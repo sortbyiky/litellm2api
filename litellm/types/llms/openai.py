@@ -756,6 +756,7 @@ class GenericChatCompletionMessage(TypedDict, total=False):
 ValidUserMessageContentTypes = [
     "text",
     "image_url",
+    "image",
     "input_audio",
     "audio_url",
     "document",
@@ -780,6 +781,7 @@ ValidUserMessageContentTypesLiteral = Literal[
 ValidUserMessageContentTypes = [
     "text",
     "image_url",
+    "image",
     "input_audio",
     "audio_url",
     "document",
