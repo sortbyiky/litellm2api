@@ -2382,6 +2382,12 @@ def anthropic_messages_pt(  # noqa: PLR0915
                                     cast(ChatCompletionFileObject, m)
                                 )
                             )
+                        elif m.get("type", "") == "tool_result":
+                            # Passthrough Anthropic-native tool_result (e.g. from Cursor)
+                            user_content.append(m)
+                        elif m.get("type", "") == "tool_use":
+                            # Passthrough Anthropic-native tool_use in user messages
+                            user_content.append(m)
                 elif isinstance(user_message_types_block["content"], str):
                     _anthropic_content_text_element: AnthropicMessagesTextParam = {
                         "type": "text",
@@ -2475,6 +2481,9 @@ def anthropic_messages_pt(  # noqa: PLR0915
                     # handle tool_search_tool_result blocks
                     # Pass through as-is since these are Anthropic-native content types
                     elif m.get("type", "") == "tool_search_tool_result":
+                        assistant_content.append(m)  # type: ignore
+                    elif m.get("type", "") == "tool_use":
+                        # Passthrough Anthropic-native tool_use in assistant content (e.g. from Cursor)
                         assistant_content.append(m)  # type: ignore
             elif (
                 "content" in assistant_content_block
