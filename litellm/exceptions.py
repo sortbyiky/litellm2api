@@ -397,6 +397,7 @@ class ContextWindowExceededError(BadRequestError):  # type: ignore
         )  # Call the base class constructor with the parameters it needs
 
         # set after, to make it clear the raised error is a context window exceeded error
+        self.code = "context_length_exceeded"
         self.message = "litellm.ContextWindowExceededError: {}".format(self.message)
 
     def __str__(self):

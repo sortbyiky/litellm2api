@@ -762,7 +762,9 @@ ValidUserMessageContentTypes = [
     "guarded_text",
     "video_url",
     "file",
-]  # used for validating user messages. Prevent users from accidentally sending anthropic messages.
+    "tool_result",
+    "tool_use",
+]  # used for validating user messages. Patched to allow Anthropic tool_result/tool_use from Cursor.
 
 ValidUserMessageContentTypesLiteral = Literal[
     "text",
@@ -784,7 +786,9 @@ ValidUserMessageContentTypes = [
     "guarded_text",
     "video_url",
     "file",
-]  # used for validating user messages. Prevent users from accidentally sending anthropic messages.
+    "tool_result",
+    "tool_use",
+]  # used for validating user messages. Patched to allow Anthropic tool_result/tool_use from Cursor.
 
 # Assistant message content types (text, thinking, redacted_thinking)
 ValidAssistantMessageContentTypesLiteral = Literal[
