@@ -8,6 +8,7 @@ from .max_budget_limiter import _PROXY_MaxBudgetLimiter
 from .parallel_request_limiter import _PROXY_MaxParallelRequestsHandler
 from .parallel_request_limiter_v3 import _PROXY_MaxParallelRequestsHandler_v3
 from .responses_id_security import ResponsesIDSecurity
+from .thinking_injection_hook import ThinkingInjectionHook
 
 ### CHECK IF ENTERPRISE HOOKS ARE AVAILABLE ####
 
@@ -23,6 +24,7 @@ PROXY_HOOKS = {
     "cache_control_check": _PROXY_CacheControlCheck,
     "responses_id_security": ResponsesIDSecurity,
     "litellm_skills": SkillsInjectionHook,
+    "thinking_injection": ThinkingInjectionHook,
 }
 
 ## FEATURE FLAG HOOKS ##
