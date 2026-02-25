@@ -7,7 +7,8 @@ from litellm.proxy._types import UserAPIKeyAuth
 class ThinkingInjectionHook(CustomLogger):
     """Auto-inject thinking params for Anthropic Claude models when not provided by client."""
 
-    THINKING_BUDGET = 10000
+    MIN_OUTPUT_TOKENS = 4096
+    MIN_BUDGET = 1024
 
     async def async_pre_call_hook(
         self,
@@ -22,17 +23,17 @@ class ThinkingInjectionHook(CustomLogger):
         if "thinking" in data or "reasoning_effort" in data:
             return data
 
-        budget = self.THINKING_BUDGET
-        max_tokens = data.get("max_tokens") or data.get("max_completion_tokens")
-        if max_tokens and max_tokens <= budget:
-            data["max_tokens"] = budget + max_tokens
-        elif not max_tokens:
-            data["max_tokens"] = 16000
+        max_tokens = data.get("max_tokens") or data.get("max_completion_tokens") or 16000
+        budget = max_tokens - self.MIN_OUTPUT_TOKENS
+        if budget < self.MIN_BUDGET:
+            return data
 
+        data["max_tokens"] = max_tokens
         data["thinking"] = {"type": "enabled", "budget_tokens": budget}
         verbose_proxy_logger.debug(
-            "ThinkingInjectionHook: injected thinking for model=%s, max_tokens=%s",
+            "ThinkingInjectionHook: injected thinking for model=%s, max_tokens=%s, budget=%s",
             model,
-            data["max_tokens"],
+            max_tokens,
+            budget,
         )
         return data
