@@ -530,11 +530,18 @@ def _gemini_convert_messages_with_history(  # noqa: PLR0915
 
 
 def _pop_and_merge_extra_body(data: RequestBody, optional_params: dict) -> None:
-    """Pop extra_body from optional_params and shallow-merge into data, deep-merging dict values."""
+    """Pop extra_body from optional_params and shallow-merge into data, deep-merging dict values.
+
+    Only merges keys that are valid RequestBody fields to prevent unknown fields
+    (e.g. "google" from Cursor's extra_body) from being sent to the Gemini API.
+    """
     extra_body: Optional[dict] = optional_params.pop("extra_body", None)
     if extra_body is not None:
+        valid_keys = set(RequestBody.__annotations__.keys())
         data_dict: dict = data  # type: ignore[assignment]
         for k, v in extra_body.items():
+            if k not in valid_keys:
+                continue
             if k in data_dict and isinstance(data_dict[k], dict) and isinstance(v, dict):
                 data_dict[k].update(v)
             else:
