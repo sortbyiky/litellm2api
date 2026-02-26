@@ -7,6 +7,7 @@ import { parseErrorMessage } from "@/components/shared/errorUtils";
 import { ClockCircleOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Modal, Skeleton, Space, Switch, Typography } from "antd";
 import React, { useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 interface SpendLogsSettingsModalProps {
   isVisible: boolean;
@@ -15,6 +16,7 @@ interface SpendLogsSettingsModalProps {
 }
 
 const SpendLogsSettingsModal: React.FC<SpendLogsSettingsModalProps> = ({ isVisible, onCancel, onSuccess }) => {
+  const { t } = useTranslation();
   const [form] = Form.useForm();
   const { mutateAsync, isPending } = useStoreRequestInSpendLogs();
   const { mutateAsync: deleteField, isPending: isDeletingField } = useDeleteProxyConfigField();
@@ -78,16 +80,16 @@ const SpendLogsSettingsModal: React.FC<SpendLogsSettingsModalProps> = ({ isVisib
 
       await mutateAsync(updateParams, {
         onSuccess: () => {
-          NotificationsManager.success("Spend logs settings updated successfully");
+          NotificationsManager.success(t("logs.spendLogsSettingsUpdated"));
           refetch(); // Refetch config to get updated values
           onSuccess?.();
         },
         onError: (error) => {
-          NotificationsManager.fromBackend("Failed to save spend logs settings: " + parseErrorMessage(error));
+          NotificationsManager.fromBackend(t("logs.failedToSaveSettings") + parseErrorMessage(error));
         },
       });
     } catch (error) {
-      NotificationsManager.fromBackend("Failed to save spend logs settings: " + parseErrorMessage(error));
+      NotificationsManager.fromBackend(t("logs.failedToSaveSettings") + parseErrorMessage(error));
     }
   };
 
@@ -98,15 +100,15 @@ const SpendLogsSettingsModal: React.FC<SpendLogsSettingsModalProps> = ({ isVisib
 
   return (
     <Modal
-      title={<Typography.Title level={5}>Spend Logs Settings</Typography.Title>}
+      title={<Typography.Title level={5}>{t("logs.spendLogsSettings")}</Typography.Title>}
       open={isVisible}
       footer={
         <Space>
           <Button onClick={handleCancel} disabled={isPending || isDeletingField || isLoadingConfig}>
-            Cancel
+            {t("logs.cancel")}
           </Button>
           <Button type="primary" loading={isPending || isDeletingField} disabled={isLoadingConfig} onClick={() => form.submit()}>
-            {isPending || isDeletingField ? "Saving..." : "Save Settings"}
+            {isPending || isDeletingField ? t("logs.saving") : t("logs.saveSettings")}
           </Button>
         </Space>
       }
@@ -121,11 +123,11 @@ const SpendLogsSettingsModal: React.FC<SpendLogsSettingsModalProps> = ({ isVisib
         initialValues={initialValues}
       >
         <Form.Item
-          label="Store Prompts in Spend Logs"
+          label={t("logs.storePromptsInSpendLogs")}
           name="store_prompts_in_spend_logs"
           tooltip={
             proxyConfigData?.find(f => f.field_name === 'store_prompts_in_spend_logs')?.field_description ||
-            "When enabled, prompts will be stored in spend logs for tracking and analysis purposes."
+            t("logs.storePromptsTooltip")
           }
           valuePropName="checked"
         >
@@ -136,15 +138,15 @@ const SpendLogsSettingsModal: React.FC<SpendLogsSettingsModalProps> = ({ isVisib
         </Form.Item>
 
         <Form.Item
-          label="Maximum Spend Logs Retention Period (Optional)"
+          label={t("logs.maximumRetentionPeriod")}
           name="maximum_spend_logs_retention_period"
           tooltip={
             proxyConfigData?.find(f => f.field_name === 'maximum_spend_logs_retention_period')?.field_description ||
-            "Set the maximum retention period for spend logs (e.g., '7d' for 7 days, '30d' for 30 days). Leave empty for no limit."
+            t("logs.retentionPeriodTooltip")
           }
         >
           {isLoadingConfig ? <Skeleton.Input active block /> : <Input
-            placeholder="e.g., 7d, 30d"
+            placeholder={t("logs.retentionPeriodPlaceholder")}
             prefix={<ClockCircleOutlined />}
           />}
         </Form.Item>

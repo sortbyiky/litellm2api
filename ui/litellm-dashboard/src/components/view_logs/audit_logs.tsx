@@ -3,10 +3,11 @@ import moment from "moment";
 import { useRef, useState, useEffect, useCallback, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { uiAuditLogsCall, keyListCall } from "../networking";
-import { AuditLogEntry, auditLogColumns } from "./columns";
+import { AuditLogEntry, createAuditLogColumns } from "./columns";
 import { Text } from "@tremor/react";
 import { Team } from "../key_team_helpers/key_list";
 import { formatNumberWithCommas } from "@/utils/dataUtils";
+import { useTranslation } from "react-i18next";
 
 interface AuditLogsProps {
   accessToken: string | null;
@@ -30,6 +31,7 @@ export default function AuditLogs({
   premiumUser,
   allTeams,
 }: AuditLogsProps) {
+  const { t } = useTranslation();
   const [startTime, setStartTime] = useState<string>(moment().subtract(24, "hours").format("YYYY-MM-DDTHH:mm"));
 
   const actionFilterRef = useRef<HTMLDivElement>(null);
@@ -174,6 +176,8 @@ export default function AuditLogs({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const auditLogColumns = useMemo(() => createAuditLogColumns(t), [t]);
 
   const completeFilteredLogs = useMemo(() => {
     if (!allLogsQuery.data) return [];
@@ -437,7 +441,7 @@ export default function AuditLogs({
         </Text>
         <img
           src={auditLogsPreviewImg}
-          alt="Audit Logs Preview"
+          alt={t("logs.auditLogsPreviewAlt")}
           style={{
             maxWidth: "100%",
             maxHeight: "700px",
@@ -472,11 +476,11 @@ export default function AuditLogs({
             <div className="flex flex-wrap items-center gap-3">
               <div className="flex items-center gap-2">
                 <div className="flex items-center">
-                  <input
-                    type="text"
-                    placeholder="Search by Object ID..."
-                    value={objectIdSearch}
-                    onChange={(e) => setObjectIdSearch(e.target.value)}
+                <input
+                  type="text"
+                  placeholder={t("logs.searchByObjectId")}
+                  value={objectIdSearch}
+                  onChange={(e) => setObjectIdSearch(e.target.value)}
                     className="px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -484,7 +488,7 @@ export default function AuditLogs({
                 <button
                   onClick={handleRefresh}
                   className="px-3 py-2 text-sm border rounded-md hover:bg-gray-50 flex items-center gap-2"
-                  title="Refresh data"
+                  title={t("logs.refreshData")}
                 >
                   <svg
                     className={`w-4 h-4 ${allLogsQuery.isFetching ? "animate-spin" : ""}`}
@@ -516,11 +520,11 @@ export default function AuditLogs({
                   className="px-3 py-2 text-sm border rounded-md hover:bg-gray-50 flex items-center gap-2 bg-white w-40 text-left justify-between"
                 >
                   <span>
-                    {selectedActionFilter === "all" && "All Actions"}
-                    {selectedActionFilter === "created" && "Created"}
-                    {selectedActionFilter === "updated" && "Updated"}
-                    {selectedActionFilter === "deleted" && "Deleted"}
-                    {selectedActionFilter === "rotated" && "Rotated"}
+                    {selectedActionFilter === "all" && t("logs.allActions")}
+                    {selectedActionFilter === "created" && t("logs.created")}
+                    {selectedActionFilter === "updated" && t("logs.updated")}
+                    {selectedActionFilter === "deleted" && t("logs.deleted")}
+                    {selectedActionFilter === "rotated" && t("logs.rotated")}
                   </span>
                   <svg
                     className="w-4 h-4 text-gray-500"
@@ -536,11 +540,11 @@ export default function AuditLogs({
                   <div className="absolute left-0 mt-2 w-40 bg-white rounded-lg shadow-lg border p-1 z-50">
                     <div className="space-y-1">
                       {[
-                        { label: "All Actions", value: "all" },
-                        { label: "Created", value: "created" },
-                        { label: "Updated", value: "updated" },
-                        { label: "Deleted", value: "deleted" },
-                        { label: "Rotated", value: "rotated" },
+                        { label: t("logs.allActions"), value: "all" },
+                        { label: t("logs.created"), value: "created" },
+                        { label: t("logs.updated"), value: "updated" },
+                        { label: t("logs.deleted"), value: "deleted" },
+                        { label: t("logs.rotated"), value: "rotated" },
                       ].map((option) => (
                         <button
                           key={option.value}
@@ -573,10 +577,10 @@ export default function AuditLogs({
                   className="px-3 py-2 text-sm border rounded-md hover:bg-gray-50 flex items-center gap-2 bg-white w-40 text-left justify-between"
                 >
                   <span>
-                    {selectedTableFilter === "all" && "All Tables"}
-                    {selectedTableFilter === "keys" && "Keys"}
-                    {selectedTableFilter === "teams" && "Teams"}
-                    {selectedTableFilter === "users" && "Users"}
+                    {selectedTableFilter === "all" && t("logs.allTables")}
+                    {selectedTableFilter === "keys" && t("logs.keys")}
+                    {selectedTableFilter === "teams" && t("logs.teams")}
+                    {selectedTableFilter === "users" && t("logs.users")}
                   </span>
                   <svg
                     className="w-4 h-4 text-gray-500"
@@ -592,10 +596,10 @@ export default function AuditLogs({
                   <div className="absolute left-0 mt-2 w-40 bg-white rounded-lg shadow-lg border p-1 z-50">
                     <div className="space-y-1">
                       {[
-                        { label: "All Tables", value: "all" },
-                        { label: "Keys", value: "keys" },
-                        { label: "Teams", value: "teams" },
-                        { label: "Users", value: "users" },
+                        { label: t("logs.allTables"), value: "all" },
+                        { label: t("logs.keys"), value: "keys" },
+                        { label: t("logs.teams"), value: "teams" },
+                        { label: t("logs.users"), value: "users" },
                       ].map((option) => (
                         <button
                           key={option.value}
@@ -618,13 +622,13 @@ export default function AuditLogs({
               </div>
 
               <span className="text-sm text-gray-700">
-                Showing {allLogsQuery.isLoading ? "..." : currentDisplayItemsStart} -{" "}
-                {allLogsQuery.isLoading ? "..." : currentDisplayItemsEnd} of{" "}
-                {allLogsQuery.isLoading ? "..." : totalFilteredItems} results
+                {t("logs.showing")} {allLogsQuery.isLoading ? "..." : currentDisplayItemsStart} -{" "}
+                {allLogsQuery.isLoading ? "..." : currentDisplayItemsEnd} {t("logs.of")}{" "}
+                {allLogsQuery.isLoading ? "..." : totalFilteredItems} {t("logs.results")}
               </span>
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-gray-700">
-                  Page {allLogsQuery.isLoading ? "..." : clientCurrentPage} of{" "}
+                  {t("logs.page")} {allLogsQuery.isLoading ? "..." : clientCurrentPage} {t("logs.of")}{" "}
                   {allLogsQuery.isLoading ? "..." : totalFilteredPages}
                 </span>
                 <button
@@ -632,14 +636,14 @@ export default function AuditLogs({
                   disabled={allLogsQuery.isLoading || clientCurrentPage === 1}
                   className="px-3 py-1 text-sm border rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Previous
+                  {t("logs.previous")}
                 </button>
                 <button
                   onClick={() => setClientCurrentPage((p) => Math.min(totalFilteredPages, p + 1))}
                   disabled={allLogsQuery.isLoading || clientCurrentPage === totalFilteredPages}
                   className="px-3 py-1 text-sm border rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Next
+                  {t("logs.next")}
                 </button>
               </div>
             </div>

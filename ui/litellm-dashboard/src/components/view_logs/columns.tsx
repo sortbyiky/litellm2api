@@ -8,6 +8,7 @@ import { TableHeaderSortDropdown } from "../common_components/TableHeaderSortDro
 import { TimeCell } from "./time_cell";
 import { MCP_CALL_TYPES } from "./constants";
 import { LlmBadge, McpBadge, SparkleIcon, WrenchIcon } from "./TypeBadges";
+import { useTranslation } from "react-i18next";
 
 /** API sort field mapping for /spend/logs/ui endpoint */
 export const LOGS_SORT_FIELD_MAP = {
@@ -100,24 +101,24 @@ const SortableHeader = ({
   </div>
 );
 
-export const createColumns = (sortProps?: LogsSortProps): ColumnDef<LogEntry>[] => [
+export const createColumns = (sortProps?: LogsSortProps, t?: (key: string, options?: any) => string): ColumnDef<LogEntry>[] => [
   {
     header: sortProps
       ? () => (
           <SortableHeader
-            label="Time"
+            label={t ? t("logs.time") : "Time"}
             field="startTime"
             sortBy={sortProps.sortBy}
             sortOrder={sortProps.sortOrder}
             onSortChange={sortProps.onSortChange}
           />
         )
-      : "Time",
+      : t ? t("logs.time") : "Time",
     accessorKey: "startTime",
     cell: (info: any) => <TimeCell utcTime={info.getValue()} />,
   },
   {
-    header: "Type",
+    header: t ? t("logs.type") : "Type",
     id: "type",
     cell: (info: any) => {
       const row = info.row.original;
@@ -144,17 +145,17 @@ export const createColumns = (sortProps?: LogsSortProps): ColumnDef<LogEntry>[] 
       );
 
       return (
-        <Tooltip title={`${sessionLlmCount} LLM • ${sessionMcpCount} MCP`}>
+        <Tooltip title={t ? t("logs.llmMcp", { defaultValue: `${sessionLlmCount} LLM • ${sessionMcpCount} MCP` }) : `${sessionLlmCount} LLM • ${sessionMcpCount} MCP`}>
           {sessionTypeBadge}
         </Tooltip>
       );
     },
   },
   {
-    header: "Status",
+    header: t ? t("logs.status") : "Status",
     accessorKey: "metadata.status",
     cell: (info: any) => {
-      const status = info.getValue() || "Success";
+      const status = info.getValue() || t?.("logs.success") || "Success";
       const isSuccess = status.toLowerCase() !== "failure";
 
       return (
@@ -163,13 +164,13 @@ export const createColumns = (sortProps?: LogsSortProps): ColumnDef<LogEntry>[] 
             isSuccess ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
           }`}
         >
-          {isSuccess ? "Success" : "Failure"}
+          {isSuccess ? (t ? t("logs.success") : "Success") : (t ? t("logs.failure") : "Failure")}
         </span>
       );
     },
   },
   {
-    header: "Session ID",
+    header: t ? t("logs.sessionId") : "Session ID",
     accessorKey: "session_id",
     cell: (info: any) => {
       const value = String(info.getValue() || "");
@@ -190,7 +191,7 @@ export const createColumns = (sortProps?: LogsSortProps): ColumnDef<LogEntry>[] 
   },
 
   {
-    header: "Request ID",
+    header: t ? t("logs.requestId") : "Request ID",
     accessorKey: "request_id",
     cell: (info: any) => (
       <Tooltip title={String(info.getValue() || "")}>
@@ -202,14 +203,14 @@ export const createColumns = (sortProps?: LogsSortProps): ColumnDef<LogEntry>[] 
     header: sortProps
       ? () => (
           <SortableHeader
-            label="Cost"
+            label={t ? t("logs.cost") : "Cost"}
             field="spend"
             sortBy={sortProps.sortBy}
             sortOrder={sortProps.sortOrder}
             onSortChange={sortProps.onSortChange}
           />
         )
-      : "Cost",
+      : t ? t("logs.cost") : "Cost",
     accessorKey: "spend",
     cell: (info: any) => {
       const row = info.row.original;
@@ -223,7 +224,7 @@ export const createColumns = (sortProps?: LogsSortProps): ColumnDef<LogEntry>[] 
           </Tooltip>
           {mcpCount > 0 && mcpSpend > 0 && (
             <span className="text-[10px] text-amber-600">
-              incl. {getSpendString(mcpSpend)} from {mcpCount} MCP
+              {t ? t("logs.inclFromMcp", { spend: getSpendString(mcpSpend), count: mcpCount }) : `incl. ${getSpendString(mcpSpend)} from ${mcpCount} MCP`}
             </span>
           )}
         </div>
@@ -231,7 +232,7 @@ export const createColumns = (sortProps?: LogsSortProps): ColumnDef<LogEntry>[] 
     },
   },
   {
-    header: "Duration (s)",
+    header: t ? t("logs.duration") : "Duration (s)",
     accessorKey: "duration",
     cell: (info: any) => (
       <Tooltip title={String(info.getValue() || "-")}>
@@ -240,7 +241,7 @@ export const createColumns = (sortProps?: LogsSortProps): ColumnDef<LogEntry>[] 
     ),
   },
   {
-    header: "Team Name",
+    header: t ? t("logs.teamName") : "Team Name",
     accessorKey: "metadata.user_api_key_team_alias",
     cell: (info: any) => (
       <Tooltip title={String(info.getValue() || "-")}>
@@ -249,7 +250,7 @@ export const createColumns = (sortProps?: LogsSortProps): ColumnDef<LogEntry>[] 
     ),
   },
   {
-    header: "Key Hash",
+    header: t ? t("logs.keyHash") : "Key Hash",
     accessorKey: "metadata.user_api_key",
     cell: (info: any) => {
       const value = String(info.getValue() || "-");
@@ -268,7 +269,7 @@ export const createColumns = (sortProps?: LogsSortProps): ColumnDef<LogEntry>[] 
     },
   },
   {
-    header: "Key Name",
+    header: t ? t("logs.keyName") : "Key Name",
     accessorKey: "metadata.user_api_key_alias",
     cell: (info: any) => (
       <Tooltip title={String(info.getValue() || "-")}>
@@ -277,7 +278,7 @@ export const createColumns = (sortProps?: LogsSortProps): ColumnDef<LogEntry>[] 
     ),
   },
   {
-    header: "Model",
+    header: t ? t("logs.model") : "Model",
     accessorKey: "model",
     cell: (info: any) => {
       const row = info.row.original;
@@ -307,14 +308,14 @@ export const createColumns = (sortProps?: LogsSortProps): ColumnDef<LogEntry>[] 
     header: sortProps
       ? () => (
           <SortableHeader
-            label="Tokens"
+            label={t ? t("logs.tokens") : "Tokens"}
             field="total_tokens"
             sortBy={sortProps.sortBy}
             sortOrder={sortProps.sortOrder}
             onSortChange={sortProps.onSortChange}
           />
         )
-      : "Tokens",
+      : t ? t("logs.tokens") : "Tokens",
     accessorKey: "total_tokens",
     cell: (info: any) => {
       const row = info.row.original;
@@ -329,7 +330,7 @@ export const createColumns = (sortProps?: LogsSortProps): ColumnDef<LogEntry>[] 
     },
   },
   {
-    header: "Internal User",
+    header: t ? t("logs.internalUser") : "Internal User",
     accessorKey: "user",
     cell: (info: any) => (
       <Tooltip title={String(info.getValue() || "-")}>
@@ -338,7 +339,7 @@ export const createColumns = (sortProps?: LogsSortProps): ColumnDef<LogEntry>[] 
     ),
   },
   {
-    header: "End User",
+    header: t ? t("logs.endUser") : "End User",
     accessorKey: "end_user",
     cell: (info: any) => (
       <Tooltip title={String(info.getValue() || "-")}>
@@ -348,7 +349,7 @@ export const createColumns = (sortProps?: LogsSortProps): ColumnDef<LogEntry>[] 
   },
 
   {
-    header: "Tags",
+    header: t ? t("logs.tags") : "Tags",
     accessorKey: "request_tags",
     cell: (info: any) => {
       const tags = info.getValue();
@@ -399,6 +400,7 @@ const formatMessage = (message: any): string => {
 
 // Add this new component for displaying request/response with copy buttons
 export const RequestResponsePanel = ({ request, response }: { request: any; response: any }) => {
+  const { t } = useTranslation();
   const requestStr = typeof request === "object" ? JSON.stringify(request, null, 2) : String(request || "{}");
   const responseStr = typeof response === "object" ? JSON.stringify(response, null, 2) : String(response || "{}");
 
@@ -414,11 +416,11 @@ export const RequestResponsePanel = ({ request, response }: { request: any; resp
     <div className="grid grid-cols-2 gap-4 mt-4">
       <div className="rounded-lg border border-gray-200 bg-gray-50">
         <div className="flex justify-between items-center p-3 border-b border-gray-200">
-          <h3 className="text-sm font-medium">Request</h3>
+          <h3 className="text-sm font-medium">{t("logs.request")}</h3>
           <button
             onClick={() => copyToClipboard(requestStr)}
             className="p-1 hover:bg-gray-200 rounded"
-            title="Copy request"
+            title={t("logs.copyRequest")}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -441,11 +443,11 @@ export const RequestResponsePanel = ({ request, response }: { request: any; resp
 
       <div className="rounded-lg border border-gray-200 bg-gray-50">
         <div className="flex justify-between items-center p-3 border-b border-gray-200">
-          <h3 className="text-sm font-medium">Response</h3>
+          <h3 className="text-sm font-medium">{t("logs.response")}</h3>
           <button
             onClick={() => copyToClipboard(responseStr)}
             className="p-1 hover:bg-gray-200 rounded"
-            title="Copy response"
+            title={t("logs.copyResponse")}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -471,6 +473,7 @@ export const RequestResponsePanel = ({ request, response }: { request: any; resp
 
 // New component for collapsible JSON display
 const CollapsibleJsonCell = ({ jsonData }: { jsonData: any }) => {
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = React.useState(false);
   const jsonString = JSON.stringify(jsonData, null, 2);
 
@@ -481,7 +484,7 @@ const CollapsibleJsonCell = ({ jsonData }: { jsonData: any }) => {
   return (
     <div>
       <button onClick={() => setIsExpanded(!isExpanded)} className="text-blue-500 hover:text-blue-700 text-xs">
-        {isExpanded ? "Hide JSON" : "Show JSON"} ({Object.keys(jsonData).length} fields)
+        {isExpanded ? t("logs.hideJson") : t("logs.showJson")} ({Object.keys(jsonData).length} {t("logs.fields")})
       </button>
       {isExpanded && (
         <pre className="mt-2 p-2 bg-gray-50 border rounded text-xs overflow-auto max-h-60">{jsonString}</pre>
@@ -510,12 +513,13 @@ const getActionBadge = (action: string) => {
   );
 };
 
-export const auditLogColumns: ColumnDef<AuditLogEntry>[] = [
+export const createAuditLogColumns = (t?: (key: string) => string): ColumnDef<AuditLogEntry>[] => [
   {
     id: "expander",
     header: () => null,
     cell: ({ row }) => {
       const ExpanderCell = () => {
+        const { t: tLocal } = useTranslation();
         const [localExpanded, setLocalExpanded] = React.useState(row.getIsExpanded());
 
         const toggleHandler = React.useCallback(() => {
@@ -527,7 +531,7 @@ export const auditLogColumns: ColumnDef<AuditLogEntry>[] = [
           <button
             onClick={toggleHandler}
             style={{ cursor: "pointer" }}
-            aria-label={localExpanded ? "Collapse row" : "Expand row"}
+            aria-label={localExpanded ? (t || tLocal)("logs.collapseRow") : (t || tLocal)("logs.expandRow")}
             className="w-6 h-6 flex items-center justify-center focus:outline-none"
           >
             <svg
@@ -548,31 +552,31 @@ export const auditLogColumns: ColumnDef<AuditLogEntry>[] = [
     },
   },
   {
-    header: "Timestamp",
+    header: t ? t("logs.timestamp") : "Timestamp",
     accessorKey: "updated_at",
     cell: (info: any) => <TimeCell utcTime={info.getValue()} />,
   },
   {
-    header: "Table Name",
+    header: t ? t("logs.tableName") : "Table Name",
     accessorKey: "table_name",
     cell: (info: any) => {
       const tableName = info.getValue();
       let displayValue = tableName;
       switch (tableName) {
         case "LiteLLM_VerificationToken":
-          displayValue = "Keys";
+          displayValue = t ? t("logs.keys") : "Keys";
           break;
         case "LiteLLM_TeamTable":
-          displayValue = "Teams";
+          displayValue = t ? t("logs.teams") : "Teams";
           break;
         case "LiteLLM_OrganizationTable":
-          displayValue = "Organizations";
+          displayValue = t ? t("logs.organizations") : "Organizations";
           break;
         case "LiteLLM_UserTable":
-          displayValue = "Users";
+          displayValue = t ? t("logs.users") : "Users";
           break;
         case "LiteLLM_ProxyModelTable":
-          displayValue = "Models";
+          displayValue = t ? t("logs.models") : "Models";
           break;
         default:
           displayValue = tableName;
@@ -581,12 +585,12 @@ export const auditLogColumns: ColumnDef<AuditLogEntry>[] = [
     },
   },
   {
-    header: "Action",
+    header: t ? t("logs.action") : "Action",
     accessorKey: "action",
     cell: (info: any) => <span>{getActionBadge(info.getValue())}</span>,
   },
   {
-    header: "Changed By",
+    header: t ? t("logs.changedBy") : "Changed By",
     accessorKey: "changed_by",
     cell: (info: any) => {
       const changedBy = info.row.original.changed_by;
@@ -608,10 +612,11 @@ export const auditLogColumns: ColumnDef<AuditLogEntry>[] = [
     },
   },
   {
-    header: "Affected Item ID",
+    header: t ? t("logs.affectedItemId") : "Affected Item ID",
     accessorKey: "object_id",
     cell: (props) => {
       const ObjectIdDisplay = () => {
+        const { t: tLocal } = useTranslation();
         const objectId = props.getValue();
         const [copied, setCopied] = useState(false);
 
@@ -628,7 +633,7 @@ export const auditLogColumns: ColumnDef<AuditLogEntry>[] = [
         };
 
         return (
-          <Tooltip title={copied ? "Copied!" : String(objectId)}>
+          <Tooltip title={copied ? (t || tLocal)("logs.copied") : String(objectId)}>
             <span className="max-w-[20ch] truncate block cursor-pointer hover:text-blue-600" onClick={handleCopy}>
               {String(objectId)}
             </span>
@@ -639,3 +644,6 @@ export const auditLogColumns: ColumnDef<AuditLogEntry>[] = [
     },
   },
 ];
+
+/** Default audit log columns without translation (for backward compatibility) */
+export const auditLogColumns = createAuditLogColumns();

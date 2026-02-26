@@ -3,6 +3,7 @@ import { notification as staticNotification } from "antd";
 import type { NotificationInstance } from "antd/es/notification/interface";
 import { parseErrorMessage } from "../shared/errorUtils";
 import { ArgsProps } from "antd/es/notification";
+import i18n from "../../i18n";
 
 let notificationInstance: NotificationInstance | null = null;
 
@@ -146,24 +147,27 @@ const CLOUDZERO_MATCH = [
   "cloudzero settings not found",
 ];
 
+// Helper function to get translations
+const t = (key: string) => i18n.t(key);
+
 function titleFor(status?: number, desc?: string): string {
   const d = (desc || "").toLowerCase();
 
-  if (AUTH_MATCH.some((s) => d.includes(s))) return "Authentication Error";
-  if (FORBIDDEN_MATCH.some((s) => d.includes(s))) return "Access Denied";
-  if (DB_MATCH?.some?.((s: string) => d.includes(s)) || status === 503) return "Service Unavailable";
-  if (BUDGET_MATCH?.some?.((s: string) => d.includes(s))) return "Budget Exceeded";
-  if (ENTERPRISE_MATCH?.some?.((s: string) => d.includes(s))) return "Feature Unavailable";
-  if (ROUTER_MATCH?.some?.((s: string) => d.includes(s))) return "Routing Error";
+  if (AUTH_MATCH.some((s) => d.includes(s))) return t("notifications.authenticationError");
+  if (FORBIDDEN_MATCH.some((s) => d.includes(s))) return t("notifications.accessDenied");
+  if (DB_MATCH?.some?.((s: string) => d.includes(s)) || status === 503) return t("notifications.serviceUnavailable");
+  if (BUDGET_MATCH?.some?.((s: string) => d.includes(s))) return t("notifications.budgetExceeded");
+  if (ENTERPRISE_MATCH?.some?.((s: string) => d.includes(s))) return t("notifications.featureUnavailable");
+  if (ROUTER_MATCH?.some?.((s: string) => d.includes(s))) return t("notifications.routingError");
 
-  if (EXISTS_MATCH.some((s) => d.includes(s))) return "Already Exists";
-  if (GUARDRAIL_MATCH.some((s) => d.includes(s))) return "Content Blocked";
+  if (EXISTS_MATCH.some((s) => d.includes(s))) return t("notifications.alreadyExists");
+  if (GUARDRAIL_MATCH.some((s) => d.includes(s))) return t("notifications.contentBlocked");
 
-  if (FILE_UPLOAD_MATCH.some((s) => d.includes(s))) return "Validation Error";
-  if (CLOUDZERO_MATCH.some((s) => d.includes(s))) return "Integration Error";
+  if (FILE_UPLOAD_MATCH.some((s) => d.includes(s))) return t("notifications.validationError");
+  if (CLOUDZERO_MATCH.some((s) => d.includes(s))) return t("notifications.integrationError");
 
-  if (VALIDATION_MATCH.some((s) => d.includes(s))) return "Validation Error";
-  if (status === 404 || d.includes("not found") || NOT_FOUND_MATCH.some((s) => d.includes(s))) return "Not Found";
+  if (VALIDATION_MATCH.some((s) => d.includes(s))) return t("notifications.validationError");
+  if (status === 404 || d.includes("not found") || NOT_FOUND_MATCH.some((s) => d.includes(s))) return t("notifications.notFound");
   if (
     status === 429 ||
     d.includes("rate limit") ||
@@ -171,13 +175,13 @@ function titleFor(status?: number, desc?: string): string {
     d.includes("rpm") ||
     RATE_LIMIT_EXTRA?.some?.((s: string) => d.includes(s))
   )
-    return "Rate Limit Exceeded";
-  if (status && status >= 500) return "Server Error";
-  if (status === 401) return "Authentication Error";
-  if (status === 403) return "Access Denied";
-  if (d.includes("enterprise") || d.includes("premium")) return "Info";
-  if (status && status >= 400) return "Request Error";
-  return "Error";
+    return t("notifications.rateLimitExceeded");
+  if (status && status >= 500) return t("notifications.serverError");
+  if (status === 401) return t("notifications.authenticationError");
+  if (status === 403) return t("notifications.accessDenied");
+  if (d.includes("enterprise") || d.includes("premium")) return t("notifications.info");
+  if (status && status >= 400) return t("notifications.requestError");
+  return t("notifications.error");
 }
 
 const SUCCESS_MATCH = [
@@ -221,10 +225,10 @@ const CONFIG_WARN_MATCH = [
 function classifyGeneralMessage(desc?: string): { kind: "success" | "info" | "warning"; title: string } | null {
   const d = (desc || "").toLowerCase();
 
-  if (SUCCESS_MATCH.some((s) => d.includes(s))) return { kind: "success", title: "Success" };
-  if (DEPRECATION_FEATURE_WARN_MATCH.some((s) => d.includes(s))) return { kind: "warning", title: "Feature Notice" };
-  if (CONFIG_WARN_MATCH.some((s) => d.includes(s))) return { kind: "warning", title: "Configuration Warning" };
-  if (INFO_MATCH.some((s) => d.includes(s))) return { kind: "warning", title: "Rate Limit" }; // show as warning for visibility
+  if (SUCCESS_MATCH.some((s) => d.includes(s))) return { kind: "success", title: t("notifications.success") };
+  if (DEPRECATION_FEATURE_WARN_MATCH.some((s) => d.includes(s))) return { kind: "warning", title: t("notifications.featureNotice") };
+  if (CONFIG_WARN_MATCH.some((s) => d.includes(s))) return { kind: "warning", title: t("notifications.configurationWarning") };
+  if (INFO_MATCH.some((s) => d.includes(s))) return { kind: "warning", title: t("notifications.rateLimit") }; // show as warning for visibility
 
   return null;
 }
@@ -260,7 +264,7 @@ function looksErrorPayload(input: any, status?: number): boolean {
 
 const NotificationManager = {
   error(input: string | NotificationConfig) {
-    const cfg = normalize(input, "Error");
+    const cfg = normalize(input, t("notifications.error"));
     getNotification().error({
       ...COMMON_NOTIFICATION_PROPS,
       ...cfg,
@@ -270,7 +274,7 @@ const NotificationManager = {
   },
 
   warning(input: string | NotificationConfig) {
-    const cfg = normalize(input, "Warning");
+    const cfg = normalize(input, t("notifications.warning"));
     getNotification().warning({
       ...COMMON_NOTIFICATION_PROPS,
       ...cfg,
@@ -280,7 +284,7 @@ const NotificationManager = {
   },
 
   info(input: string | NotificationConfig) {
-    const cfg = normalize(input, "Info");
+    const cfg = normalize(input, t("notifications.info"));
     getNotification().info({
       ...COMMON_NOTIFICATION_PROPS,
       ...cfg,
@@ -293,14 +297,14 @@ const NotificationManager = {
     if (React.isValidElement(input)) {
       getNotification().success({
         ...COMMON_NOTIFICATION_PROPS,
-        message: "Success",
+        message: t("notifications.success"),
         description: input,
         placement: defaultPlacement(),
         duration: 3.5,
       });
       return;
     }
-    const cfg = normalize(input as string | NotificationConfig, "Success");
+    const cfg = normalize(input as string | NotificationConfig, t("notifications.success"));
     getNotification().success({
       ...COMMON_NOTIFICATION_PROPS,
       ...cfg,
@@ -319,27 +323,27 @@ const NotificationManager = {
       const payload = { ...base, message: title };
 
       if (
-        title === "Rate Limit Exceeded" ||
-        title === "Info" ||
-        title === "Budget Exceeded" ||
-        title === "Feature Unavailable" ||
-        title === "Content Blocked" ||
-        title === "Integration Error"
+        title === t("notifications.rateLimitExceeded") ||
+        title === t("notifications.info") ||
+        title === t("notifications.budgetExceeded") ||
+        title === t("notifications.featureUnavailable") ||
+        title === t("notifications.contentBlocked") ||
+        title === t("notifications.integrationError")
       ) {
         getNotification().warning({ ...COMMON_NOTIFICATION_PROPS, ...payload, duration: extra?.duration ?? 7 });
         return;
       }
-      if (title === "Server Error") {
+      if (title === t("notifications.serverError")) {
         getNotification().error({ ...COMMON_NOTIFICATION_PROPS, ...payload, duration: extra?.duration ?? 8 });
         return;
       }
       if (
-        title === "Request Error" ||
-        title === "Authentication Error" ||
-        title === "Access Denied" ||
-        title === "Not Found" ||
-        title === "Error" ||
-        title === "Already Exists"
+        title === t("notifications.requestError") ||
+        title === t("notifications.authenticationError") ||
+        title === t("notifications.accessDenied") ||
+        title === t("notifications.notFound") ||
+        title === t("notifications.error") ||
+        title === t("notifications.alreadyExists")
       ) {
         getNotification().error({ ...COMMON_NOTIFICATION_PROPS, ...payload, duration: extra?.duration ?? 6 });
         return;
@@ -350,7 +354,7 @@ const NotificationManager = {
 
     // Non-error: success/info/warning classifier
     const cls = classifyGeneralMessage(description);
-    const payload = { ...base, message: cls?.title ?? "Info" };
+    const payload = { ...base, message: cls?.title ?? t("notifications.info") };
 
     if (cls?.kind === "success") {
       getNotification().success({ ...COMMON_NOTIFICATION_PROPS, ...payload, duration: extra?.duration ?? 3.5 });

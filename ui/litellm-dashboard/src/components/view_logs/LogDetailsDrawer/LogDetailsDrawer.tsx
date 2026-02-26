@@ -7,6 +7,7 @@ import {
   RightOutlined,
 } from "@ant-design/icons";
 import { Sparkles, Wrench } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { LogEntry } from "../columns";
 import { MCP_CALL_TYPES } from "../constants";
 import { getEventDisplayName } from "../utils";
@@ -111,6 +112,7 @@ export function LogDetailsDrawer({
   onSelectLog,
   startTime,
 }: LogDetailsDrawerProps) {
+  const { t } = useTranslation();
   const isSessionMode = Boolean(sessionId);
   const [selectedSessionRequestId, setSelectedSessionRequestId] = useState<string | null>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -206,7 +208,7 @@ export function LogDetailsDrawer({
   const metadata = currentLog?.metadata || {};
 
   // Status display values
-  const statusLabel = metadata.status === "failure" ? "Failure" : "Success";
+  const statusLabel = metadata.status === "failure" ? t("logs.failure") : t("logs.success");
   const statusColor = metadata.status === "failure" ? ("error" as const) : ("success" as const);
   const environment = metadata?.user_api_key_team_alias || "default";
 
@@ -260,7 +262,7 @@ export function LogDetailsDrawer({
               icon={<LeftOutlined />}
               onClick={() => setIsSidebarCollapsed(true)}
               className="absolute top-2 left-2 z-20 !bg-white !border !border-slate-200 !rounded-md"
-              aria-label="Collapse trace sidebar"
+              aria-label={t("logs.collapseTraceSidebar")}
             />
           ) : (
             <Button
@@ -269,7 +271,7 @@ export function LogDetailsDrawer({
               icon={<RightOutlined />}
               onClick={() => setIsSidebarCollapsed(false)}
               className="absolute top-2 left-2 z-20 !bg-white !border !border-slate-200 !rounded-md"
-              aria-label="Expand trace sidebar"
+              aria-label={t("logs.expandTraceSidebar")}
             />
           )}
           {!isSidebarCollapsed && (
@@ -281,7 +283,7 @@ export function LogDetailsDrawer({
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <div className="text-[10px] uppercase tracking-wide text-slate-500">
-                    {isSessionMode ? "Session" : "Trace"}
+                    {isSessionMode ? t("logs.session") : t("logs.trace")}
                   </div>
                   <div className="font-mono text-[12px] text-slate-900 leading-tight flex items-center gap-1">
                     <span className="truncate">{leftPanelDisplayId}</span>
@@ -289,7 +291,7 @@ export function LogDetailsDrawer({
                       type="button"
                       onClick={handleCopyLeftPanelId}
                       className="text-slate-400 hover:text-slate-600"
-                      aria-label="Copy trace id"
+                      aria-label={t("logs.copyTraceId")}
                     >
                       {copiedLeftPanelId ? (
                         <CheckOutlined className="text-[11px]" />
@@ -301,15 +303,15 @@ export function LogDetailsDrawer({
                 </div>
               </div>
               <div className="mt-1 text-[11px] text-slate-500 font-mono">
-                {logsForList.length} req
+                {logsForList.length} {t("logs.req")}
                 <span className="mx-1.5">·</span>
                 {isSessionMode
-                  ? `${llmCount} LLM`
-                  : `${logsForList.filter((row) => !MCP_CALL_TYPES.includes(row.call_type)).length} LLM`}
+                  ? `${llmCount} ${t("logs.llm")}`
+                  : `${logsForList.filter((row) => !MCP_CALL_TYPES.includes(row.call_type)).length} ${t("logs.llm")}`}
                 <span className="mx-1.5">·</span>
                 {isSessionMode
-                  ? `${mcpCount} MCP`
-                  : `${logsForList.filter((row) => MCP_CALL_TYPES.includes(row.call_type)).length} MCP`}
+                  ? `${mcpCount} ${t("logs.mcp")}`
+                  : `${logsForList.filter((row) => MCP_CALL_TYPES.includes(row.call_type)).length} ${t("logs.mcp")}`}
                 <span className="mx-1.5">·</span>
                 {isSessionMode
                   ? getSpendString(totalSessionCost)

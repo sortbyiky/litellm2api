@@ -139,16 +139,16 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
 
   const handleResetPassword = async (userId: string) => {
     if (!accessToken) {
-      NotificationsManager.fromBackend("Access token not found");
+      NotificationsManager.fromBackend(t("users.accessTokenNotFound"));
       return;
     }
     try {
-      NotificationsManager.success("Generating password reset link...");
+      NotificationsManager.success(t("users.generatingPasswordResetLink"));
       const data = await invitationCreateCall(accessToken, userId);
       setInvitationLinkData(data);
       setIsInvitationLinkModalVisible(true);
     } catch (error) {
-      NotificationsManager.fromBackend("Failed to generate password reset link");
+      NotificationsManager.fromBackend(t("users.failedToGeneratePasswordResetLink"));
     }
   };
 
@@ -168,7 +168,7 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
         NotificationsManager.success(t("users.userDeletedSuccess"));
       } catch (error) {
         console.error("Error deleting user:", error);
-        NotificationsManager.fromBackend("Failed to delete user");
+        NotificationsManager.fromBackend(t("users.failedToDeleteUser"));
       } finally {
         setIsDeleteModalOpen(false);
         setUserToDelete(null);
@@ -208,9 +208,9 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
         return { ...previousData, users: updatedUsers };
       });
 
-      NotificationsManager.success(`User ${editedUser.user_id} updated successfully`);
+      NotificationsManager.success(t("users.userUpdatedSuccess", { userId: editedUser.user_id }));
     } catch (error) {
-      console.error("There was an error updating the user", error);
+      console.error(t("users.errorUpdatingUser"), error);
     }
     setSelectedUser(null);
     setEditModalVisible(false);
@@ -232,7 +232,7 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
 
   const handleBulkEdit = () => {
     if (selectedUsers.length === 0) {
-      NotificationsManager.fromBackend("Please select users to edit");
+      NotificationsManager.fromBackend(t("users.pleaseSelectUsers"));
       return;
     }
 
@@ -310,12 +310,12 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
                 variant={selectionMode ? "primary" : "secondary"}
                 className="flex items-center"
               >
-                {selectionMode ? "Cancel Selection" : "Select Users"}
+                {selectionMode ? t("users.cancelSelection") : t("users.selectUsers")}
               </Button>
 
               {selectionMode && (
                 <Button onClick={handleBulkEdit} disabled={selectedUsers.length === 0} className="flex items-center">
-                  Bulk Edit ({selectedUsers.length} selected)
+                  {t("users.bulkEdit", { count: selectedUsers.length })}
                 </Button>
               )}
             </>
@@ -391,17 +391,17 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
       <DeleteResourceModal
         isOpen={isDeleteModalOpen}
         title={t("users.deleteUserConfirm")}
-        message="Are you sure you want to delete this user? This action cannot be undone."
+        message={t("users.deleteUserMessage")}
         resourceInformationTitle={t("users.userInformation")}
         resourceInformation={[
-          { label: "Email", value: userToDelete?.user_email },
+          { label: t("users.email"), value: userToDelete?.user_email },
           { label: t("users.userId"), value: userToDelete?.user_id, code: true },
           {
-            label: "Global Proxy Role",
+            label: t("users.globalProxyRole"),
             value:
               (userToDelete && possibleUIRoles?.[userToDelete.user_role]?.ui_label) || userToDelete?.user_role || "-",
           },
-          { label: "Total Spend (USD)", value: userToDelete?.spend?.toFixed(2) },
+          { label: t("users.totalSpendUSD"), value: userToDelete?.spend?.toFixed(2) },
         ]}
         onCancel={cancelDelete}
         onOk={confirmDelete}
