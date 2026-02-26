@@ -283,7 +283,7 @@ class VertexGeminiConfig(VertexAIBaseConfig, BaseConfig):
         return supported_params
 
     def map_tool_choice_values(
-        self, model: str, tool_choice: Union[str, dict]
+        self, model: str, tool_choice: Union[str, dict], drop_params: bool = False,
     ) -> Optional[ToolConfig]:
         if tool_choice == "none":
             return ToolConfig(functionCallingConfig=FunctionCallingConfig(mode="NONE"))
@@ -300,6 +300,8 @@ class VertexGeminiConfig(VertexAIBaseConfig, BaseConfig):
                 )
             )
         else:
+            if drop_params or litellm.drop_params:
+                return None
             raise litellm.utils.UnsupportedParamsError(
                 message="VertexAI doesn't support tool_choice={}. Supported tool_choice values=['auto', 'required', json object]. To drop it from the call, set `litellm.drop_params = True.".format(
                     tool_choice
@@ -1014,7 +1016,7 @@ class VertexGeminiConfig(VertexAIBaseConfig, BaseConfig):
                 isinstance(value, str) or isinstance(value, dict)
             ):
                 _tool_choice_value = self.map_tool_choice_values(
-                    model=model, tool_choice=value  # type: ignore
+                    model=model, tool_choice=value, drop_params=drop_params,
                 )
                 if _tool_choice_value is not None:
                     optional_params["tool_choice"] = _tool_choice_value
