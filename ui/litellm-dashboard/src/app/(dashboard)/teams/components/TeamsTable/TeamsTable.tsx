@@ -3,6 +3,7 @@ import { Tooltip } from "antd";
 import { formatNumberWithCommas } from "@/utils/dataUtils";
 import { PencilAltIcon, TrashIcon } from "@heroicons/react/outline";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { type KeyResponse, Team } from "@/components/key_team_helpers/key_list";
 import { Member, Organization } from "@/components/networking";
 import ModelsCell from "@/app/(dashboard)/teams/components/TeamsTable/ModelsCell";
@@ -38,19 +39,20 @@ const TeamsTable = ({
   setEditTeam,
   onDeleteTeam,
 }: TeamsTableProps) => {
+  const { t } = useTranslation();
   return (
     <Table>
       <TableHead>
         <TableRow>
-          <TableHeaderCell>Team Name</TableHeaderCell>
-          <TableHeaderCell>Team ID</TableHeaderCell>
-          <TableHeaderCell>Created</TableHeaderCell>
-          <TableHeaderCell>Spend (USD)</TableHeaderCell>
-          <TableHeaderCell>Budget (USD)</TableHeaderCell>
-          <TableHeaderCell>Models</TableHeaderCell>
-          <TableHeaderCell>Organization</TableHeaderCell>
-          <TableHeaderCell>Your Role</TableHeaderCell>
-          <TableHeaderCell>Info</TableHeaderCell>
+          <TableHeaderCell>{t("teams.teamName")}</TableHeaderCell>
+          <TableHeaderCell>{t("teams.teamId")}</TableHeaderCell>
+          <TableHeaderCell>{t("teams.created")}</TableHeaderCell>
+          <TableHeaderCell>{t("teams.spendUsd")}</TableHeaderCell>
+          <TableHeaderCell>{t("teams.budgetUsd")}</TableHeaderCell>
+          <TableHeaderCell>{t("teams.models")}</TableHeaderCell>
+          <TableHeaderCell>{t("teams.organization")}</TableHeaderCell>
+          <TableHeaderCell>{t("teams.yourRole")}</TableHeaderCell>
+          <TableHeaderCell>{t("teams.info")}</TableHeaderCell>
         </TableRow>
       </TableHead>
 
@@ -115,7 +117,7 @@ const TeamsTable = ({
                       overflow: "hidden",
                     }}
                   >
-                    {team["max_budget"] !== null && team["max_budget"] !== undefined ? team["max_budget"] : "No limit"}
+                    {team["max_budget"] !== null && team["max_budget"] !== undefined ? team["max_budget"] : t("teams.noLimit")}
                   </TableCell>
                   <ModelsCell team={team} />
                   <TableCell>{team.organization_id}</TableCell>

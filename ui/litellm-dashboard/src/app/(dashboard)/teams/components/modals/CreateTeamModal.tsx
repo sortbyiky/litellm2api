@@ -13,6 +13,7 @@ import AgentSelector from "@/components/agent_management/AgentSelector";
 import PremiumLoggingSettings from "@/components/common_components/PremiumLoggingSettings";
 import ModelAliasManager from "@/components/common_components/ModelAliasManager";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import NotificationsManager from "@/components/molecules/notifications_manager";
 import { fetchMCPAccessGroups, getGuardrailsList, getPoliciesList, Organization, Team, teamCreateCall } from "@/components/networking";
 import useAuthorized from "@/app/(dashboard)/hooks/useAuthorized";
@@ -70,6 +71,7 @@ const CreateTeamModal = ({
   setLoggingSettings,
   setIsTeamModalVisible,
 }: CreateTeamModalProps) => {
+  const { t } = useTranslation();
   const { userId: userID, userRole, accessToken, premiumUser } = useAuthorized();
   const [form] = Form.useForm();
   const [userModels, setUserModels] = useState<string[]>([]);
@@ -293,7 +295,7 @@ const CreateTeamModal = ({
 
   return (
     <Modal
-      title="Create Team"
+      title={t("createTeam.title")}
       open={isTeamModalVisible}
       width={1000}
       footer={null}
@@ -348,7 +350,7 @@ const CreateTeamModal = ({
             <Select2
               showSearch
               allowClear
-              placeholder="Search or select an Organization"
+              placeholder={t("createTeam.searchOrg")}
               onChange={(value) => {
                 form.setFieldValue("organization_id", value);
                 setCurrentOrgForCreateTeam(organizations?.find((org) => org.organization_id === value) || null);
@@ -372,14 +374,14 @@ const CreateTeamModal = ({
             label={
               <span>
                 Models{" "}
-                <Tooltip title="These are the models that your selected team has access to">
+                <Tooltip title={t("teams.modelsTooltip")}>
                   <InfoCircleOutlined style={{ marginLeft: "4px" }} />
                 </Tooltip>
               </span>
             }
             name="models"
           >
-            <Select2 mode="multiple" placeholder="Select models" style={{ width: "100%" }}>
+            <Select2 mode="multiple" placeholder={t("createTeam.selectModels")} style={{ width: "100%" }}>
               <Select2.Option key="all-proxy-models" value="all-proxy-models">
                 All Proxy Models
               </Select2.Option>
@@ -418,7 +420,7 @@ const CreateTeamModal = ({
             }}
           >
             <AccordionHeader>
-              <b>Additional Settings</b>
+              <b>{t("createTeam.additionalSettings")}</b>
             </AccordionHeader>
             <AccordionBody>
               <Form.Item
@@ -502,7 +504,7 @@ const CreateTeamModal = ({
                 label={
                   <span>
                     Guardrails{" "}
-                    <Tooltip title="Setup your first guardrail">
+                    <Tooltip title={t("teams.setupGuardrailTooltip")}>
                       <a
                         href="https://docs.litellm.ai/docs/proxy/guardrails/quick_start"
                         target="_blank"
@@ -521,7 +523,7 @@ const CreateTeamModal = ({
                 <Select2
                   mode="tags"
                   style={{ width: "100%" }}
-                  placeholder="Select or enter guardrails"
+                  placeholder={t("teams.selectGuardrails")}
                   options={guardrailsList.map((name) => ({
                     value: name,
                     label: name,
@@ -532,7 +534,7 @@ const CreateTeamModal = ({
                 label={
                   <span>
                     Disable Global Guardrails{" "}
-                    <Tooltip title="When enabled, this team will bypass any guardrails configured to run on every request (global guardrails)">
+                    <Tooltip title={t("teams.bypassGuardrailsTooltip")}>
                       <InfoCircleOutlined style={{ marginLeft: "4px" }} />
                     </Tooltip>
                   </span>
@@ -551,7 +553,7 @@ const CreateTeamModal = ({
                 label={
                   <span>
                     Policies{" "}
-                    <Tooltip title="Apply policies to this team to control guardrails and other settings">
+                    <Tooltip title={t("teams.policiesTooltip")}>
                       <a
                         href="https://docs.litellm.ai/docs/proxy/guardrails/guardrail_policies"
                         target="_blank"
@@ -570,7 +572,7 @@ const CreateTeamModal = ({
                 <Select2
                   mode="tags"
                   style={{ width: "100%" }}
-                  placeholder="Select or enter policies"
+                  placeholder={t("teams.selectPolicies")}
                   options={policiesList.map((name) => ({
                     value: name,
                     label: name,
@@ -581,7 +583,7 @@ const CreateTeamModal = ({
                 label={
                   <span>
                     Allowed Vector Stores{" "}
-                    <Tooltip title="Select which vector stores this team can access by default. Leave empty for access to all vector stores">
+                    <Tooltip title={t("teams.vectorStoresTooltip")}>
                       <InfoCircleOutlined style={{ marginLeft: "4px" }} />
                     </Tooltip>
                   </span>
@@ -594,7 +596,7 @@ const CreateTeamModal = ({
                   onChange={(values: string[]) => form.setFieldValue("allowed_vector_store_ids", values)}
                   value={form.getFieldValue("allowed_vector_store_ids")}
                   accessToken={accessToken || ""}
-                  placeholder="Select vector stores (optional)"
+                  placeholder={t("teams.selectVectorStores")}
                 />
               </Form.Item>
             </AccordionBody>
@@ -602,14 +604,14 @@ const CreateTeamModal = ({
 
           <Accordion className="mt-8 mb-8">
             <AccordionHeader>
-              <b>MCP Settings</b>
+              <b>{t("createTeam.mcpSettings")}</b>
             </AccordionHeader>
             <AccordionBody>
               <Form.Item
                 label={
                   <span>
                     Allowed MCP Servers{" "}
-                    <Tooltip title="Select which MCP servers or access groups this team can access">
+                    <Tooltip title={t("teams.mcpServersTooltip")}>
                       <InfoCircleOutlined style={{ marginLeft: "4px" }} />
                     </Tooltip>
                   </span>
@@ -622,7 +624,7 @@ const CreateTeamModal = ({
                   onChange={(val: any) => form.setFieldValue("allowed_mcp_servers_and_groups", val)}
                   value={form.getFieldValue("allowed_mcp_servers_and_groups")}
                   accessToken={accessToken || ""}
-                  placeholder="Select MCP servers or access groups (optional)"
+                  placeholder={t("teams.selectMcpServers")}
                 />
               </Form.Item>
 
@@ -654,14 +656,14 @@ const CreateTeamModal = ({
 
           <Accordion className="mt-8 mb-8">
             <AccordionHeader>
-              <b>Agent Settings</b>
+              <b>{t("createTeam.agentSettings")}</b>
             </AccordionHeader>
             <AccordionBody>
               <Form.Item
                 label={
                   <span>
                     Allowed Agents{" "}
-                    <Tooltip title="Select which agents or access groups this team can access">
+                    <Tooltip title={t("teams.agentsTooltip")}>
                       <InfoCircleOutlined style={{ marginLeft: "4px" }} />
                     </Tooltip>
                   </span>
@@ -674,7 +676,7 @@ const CreateTeamModal = ({
                   onChange={(val: any) => form.setFieldValue("allowed_agents_and_groups", val)}
                   value={form.getFieldValue("allowed_agents_and_groups")}
                   accessToken={accessToken || ""}
-                  placeholder="Select agents or access groups (optional)"
+                  placeholder={t("teams.selectAgents")}
                 />
               </Form.Item>
             </AccordionBody>
@@ -682,7 +684,7 @@ const CreateTeamModal = ({
 
           <Accordion className="mt-8 mb-8">
             <AccordionHeader>
-              <b>Logging Settings</b>
+              <b>{t("createTeam.loggingSettings")}</b>
             </AccordionHeader>
             <AccordionBody>
               <div className="mt-4">
@@ -697,7 +699,7 @@ const CreateTeamModal = ({
 
           <Accordion className="mt-8 mb-8">
             <AccordionHeader>
-              <b>Model Aliases</b>
+              <b>{t("createTeam.modelAliases")}</b>
             </AccordionHeader>
             <AccordionBody>
               <div className="mt-4">
@@ -716,7 +718,7 @@ const CreateTeamModal = ({
           </Accordion>
         </>
         <div style={{ textAlign: "right", marginTop: "10px" }}>
-          <Button2 htmlType="submit">Create Team</Button2>
+          <Button2 htmlType="submit">{t("createTeam.submit")}</Button2>
         </div>
       </Form>
     </Modal>

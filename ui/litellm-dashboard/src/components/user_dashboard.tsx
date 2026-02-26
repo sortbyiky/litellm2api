@@ -5,6 +5,7 @@ import { Typography } from "antd";
 import { jwtDecode } from "jwt-decode";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import Onboarding from "../app/onboarding/page";
 import { fetchTeams } from "./common_components/fetch_teams";
 import { KeyResponse, Team } from "./key_team_helpers/key_list";
@@ -91,6 +92,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [teamSpend, setTeamSpend] = useState<number | null>(null);
   const [userModels, setUserModels] = useState<string[]>([]);
+  const { t } = useTranslation();
   const [proxySettings, setProxySettings] = useState<ProxySettings | null>(null);
   const [selectedTeam, setSelectedTeam] = useState<any | null>(null);
   // check if window is not undefined
@@ -321,7 +323,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
   }
 
   if (userID == null) {
-    return <h1>User ID is not set</h1>;
+    return <h1>{t("dashboard.userIdNotSet")}</h1>;
   }
 
   if (userRole == null) {
@@ -332,8 +334,8 @@ const UserDashboard: React.FC<UserDashboardProps> = ({
     const { Title, Paragraph } = Typography;
     return (
       <div>
-        <Title level={1}>Access Denied</Title>
-        <Paragraph>Ask your proxy admin for access to create keys</Paragraph>
+        <Title level={1}>{t("dashboard.accessDenied")}</Title>
+        <Paragraph>{t("dashboard.askAdminForAccess")}</Paragraph>
       </div>
     );
   }

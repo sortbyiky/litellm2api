@@ -12,6 +12,7 @@ import { Badge, Button, Select, Skeleton, Space, Typography } from "antd";
 import ModelSettingsModal from "@/components/model_dashboard/ModelSettingsModal/ModelSettingsModal";
 import debounce from "lodash/debounce";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useModelsInfo } from "../../hooks/models/useModels";
 import { transformModelData } from "../utils/modelDataTransformer";
 type ModelViewMode = "all" | "current_team";
@@ -34,6 +35,7 @@ const AllModelsTab = ({
   setSelectedModelId,
   setSelectedTeamId,
 }: AllModelsTabProps) => {
+  const { t } = useTranslation();
   const { data: modelCostMapData, isLoading: isLoadingModelCostMap } = useModelCostMap();
   const { userId, userRole, premiumUser } = useAuthorized();
   const { data: teams, isLoading: isLoadingTeams } = useTeams();
@@ -232,7 +234,7 @@ const AllModelsTab = ({
                             label: (
                               <Space direction="horizontal" align="center">
                                 <Badge color="blue" size="small" />
-                                <Text style={{ fontSize: 16 }}>Personal</Text>
+                                <Text style={{ fontSize: 16 }}>{t("models.personal")}</Text>
                               </Space>
                             ),
                           },
@@ -272,7 +274,7 @@ const AllModelsTab = ({
                             label: (
                               <Space direction="horizontal" align="center">
                                 <Badge color="purple" size="small" />
-                                <Text style={{ fontSize: 16 }}>Current Team Models</Text>
+                                <Text style={{ fontSize: 16 }}>{t("models.currentTeamModels")}</Text>
                               </Space>
                             ),
                           },
@@ -281,7 +283,7 @@ const AllModelsTab = ({
                             label: (
                               <Space direction="horizontal" align="center">
                                 <Badge color="gray" size="small" />
-                                <Text style={{ fontSize: 16 }}>All Available Models</Text>
+                                <Text style={{ fontSize: 16 }}>{t("models.allAvailableModels")}</Text>
                               </Space>
                             ),
                           },
@@ -334,7 +336,7 @@ const AllModelsTab = ({
                     <div className="relative w-64">
                       <input
                         type="text"
-                        placeholder="Search model names..."
+                        placeholder={t("models.searchModelNames")}
                         className="w-full px-3 py-2 pl-8 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         value={modelNameSearch}
                         onChange={(e) => setModelNameSearch(e.target.value)}
@@ -404,7 +406,7 @@ const AllModelsTab = ({
                         className="w-full"
                         value={selectedModelGroup ?? "all"}
                         onChange={(value) => setSelectedModelGroup(value === "all" ? "all" : value)}
-                        placeholder="Filter by Public Model Name"
+                        placeholder={t("models.filterByPublicModelName")}
                         showSearch
                         options={[
                           { value: "all", label: "All Models" },
@@ -423,7 +425,7 @@ const AllModelsTab = ({
                         className="w-full"
                         value={selectedModelAccessGroupFilter ?? "all"}
                         onChange={(value) => setSelectedModelAccessGroupFilter(value === "all" ? null : value)}
-                        placeholder="Filter by Model Access Group"
+                        placeholder={t("models.filterByAccessGroup")}
                         showSearch
                         options={[
                           { value: "all", label: "All Model Access Groups" },

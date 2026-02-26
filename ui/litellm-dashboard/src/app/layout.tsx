@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
+import I18nProvider from "@/i18n/I18nProvider";
 import AntdGlobalProvider from "@/contexts/AntdGlobalProvider";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -20,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AntdGlobalProvider>{children}</AntdGlobalProvider>
+        <AntdGlobalProvider><I18nProvider>{children}</I18nProvider></AntdGlobalProvider>
       </body>
     </html>
   );

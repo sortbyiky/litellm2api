@@ -1,5 +1,6 @@
 import { AlertTriangleIcon, XIcon } from "lucide-react";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Team } from "@/components/key_team_helpers/key_list";
 
 interface DeleteTeamModalProps {
@@ -10,6 +11,7 @@ interface DeleteTeamModalProps {
 }
 
 const DeleteTeamModal = ({ teams, teamToDelete, onCancel, onConfirm }: DeleteTeamModalProps) => {
+  const { t } = useTranslation();
   const [deleteConfirmInput, setDeleteConfirmInput] = useState("");
 
   const team = teams?.find((t) => t.team_id === teamToDelete);
@@ -22,7 +24,7 @@ const DeleteTeamModal = ({ teams, teamToDelete, onCancel, onConfirm }: DeleteTea
       <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl min-h-[380px] py-6 overflow-hidden transform transition-all flex flex-col justify-between">
         <div>
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Delete Team</h3>
+            <h3 className="text-lg font-semibold text-gray-900">{t("teams.deleteTeam")}</h3>
             <button
               aria-label="Close"
               onClick={() => {
@@ -45,25 +47,23 @@ const DeleteTeamModal = ({ teams, teamToDelete, onCancel, onConfirm }: DeleteTea
                     Warning: This team has {keyCount} associated key{keyCount > 1 ? "s" : ""}.
                   </p>
                   <p className="text-base text-red-600 mt-2">
-                    Deleting the team will also delete all associated keys. This action is irreversible.
+                    {t("teams.deleteWarningIrreversible")}
                   </p>
                 </div>
               </div>
             )}
             <p className="text-base text-gray-600 mb-5">
-              Are you sure you want to force delete this team and all its keys?
+              {t("teams.confirmDeleteTeam")}
             </p>
             <div className="mb-5">
               <label className="block text-base font-medium text-gray-700 mb-2">
-                {`Type `}
-                <span className="underline">{teamName}</span>
-                {` to confirm deletion:`}
+                {t("teams.typeToConfirm")}
               </label>
               <input
                 type="text"
                 value={deleteConfirmInput}
                 onChange={(e) => setDeleteConfirmInput(e.target.value)}
-                placeholder="Enter team name exactly"
+                placeholder={t("teams.enterTeamNameExactly")}
                 className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base"
                 autoFocus
               />

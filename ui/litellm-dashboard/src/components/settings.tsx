@@ -19,6 +19,7 @@ import {
   TextInput,
 } from "@tremor/react";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Button as Button2, Form, Input, Modal, Select, Typography } from "antd";
 import EmailSettings from "./email_settings";
@@ -136,6 +137,7 @@ const CallbackSelector: React.FC<CallbackSelectorProps> = ({
   onCallbackChange,
   disabled = false,
 }) => {
+  const { t } = useTranslation();
   return (
     <FormItem
       label="Callback"
@@ -143,7 +145,7 @@ const CallbackSelector: React.FC<CallbackSelectorProps> = ({
       rules={disabled ? undefined : [{ required: true, message: "Please select a callback" }]}
     >
       <Select
-        placeholder="Choose a logging callback..."
+        placeholder={t("settings.chooseLoggingCallback")}
         size="large"
         className="w-full"
         showSearch
@@ -214,6 +216,7 @@ const buildCallbackPayload = (formValues: Record<string, any>, callbackName: str
 };
 
 const Settings: React.FC<SettingsPageProps> = ({ accessToken, userRole, userID, premiumUser }) => {
+  const { t } = useTranslation();
   const [callbacks, setCallbacks] = useState<AlertingObject[]>([]);
   const [alerts, setAlerts] = useState<any[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -568,11 +571,11 @@ const Settings: React.FC<SettingsPageProps> = ({ accessToken, userRole, userID, 
       <Grid numItems={1} className="gap-2 p-8 w-full mt-2">
         <TabGroup>
           <TabList variant="line" defaultValue="1">
-            <Tab value="1">Logging Callbacks</Tab>
-            <Tab value="2">CloudZero Cost Tracking</Tab>
-            <Tab value="2">Alerting Types</Tab>
-            <Tab value="3">Alerting Settings</Tab>
-            <Tab value="4">Email Alerts</Tab>
+            <Tab value="1">{t("settings.loggingCallbacks")}</Tab>
+            <Tab value="2">{t("settings.cloudZeroCostTracking")}</Tab>
+            <Tab value="2">{t("settings.alertingTypes")}</Tab>
+            <Tab value="3">{t("settings.alertingSettings")}</Tab>
+            <Tab value="4">{t("settings.emailAlerts")}</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
@@ -695,7 +698,7 @@ const Settings: React.FC<SettingsPageProps> = ({ accessToken, userRole, userID, 
       </Grid>
 
       <Modal
-        title="Add Logging Callback"
+        title={t("settings.addLoggingCallback")}
         open={showAddCallbacksModal}
         width={800}
         onCancel={() => {
@@ -747,7 +750,7 @@ const Settings: React.FC<SettingsPageProps> = ({ accessToken, userRole, userID, 
               Cancel
             </Button2>
             <Button2 htmlType="submit" loading={isAddingCallback} disabled={isAddingCallback}>
-              {isAddingCallback ? "Adding..." : "Add Callback"}
+              {isAddingCallback ? t("settings.adding") : t("settings.addCallback")}
             </Button2>
           </div>
         </Form>
@@ -756,7 +759,7 @@ const Settings: React.FC<SettingsPageProps> = ({ accessToken, userRole, userID, 
       <Modal
         open={showEditCallback}
         width={800}
-        title={"Edit Callback Settings"}
+        title={t("settings.editCallbackSettings")}
         onCancel={() => {
           setShowEditCallback(false);
           setSelectedEditCallback(null);
@@ -810,7 +813,7 @@ const Settings: React.FC<SettingsPageProps> = ({ accessToken, userRole, userID, 
               loading={isUpdatingCallback}
               disabled={isUpdatingCallback}
             >
-              {isUpdatingCallback ? "Saving..." : "Save Changes"}
+              {isUpdatingCallback ? t("settings.saving") : t("settings.saveChanges")}
             </Button2>
           </div>
         </Form>
@@ -818,12 +821,12 @@ const Settings: React.FC<SettingsPageProps> = ({ accessToken, userRole, userID, 
 
       <DeleteResourceModal
         isOpen={showDeleteConfirmModal}
-        title="Delete Callback"
+        title={t("settings.deleteCallback")}
         message="Are you sure you want to delete this callback? This action cannot be undone."
-        resourceInformationTitle="Callback Information"
+        resourceInformationTitle={t("settings.callbackInformation")}
         resourceInformation={[
-          { label: "Callback Name", value: callbackToDelete?.name },
-          { label: "Mode", value: callbackToDelete?.mode || "success" },
+          { label: t("settings.callbackName"), value: callbackToDelete?.name },
+          { label: t("settings.mode"), value: callbackToDelete?.mode || "success" },
         ]}
         onCancel={() => {
           setShowDeleteConfirmModal(false);

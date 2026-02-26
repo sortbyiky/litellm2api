@@ -20,6 +20,7 @@ import {
   Text,
 } from "@tremor/react";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import DeleteResourceModal from "../common_components/DeleteResourceModal";
 import TableIconActionButton from "../common_components/IconActionButton/TableIconActionButtons/TableIconActionButton";
@@ -42,6 +43,7 @@ export interface budgetItem {
 }
 
 const BudgetPanel: React.FC<BudgetSettingsPageProps> = ({ accessToken }) => {
+  const { t } = useTranslation();
   const [isCreateModelVisible, setIsCreateModelVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [selectedBudget, setSelectedBudget] = useState<budgetItem | null>(null);
@@ -77,7 +79,7 @@ const BudgetPanel: React.FC<BudgetSettingsPageProps> = ({ accessToken }) => {
     setIsDeleting(true);
     try {
       await budgetDeleteCall(accessToken, selectedBudget.budget_id);
-      NotificationsManager.success("Budget deleted.");
+      NotificationsManager.success(t("budgets.budgetDeleted"));
       await handleUpdateCall();
     } catch (error) {
       console.error("Error deleting budget:", error);
@@ -113,8 +115,8 @@ const BudgetPanel: React.FC<BudgetSettingsPageProps> = ({ accessToken }) => {
       </Button>
       <TabGroup>
         <TabList>
-          <Tab>Budgets</Tab>
-          <Tab>Examples</Tab>
+          <Tab>{t("budgets.budgets")}</Tab>
+          <Tab>{t("budgets.examples")}</Tab>
         </TabList>
         <TabPanels>
           <TabPanel>
@@ -140,8 +142,8 @@ const BudgetPanel: React.FC<BudgetSettingsPageProps> = ({ accessToken }) => {
                 <Table>
                   <TableHead>
                     <TableRow>
-                      <TableHeaderCell>Budget ID</TableHeaderCell>
-                      <TableHeaderCell>Max Budget</TableHeaderCell>
+                      <TableHeaderCell>{t("budgets.budgetId")}</TableHeaderCell>
+                      <TableHeaderCell>{t("budgets.maxBudget")}</TableHeaderCell>
                       <TableHeaderCell>TPM</TableHeaderCell>
                       <TableHeaderCell>RPM</TableHeaderCell>
                     </TableRow>
@@ -159,13 +161,13 @@ const BudgetPanel: React.FC<BudgetSettingsPageProps> = ({ accessToken }) => {
                           <TableCell>{value.rpm_limit ? value.rpm_limit : "n/a"}</TableCell>
                           <TableIconActionButton
                             variant="Edit"
-                            tooltipText="Edit budget"
+                            tooltipText={t("budgets.editBudget")}
                             onClick={() => handleEditCall(value)}
                             dataTestId="edit-budget-button"
                           />
                           <TableIconActionButton
                             variant="Delete"
-                            tooltipText="Delete budget"
+                            tooltipText={t("budgets.deleteBudget")}
                             onClick={() => handleDeleteClick(value)}
                             dataTestId="delete-budget-button"
                           />
@@ -176,11 +178,11 @@ const BudgetPanel: React.FC<BudgetSettingsPageProps> = ({ accessToken }) => {
               </Card>
               <DeleteResourceModal
                 isOpen={isDeleteModalVisible}
-                title="Delete Budget?"
+                title={t("budgets.deleteBudgetConfirm")}
                 message="Are you sure you want to delete this budget? This action cannot be undone."
-                resourceInformationTitle="Budget Information"
+                resourceInformationTitle={t("budgets.budgetInformation")}
                 resourceInformation={[
-                  { label: "Budget ID", value: selectedBudget?.budget_id, code: true },
+                  { label: t("budgets.budgetId"), value: selectedBudget?.budget_id, code: true },
                   { label: "Max Budget", value: selectedBudget?.max_budget },
                   { label: "TPM", value: selectedBudget?.tpm_limit },
                   { label: "RPM", value: selectedBudget?.rpm_limit },
@@ -193,10 +195,10 @@ const BudgetPanel: React.FC<BudgetSettingsPageProps> = ({ accessToken }) => {
           </TabPanel>
           <TabPanel>
             <div className="mt-6">
-              <Text className="text-base">How to use budget id</Text>
+              <Text className="text-base">{t("budgets.howToUseBudgetId")}</Text>
               <TabGroup>
                 <TabList>
-                  <Tab>Assign Budget to Customer</Tab>
+                  <Tab>{t("budgets.assignToCustomer")}</Tab>
                   <Tab>Test it (Curl)</Tab>
                   <Tab>Test it (OpenAI SDK)</Tab>
                 </TabList>

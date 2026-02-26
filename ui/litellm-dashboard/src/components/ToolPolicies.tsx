@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useCallback, useDeferredValue, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Select, Switch, Tooltip } from "antd";
-import { Select, Tooltip } from "antd";
 import {
   Table,
   TableHead,
@@ -68,7 +68,7 @@ const PolicySelect: React.FC<{
           paddingLeft: 8,
           paddingRight: 4,
         },
-      }}
+      } as any}
       popupMatchSelectWidth={false}
       options={POLICY_OPTIONS.map((o) => ({
         value: o.value,
@@ -102,6 +102,7 @@ const PolicySelect: React.FC<{
 };
 
 export const ToolPolicies: React.FC<ToolPoliciesProps> = ({ accessToken }) => {
+  const { t } = useTranslation();
   const [tools, setTools] = useState<ToolRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
@@ -244,7 +245,7 @@ export const ToolPolicies: React.FC<ToolPoliciesProps> = ({ accessToken }) => {
 
   return (
     <div className="p-6 w-full">
-      <h1 className="text-2xl font-semibold text-gray-900 mb-6">Tool Policies</h1>
+      <h1 className="text-2xl font-semibold text-gray-900 mb-6">{t("toolPolicies.title")}</h1>
       <div className="bg-white rounded-lg shadow w-full max-w-full box-border">
 
         {/* Toolbar */}
@@ -254,7 +255,7 @@ export const ToolPolicies: React.FC<ToolPoliciesProps> = ({ accessToken }) => {
               <div className="relative w-64">
                 <input
                   type="text"
-                  placeholder="Search by Tool Name"
+                  placeholder={t("toolPolicies.searchByToolName")}
                   className="w-full px-3 py-2 pl-8 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   value={searchTerm}
                   onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
@@ -265,8 +266,8 @@ export const ToolPolicies: React.FC<ToolPoliciesProps> = ({ accessToken }) => {
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-900">Live Tail</span>
-                <Switch color="green" checked={isLiveTail} onChange={setIsLiveTail} />
+                <span className="text-sm font-medium text-gray-900">{t("toolPolicies.liveTail")}</span>
+                <Switch checked={isLiveTail} onChange={setIsLiveTail} />
               </div>
 
               <button
@@ -288,9 +289,8 @@ export const ToolPolicies: React.FC<ToolPoliciesProps> = ({ accessToken }) => {
               <span>Page {currentPage} of {totalPages}</span>
               <div className="flex gap-1">
                 <button onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}
-                  className="px-3 py-1.5 border rounded-md text-sm hover:bg-gray-50 disabled:opacity-40">Previous</button>
-                <button onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
-                  className="px-3 py-1.5 border rounded-md text-sm hover:bg-gray-50 disabled:opacity-40">Next</button>
+                  className="px-3 py-1.5 border rounded-md text-sm hover:bg-gray-50 disabled:opacity-40">{t("common.previous")}</button>                <button onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
+                  className="px-3 py-1.5 border rounded-md text-sm hover:bg-gray-50 disabled:opacity-40">{t("common.next")}</button>
               </div>
             </div>
           </div>
@@ -310,7 +310,7 @@ export const ToolPolicies: React.FC<ToolPoliciesProps> = ({ accessToken }) => {
         {isLiveTail && (
           <div className="bg-green-50 border-b border-green-100 px-6 py-2 flex items-center justify-between">
             <span className="text-sm text-green-700">Auto-refreshing every 15 seconds</span>
-            <button onClick={() => setIsLiveTail(false)} className="text-xs text-green-600 underline">Stop</button>
+            <button onClick={() => setIsLiveTail(false)} className="text-xs text-green-600 underline">{t("toolPolicies.stop")}</button>
           </div>
         )}
 
@@ -401,9 +401,9 @@ export const ToolPolicies: React.FC<ToolPoliciesProps> = ({ accessToken }) => {
             <span>Showing {(currentPage - 1) * pageSize + 1} - {Math.min(currentPage * pageSize, sorted.length)} of {sorted.length}</span>
             <div className="flex gap-1">
               <button onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}
-                className="px-3 py-1.5 border rounded-md hover:bg-gray-50 disabled:opacity-40">Previous</button>
+                className="px-3 py-1.5 border rounded-md hover:bg-gray-50 disabled:opacity-40">{t("common.previous")}</button>
               <button onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
-                className="px-3 py-1.5 border rounded-md hover:bg-gray-50 disabled:opacity-40">Next</button>
+                className="px-3 py-1.5 border rounded-md hover:bg-gray-50 disabled:opacity-40">{t("common.next")}</button>
             </div>
           </div>
         )}

@@ -7,8 +7,10 @@ import { MenuFoldOutlined, MenuUnfoldOutlined, MoonOutlined, SunOutlined } from 
 import { Button, Switch, Tag } from "antd";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { BlogDropdown } from "./Navbar/BlogDropdown/BlogDropdown";
 import { CommunityEngagementButtons } from "./Navbar/CommunityEngagementButtons/CommunityEngagementButtons";
+import LanguageSwitcher from "./LanguageSwitcher";
 import UserDropdown from "./Navbar/UserDropdown/UserDropdown";
 
 interface NavbarProps {
@@ -44,6 +46,7 @@ const Navbar: React.FC<NavbarProps> = ({
   const [logoutUrl, setLogoutUrl] = useState("");
   const { logoUrl } = useTheme();
   const { data: healthData } = useHealthReadiness();
+  const { t } = useTranslation();
   const version = healthData?.litellm_version;
 
   // Simple logo URL: use custom logo if available, otherwise default
@@ -136,8 +139,9 @@ const Navbar: React.FC<NavbarProps> = ({
                 unCheckedChildren={<SunOutlined />}
               />
             )}
+            <LanguageSwitcher />
             <Button type="text" href="https://docs.litellm.ai/docs/" target="_blank" rel="noopener noreferrer">
-              Docs
+              {t("nav.docs")}
             </Button>
             <BlogDropdown />
 

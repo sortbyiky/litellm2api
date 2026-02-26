@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Card,
   Table,
@@ -40,6 +41,7 @@ interface generalSettingsItem {
 }
 
 const GeneralSettings: React.FC<GeneralSettingsPageProps> = ({ accessToken, userRole, userID, modelData }) => {
+  const { t } = useTranslation();
   const [generalSettings, setGeneralSettings] = useState<generalSettingsItem[]>([]);
 
   useEffect(() => {
@@ -109,9 +111,9 @@ const GeneralSettings: React.FC<GeneralSettingsPageProps> = ({ accessToken, user
     <div className="w-full">
       <TabGroup className="h-[75vh] w-full">
         <TabList variant="line" defaultValue="1" className="px-8 pt-4">
-          <Tab value="1">Loadbalancing</Tab>
-          <Tab value="2">Fallbacks</Tab>
-          <Tab value="3">General</Tab>
+          <Tab value="1">{t("router.loadbalancing")}</Tab>
+          <Tab value="2">{t("router.fallbacks")}</Tab>
+          <Tab value="3">{t("router.general")}</Tab>
         </TabList>
         <TabPanels className="px-8 py-6">
           <TabPanel>
@@ -135,10 +137,10 @@ const GeneralSettings: React.FC<GeneralSettingsPageProps> = ({ accessToken, user
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableHeaderCell>Setting</TableHeaderCell>
-                    <TableHeaderCell>Value</TableHeaderCell>
-                    <TableHeaderCell>Status</TableHeaderCell>
-                    <TableHeaderCell>Action</TableHeaderCell>
+                    <TableHeaderCell>{t("router.setting")}</TableHeaderCell>
+                    <TableHeaderCell>{t("router.value")}</TableHeaderCell>
+                    <TableHeaderCell>{t("router.status")}</TableHeaderCell>
+                    <TableHeaderCell>{t("router.action")}</TableHeaderCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -179,13 +181,13 @@ const GeneralSettings: React.FC<GeneralSettingsPageProps> = ({ accessToken, user
                               In DB
                             </Badge>
                           ) : value.stored_in_db == false ? (
-                            <Badge className="text-gray bg-white outline">In Config</Badge>
+                            <Badge className="text-gray bg-white outline">{t("router.inConfig")}</Badge>
                           ) : (
-                            <Badge className="text-gray bg-white outline">Not Set</Badge>
+                            <Badge className="text-gray bg-white outline">{t("router.notSet")}</Badge>
                           )}
                         </TableCell>
                         <TableCell>
-                          <Button onClick={() => handleUpdateField(value.field_name, index)}>Update</Button>
+                          <Button onClick={() => handleUpdateField(value.field_name, index)}>{t("router.update")}</Button>
                           <Icon icon={TrashIcon} color="red" onClick={() => handleResetField(value.field_name, index)}>
                             Reset
                           </Icon>

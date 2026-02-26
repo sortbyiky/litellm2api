@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, Title, Text, Divider, Button, TextInput } from "@tremor/react";
 import { Typography, Spin, Switch, Select, InputNumber } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
@@ -27,6 +28,7 @@ const DefaultUserSettings: React.FC<DefaultUserSettingsProps> = ({
   userID,
   userRole,
 }) => {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState<boolean>(true);
   const [settings, setSettings] = useState<any>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -172,21 +174,21 @@ const DefaultUserSettings: React.FC<DefaultUserSettingsProps> = ({
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
-                <Text className="text-sm font-medium mb-1">Team ID</Text>
+                <Text className="text-sm font-medium mb-1">{t("users.teamId")}</Text>
                 <TextInput
                   value={team.team_id}
                   onChange={(e) => updateTeam(index, "team_id", e.target.value)}
-                  placeholder="Enter team ID"
+                  placeholder={t("users.enterTeamId")}
                 />
               </div>
 
               <div>
-                <Text className="text-sm font-medium mb-1">Max Budget in Team</Text>
+                <Text className="text-sm font-medium mb-1">{t("users.maxBudgetInTeam")}</Text>
                 <InputNumber
                   style={{ width: "100%" }}
                   value={team.max_budget_in_team}
                   onChange={(value) => updateTeam(index, "max_budget_in_team", value)}
-                  placeholder="Optional"
+                  placeholder={t("common.optional")}
                   min={0}
                   step={0.01}
                   precision={2}
@@ -194,7 +196,7 @@ const DefaultUserSettings: React.FC<DefaultUserSettingsProps> = ({
               </div>
 
               <div>
-                <Text className="text-sm font-medium mb-1">User Role</Text>
+                <Text className="text-sm font-medium mb-1">{t("users.userRole")}</Text>
                 <Select
                   style={{ width: "100%" }}
                   value={team.user_role}
@@ -320,10 +322,10 @@ const DefaultUserSettings: React.FC<DefaultUserSettingsProps> = ({
   };
 
   const renderValue = (key: string, value: any): JSX.Element => {
-    if (value === null || value === undefined) return <span className="text-gray-400">Not set</span>;
+    if (value === null || value === undefined) return <span className="text-gray-400">{t("common.notSet")}</span>;
 
     if (key === "teams" && Array.isArray(value)) {
-      if (value.length === 0) return <span className="text-gray-400">No teams assigned</span>;
+      if (value.length === 0) return <span className="text-gray-400">{t("common.noTeamsAssigned")}</span>;
 
       const normalizedTeams = normalizeTeams(value);
 
@@ -429,7 +431,7 @@ const DefaultUserSettings: React.FC<DefaultUserSettingsProps> = ({
     const { values, field_schema } = settings;
 
     if (!field_schema || !field_schema.properties) {
-      return <Text>No schema information available</Text>;
+      return <Text>{t("common.noSchemaInfo")}</Text>;
     }
 
     return Object.entries(field_schema.properties).map(([key, property]: [string, any]) => {
@@ -456,7 +458,7 @@ const DefaultUserSettings: React.FC<DefaultUserSettingsProps> = ({
   return (
     <Card>
       <div className="flex justify-between items-center mb-4">
-        <Title>Default User Settings</Title>
+        <Title>{t("users.defaultUserSettings")}</Title>
         {!loading &&
           settings &&
           (isEditing ? (
@@ -476,7 +478,7 @@ const DefaultUserSettings: React.FC<DefaultUserSettingsProps> = ({
               </Button>
             </div>
           ) : (
-            <Button onClick={() => setIsEditing(true)}>Edit Settings</Button>
+            <Button onClick={() => setIsEditing(true)}>{t("users.editSettings")}</Button>
           ))}
       </div>
 

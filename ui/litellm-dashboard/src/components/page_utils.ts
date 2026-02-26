@@ -2,7 +2,8 @@
  * Utility functions for working with navigation pages
  */
 
-import { menuGroups } from "./leftnav";
+import i18n from "@/i18n";
+import { getMenuGroups } from "./leftnav";
 import { pageDescriptions, PageMetadata } from "./page_metadata";
 import { internalUserRoles } from "@/utils/roles";
 
@@ -31,6 +32,7 @@ const isPageAccessibleToInternalUsers = (pageRoles?: string[]): boolean => {
  */
 export const getAvailablePages = (): PageMetadata[] => {
   const pages: PageMetadata[] = [];
+  const menuGroups = getMenuGroups(i18n.t.bind(i18n));
 
   menuGroups.forEach((group) => {
     group.items.forEach((item) => {

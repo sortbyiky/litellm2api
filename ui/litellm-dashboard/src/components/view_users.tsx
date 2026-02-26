@@ -1,5 +1,6 @@
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@tremor/react";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { Button } from "@tremor/react";
 import BulkEditUserModal from "./BulkEditUsers";
@@ -70,6 +71,7 @@ const initialFilters: FilterState = {
 };
 
 const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, token, userRole, userID, teams }) => {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
   const [editModalVisible, setEditModalVisible] = useState(false);
@@ -163,7 +165,7 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
           return { ...previousData, users: updatedUsers };
         });
 
-        NotificationsManager.success("User deleted successfully");
+        NotificationsManager.success(t("users.userDeletedSuccess"));
       } catch (error) {
         console.error("Error deleting user:", error);
         NotificationsManager.fromBackend("Failed to delete user");
@@ -323,8 +325,8 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
 
       <TabGroup defaultIndex={0} onIndexChange={(index) => setActiveTab(index === 0 ? "users" : "settings")}>
         <TabList className="mb-4">
-          <Tab>Users</Tab>
-          <Tab>Default User Settings</Tab>
+          <Tab>{t("users.users")}</Tab>
+          <Tab>{t("users.defaultUserSettings")}</Tab>
         </TabList>
 
         <TabPanels>
@@ -388,12 +390,12 @@ const ViewUserDashboard: React.FC<ViewUserDashboardProps> = ({ accessToken, toke
 
       <DeleteResourceModal
         isOpen={isDeleteModalOpen}
-        title="Delete User?"
+        title={t("users.deleteUserConfirm")}
         message="Are you sure you want to delete this user? This action cannot be undone."
-        resourceInformationTitle="User Information"
+        resourceInformationTitle={t("users.userInformation")}
         resourceInformation={[
           { label: "Email", value: userToDelete?.user_email },
-          { label: "User ID", value: userToDelete?.user_id, code: true },
+          { label: t("users.userId"), value: userToDelete?.user_id, code: true },
           {
             label: "Global Proxy Role",
             value:

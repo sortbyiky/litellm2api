@@ -20,6 +20,7 @@ import type { UploadProps } from "antd";
 import { Form, Typography } from "antd";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import React, { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import AddModelTab from "../../../components/add_model/add_model_tab";
 import HealthCheckComponent from "../../../components/model_dashboard/HealthCheckComponent";
 import ModelGroupAliasSettings from "../../../components/model_group_alias_settings";
@@ -48,6 +49,7 @@ interface GlobalRetryPolicyObject {
 
 const ModelsAndEndpointsView: React.FC<ModelDashboardProps> = ({ premiumUser, teams }) => {
   const { accessToken, token, userRole, userId: userID } = useAuthorized();
+  const { t } = useTranslation();
   const [addModelForm] = Form.useForm();
   const [lastRefreshed, setLastRefreshed] = useState("");
   const [providerModels, setProviderModels] = useState<Array<string>>([]);
@@ -227,8 +229,8 @@ const ModelsAndEndpointsView: React.FC<ModelDashboardProps> = ({ premiumUser, te
     const { Title, Paragraph } = Typography;
     return (
       <div>
-        <Title level={1}>Access Denied</Title>
-        <Paragraph>Ask your proxy admin for access to view all models</Paragraph>
+        <Title level={1}>{t("models.accessDenied")}</Title>
+        <Paragraph>{t("models.askAdminForAccess")}</Paragraph>
       </div>
     );
   }
@@ -275,11 +277,11 @@ const ModelsAndEndpointsView: React.FC<ModelDashboardProps> = ({ premiumUser, te
           {/* Model Management Header */}
           <div className="flex justify-between items-center mb-4">
             <div>
-              <h2 className="text-lg font-semibold">Model Management</h2>
+              <h2 className="text-lg font-semibold">{t("models.modelManagement")}</h2>
               {!all_admin_roles.includes(userRole) ? (
-                <p className="text-sm text-gray-600">Add models for teams you are an admin for.</p>
+                <p className="text-sm text-gray-600">{t("models.addModelsForTeams")}</p>
               ) : (
-                <p className="text-sm text-gray-600">Add and manage models for the proxy</p>
+                <p className="text-sm text-gray-600">{t("models.addAndManageModels")}</p>
               )}
             </div>
           </div>
@@ -338,14 +340,14 @@ const ModelsAndEndpointsView: React.FC<ModelDashboardProps> = ({ premiumUser, te
             <TabGroup index={selectedTabIndex} onIndexChange={setSelectedTabIndex} className="gap-2 h-[75vh] w-full ">
               <TabList className="flex justify-between mt-2 w-full items-center">
                 <div className="flex">
-                  {all_admin_roles.includes(userRole) ? <Tab>All Models</Tab> : <Tab>Your Models</Tab>}
-                  {!shouldHideAddModelTab && <Tab>Add Model</Tab>}
-                  {all_admin_roles.includes(userRole) && <Tab>LLM Credentials</Tab>}
-                  {all_admin_roles.includes(userRole) && <Tab>Pass-Through Endpoints</Tab>}
-                  {all_admin_roles.includes(userRole) && <Tab>Health Status</Tab>}
-                  {all_admin_roles.includes(userRole) && <Tab>Model Retry Settings</Tab>}
-                  {all_admin_roles.includes(userRole) && <Tab>Model Group Alias</Tab>}
-                  {all_admin_roles.includes(userRole) && <Tab>Price Data Reload</Tab>}
+                  {all_admin_roles.includes(userRole) ? <Tab>{t("models.allModels")}</Tab> : <Tab>{t("models.yourModels")}</Tab>}
+                  {!shouldHideAddModelTab && <Tab>{t("models.addModel")}</Tab>}
+                  {all_admin_roles.includes(userRole) && <Tab>{t("models.llmCredentials")}</Tab>}
+                  {all_admin_roles.includes(userRole) && <Tab>{t("models.passThroughEndpoints")}</Tab>}
+                  {all_admin_roles.includes(userRole) && <Tab>{t("models.healthStatus")}</Tab>}
+                  {all_admin_roles.includes(userRole) && <Tab>{t("models.modelRetrySettings")}</Tab>}
+                  {all_admin_roles.includes(userRole) && <Tab>{t("models.modelGroupAlias")}</Tab>}
+                  {all_admin_roles.includes(userRole) && <Tab>{t("models.priceDataReload")}</Tab>}
                 </div>
 
                 <div className="flex items-center space-x-2">

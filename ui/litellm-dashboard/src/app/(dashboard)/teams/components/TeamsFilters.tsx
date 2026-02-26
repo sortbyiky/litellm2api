@@ -1,5 +1,6 @@
 import { Select, SelectItem } from "@tremor/react";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Organization } from "@/components/networking";
 
 interface TeamsFiltersProps {
@@ -27,6 +28,7 @@ const TeamsFilters = ({
   onChange,
   onReset,
 }: TeamsFiltersProps) => {
+  const { t } = useTranslation();
   return (
     <div className="flex flex-col space-y-4">
       {/* Search and Filter Controls */}
@@ -35,7 +37,7 @@ const TeamsFilters = ({
         <div className="relative w-64">
           <input
             type="text"
-            placeholder="Search by Team Name..."
+            placeholder={t("teams.searchByName")}
             className="w-full px-3 py-2 pl-8 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             value={filters.team_alias}
             onChange={(e) => onChange("team_alias", e.target.value)}
@@ -98,7 +100,7 @@ const TeamsFilters = ({
           <div className="relative w-64">
             <input
               type="text"
-              placeholder="Enter Team ID"
+              placeholder={t("teams.enterTeamId")}
               className="w-full px-3 py-2 pl-8 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               value={filters.team_id}
               onChange={(e) => onChange("team_id", e.target.value)}
@@ -123,7 +125,7 @@ const TeamsFilters = ({
             <Select
               value={filters.organization_id || ""}
               onValueChange={(value) => onChange("organization_id", value)}
-              placeholder="Select Organization"
+              placeholder={t("teams.selectOrganization")}
             >
               {organizations?.map((org) => (
                 <SelectItem key={org.organization_id} value={org.organization_id || ""}>

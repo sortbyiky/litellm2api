@@ -7,6 +7,9 @@ import PlaygroundPage from "@/app/(dashboard)/playground/page";
 import AdminPanel from "@/components/AdminPanel";
 import AgentsPanel from "@/components/agents";
 import BudgetPanel from "@/components/budgets/budget_panel";
+import { useTranslation } from "react-i18next";
+import zhCN from "antd/locale/zh_CN";
+import enUS from "antd/locale/en_US";
 import CacheDashboard from "@/components/cache_dashboard";
 import ClaudeCodePluginsPanel from "@/components/claude_code_plugins";
 import { fetchTeams } from "@/components/common_components/fetch_teams";
@@ -105,6 +108,8 @@ interface ProxySettings {
 const queryClient = new QueryClient();
 
 function CreateKeyPageContent() {
+  const { i18n } = useTranslation();
+  const antdLocale = i18n.language?.startsWith("zh") ? zhCN : enUS;
   const [userRole, setUserRole] = useState("");
   const [premiumUser, setPremiumUser] = useState(false);
   const [disabledPersonalKeyCreation, setDisabledPersonalKeyCreation] = useState(false);
@@ -372,7 +377,7 @@ function CreateKeyPageContent() {
   return (
     <Suspense fallback={<LoadingScreen />}>
       <QueryClientProvider client={queryClient}>
-        <ConfigProvider theme={{
+        <ConfigProvider locale={antdLocale} theme={{
           algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
         }}>
           <ThemeProvider accessToken={accessToken}>

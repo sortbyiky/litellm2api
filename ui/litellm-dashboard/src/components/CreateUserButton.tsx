@@ -10,6 +10,7 @@ import {
 } from "@tremor/react";
 import { Alert, Button, Form, Input, Modal, Select, Select as Select2, Space, Tooltip, Typography } from "antd";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import BulkCreateUsers from "./bulk_create_users_button";
 import TeamDropdown from "./common_components/team_dropdown";
 import { getModelDisplayName } from "./key_team_helpers/fetch_available_models_team_key";
@@ -56,6 +57,7 @@ interface UISettings {
 
 export const CreateUserButton: React.FC<CreateuserProps> = ({
   userID, accessToken, teams, possibleUIRoles, onUserCreated, isEmbedded = false }) => {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [uiSettings, setUISettings] = useState<UISettings | null>(null);
   const [form] = Form.useForm();
@@ -191,17 +193,17 @@ export const CreateUserButton: React.FC<CreateuserProps> = ({
           </Select2>
         </Form.Item>
         <Form.Item label="Team" name="team_id">
-          <Select placeholder="Select Team" style={{ width: "100%" }}>
+          <Select placeholder={t("users.selectTeam")} style={{ width: "100%" }}>
             <TeamDropdown teams={teams} />
           </Select>
         </Form.Item>
 
         <Form.Item label="Metadata" name="metadata">
-          <Input.TextArea rows={4} placeholder="Enter metadata as JSON" />
+          <Input.TextArea rows={4} placeholder={t("users.enterMetadataJson")} />
         </Form.Item>
 
         <div style={{ textAlign: "right", marginTop: "10px" }}>
-          <Button htmlType="submit">Create User</Button>
+          <Button htmlType="submit">{t("users.createUser")}</Button>
         </div>
       </Form>
     );
@@ -215,7 +217,7 @@ export const CreateUserButton: React.FC<CreateuserProps> = ({
       </Button2>
       <BulkCreateUsers accessToken={accessToken} teams={teams} possibleUIRoles={possibleUIRoles} />
       <Modal
-        title="Invite User"
+        title={t("users.inviteUser")}
         open={isModalVisible}
         width={800}
         footer={null}
@@ -223,7 +225,7 @@ export const CreateUserButton: React.FC<CreateuserProps> = ({
         onCancel={handleCancel}
       >
         <Space direction="vertical" size="middle">
-          <Text className="mb-1">Create a User who can own keys</Text>
+          <Text className="mb-1">{t("users.createUserDescription")}</Text>
           <Alert
             message="Email invitations"
             description={
@@ -280,11 +282,11 @@ export const CreateUserButton: React.FC<CreateuserProps> = ({
           </Form.Item>
 
           <Form.Item label="Metadata" name="metadata">
-            <Input.TextArea rows={4} placeholder="Enter metadata as JSON" />
+            <Input.TextArea rows={4} placeholder={t("users.enterMetadataJson")} />
           </Form.Item>
           <Accordion>
             <AccordionHeader>
-              <Text strong>Personal Key Creation</Text>
+              <Text strong>{t("users.personalKeyCreation")}</Text>
             </AccordionHeader>
             <AccordionBody>
               <Form.Item
@@ -300,7 +302,7 @@ export const CreateUserButton: React.FC<CreateuserProps> = ({
                 name="models"
                 help="Models user has access to, outside of team scope."
               >
-                <Select2 mode="multiple" placeholder="Select models" style={{ width: "100%" }}>
+                <Select2 mode="multiple" placeholder={t("users.selectModels")} style={{ width: "100%" }}>
                   <Select2.Option key="all-proxy-models" value="all-proxy-models">
                     All Proxy Models
                   </Select2.Option>
@@ -317,7 +319,7 @@ export const CreateUserButton: React.FC<CreateuserProps> = ({
             </AccordionBody>
           </Accordion>
           <div style={{ textAlign: "right", marginTop: "10px" }}>
-            <Button type="primary" icon={<UserAddOutlined />} htmlType="submit">Invite User</Button>
+            <Button type="primary" icon={<UserAddOutlined />} htmlType="submit">{t("users.inviteUser")}</Button>
           </div>
         </Form>
       </Modal>

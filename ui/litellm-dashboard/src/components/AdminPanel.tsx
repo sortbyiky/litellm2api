@@ -16,6 +16,7 @@ import {
 } from "@tremor/react";
 import { Alert, Button as Button2, Form, Input, Modal, Tabs, Typography } from "antd";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useBaseUrl } from "./constants";
 import NotificationsManager from "./molecules/notifications_manager";
 import {
@@ -37,6 +38,7 @@ interface AdminPanelProps {
 }
 
 const AdminPanel: React.FC<AdminPanelProps> = ({ proxySettings }) => {
+  const { t } = useTranslation();
   const { premiumUser, accessToken, userId: userID } = useAuthorized();
   const [form] = Form.useForm();
   const [isAddSSOModalVisible, setIsAddSSOModalVisible] = useState(false);
@@ -50,7 +52,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ proxySettings }) => {
   const [ssoConfigured, setSsoConfigured] = useState<boolean>(false);
 
   const baseUrl = useBaseUrl();
-  const all_ip_address_allowed = "All IP Addresses Allowed";
+  const all_ip_address_allowed = t("admin.allIpAddressesAllowed");
 
   let nonSssoUrl = baseUrl;
   nonSssoUrl += "/fallback/login";
@@ -108,7 +110,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ proxySettings }) => {
         // Fetch the updated list of IPs
         const updatedIPs = await getAllowedIPs(accessToken);
         setAllowedIPs(updatedIPs);
-        NotificationsManager.success("IP address added successfully");
+        NotificationsManager.success(t("admin.ipAddedSuccess"));
       }
     } catch (error) {
       console.error("Error adding IP:", error);
@@ -130,7 +132,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ proxySettings }) => {
         // Fetch the updated list of IPs
         const updatedIPs = await getAllowedIPs(accessToken);
         setAllowedIPs(updatedIPs.length > 0 ? updatedIPs : [all_ip_address_allowed]);
-        NotificationsManager.success("IP address deleted successfully");
+        NotificationsManager.success(t("admin.ipDeletedSuccess"));
       } catch (error) {
         console.error("Error deleting IP:", error);
         NotificationsManager.fromBackend(`Failed to delete IP address ${error}`);
@@ -188,18 +190,18 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ proxySettings }) => {
   const tabItems = [
     {
       key: "sso-settings",
-      label: "SSO Settings",
+      label: t("admin.ssoSettings"),
       children: <SSOSettings />,
     },
     {
       key: "security-settings",
-      label: "Security Settings",
+      label: t("admin.securitySettings"),
       children: (
         <>
           <Card>
             <Title level={4}> ✨ Security Settings</Title>
             <Alert
-              message="SSO Configuration Deprecated"
+              message={t("admin.ssoConfigDeprecated")}
               description="Editing SSO Settings on this page is deprecated and will be removed in a future version. Please use the SSO Settings tab for SSO configuration."
               type="warning"
               showIcon
@@ -215,7 +217,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ proxySettings }) => {
             >
               <div>
                 <Button style={{ width: "150px" }} onClick={() => setIsAddSSOModalVisible(true)}>
-                  {ssoConfigured ? "Edit SSO Settings" : "Add SSO"}
+                  {ssoConfigured ? t("admin.editSsoSettings") : t("admin.addSso")}
                 </Button>
               </div>
               <div>
@@ -252,7 +254,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ proxySettings }) => {
               ssoConfigured={ssoConfigured}
             />
             <Modal
-              title="Manage Allowed IP Addresses"
+              title={t("admin.manageAllowedIpAddresses")}
               width={800}
               open={isAllowedIPModalVisible}
               onCancel={() => setIsAllowedIPModalVisible(false)}
@@ -268,8 +270,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ proxySettings }) => {
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableHeaderCell>IP Address</TableHeaderCell>
-                    <TableHeaderCell className="text-right">Action</TableHeaderCell>
+                    <TableHeaderCell>{t("admin.ipAddress")}</TableHeaderCell>
+                    <TableHeaderCell className="text-right">{t("admin.action")}</TableHeaderCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -290,17 +292,17 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ proxySettings }) => {
             </Modal>
 
             <Modal
-              title="Add Allowed IP Address"
+              title={t("admin.addAllowedIpAddress")}
               open={isAddIPModalVisible}
               onCancel={() => setIsAddIPModalVisible(false)}
               footer={null}
             >
               <Form onFinish={handleAddIP}>
-                <Form.Item name="ip" rules={[{ required: true, message: "Please enter an IP address" }]}>
-                  <Input placeholder="Enter IP address" />
+                <Form.Item name="ip" rules={[{ required: true, message: t("admin.pleaseEnterIp") }]}>
+                  <Input placeholder={t("admin.enterIpAddress")} />
                 </Form.Item>
                 <Form.Item>
-                  <Button2 htmlType="submit">Add IP Address</Button2>
+                  <Button2 htmlType="submit">{t("admin.addIpAddress")}</Button2>
                 </Form.Item>
               </Form>
             </Modal>
@@ -356,14 +358,14 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ proxySettings }) => {
     },
     {
       key: "ui-settings",
-      label: "UI Settings",
+      label: t("admin.uiSettings"),
       children: <UISettings />,
     },
   ];
 
   return (
     <div className="w-full m-2 mt-2 p-8">
-      <Title level={4}>Admin Access </Title>
+      <Title level={4}>{t("admin.adminAccess")} </Title>
       <Paragraph>Go to &apos;Internal Users&apos; page to add other admins.</Paragraph>
       <Tabs items={tabItems} />
     </div>

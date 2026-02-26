@@ -28,6 +28,7 @@ import {
 import type { MenuProps } from "antd";
 import { ConfigProvider, Layout, Menu } from "antd";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { all_admin_roles, internalUserRoles, isAdminRole, rolesWithWriteAccess } from "../utils/roles";
 import NewBadge from "./common_components/NewBadge";
 import type { Organization } from "./networking";
@@ -60,48 +61,48 @@ interface MenuGroup {
   roles?: string[];
 }
 
-// Menu groups organized by category - defined outside component for export
-const menuGroups: MenuGroup[] = [
+// Menu groups organized by category - factory function for i18n
+const getMenuGroups = (t: (key: string) => string): MenuGroup[] => [
   {
-    groupLabel: "AI GATEWAY",
+    groupLabel: t("sidebar.aiGateway").toUpperCase(),
     items: [
       {
         key: "api-keys",
         page: "api-keys",
-        label: "Virtual Keys",
+        label: t("sidebar.virtualKeys"),
         icon: <KeyOutlined />,
       },
       {
         key: "llm-playground",
         page: "llm-playground",
-        label: "Playground",
+        label: t("sidebar.playground"),
         icon: <PlayCircleOutlined />,
         roles: rolesWithWriteAccess,
       },
       {
         key: "models",
         page: "models",
-        label: "Models + Endpoints",
+        label: t("sidebar.modelsEndpoints"),
         icon: <BlockOutlined />,
         roles: rolesWithWriteAccess,
       },
       {
         key: "agents",
         page: "agents",
-        label: "Agents",
+        label: t("sidebar.agents"),
         icon: <RobotOutlined />,
         roles: rolesWithWriteAccess,
       },
       {
         key: "mcp-servers",
         page: "mcp-servers",
-        label: "MCP Servers",
+        label: t("sidebar.mcpServers"),
         icon: <ToolOutlined />,
       },
       {
         key: "guardrails",
         page: "guardrails",
-        label: "Guardrails",
+        label: t("sidebar.guardrails"),
         icon: <SafetyOutlined />,
         roles: all_admin_roles,
       },
@@ -110,7 +111,7 @@ const menuGroups: MenuGroup[] = [
         page: "policies",
         label: (
           <span className="flex items-center gap-4">
-            Policies
+            {t("sidebar.policies")}
           </span>
         ),
         icon: <AuditOutlined />,
@@ -119,25 +120,25 @@ const menuGroups: MenuGroup[] = [
       {
         key: "tools",
         page: "tools",
-        label: "Tools",
+        label: t("sidebar.searchTools"),
         icon: <ToolOutlined />,
         children: [
           {
             key: "search-tools",
             page: "search-tools",
-            label: "Search Tools",
+            label: t("sidebar.searchTools"),
             icon: <SearchOutlined />,
           },
           {
             key: "vector-stores",
             page: "vector-stores",
-            label: "Vector Stores",
+            label: t("sidebar.vectorStores"),
             icon: <DatabaseOutlined />,
           },
           {
             key: "tool-policies",
             page: "tool-policies",
-            label: "Tool Policies",
+            label: t("sidebar.toolPolicies"),
             icon: <SafetyOutlined />,
           },
         ],
@@ -145,50 +146,50 @@ const menuGroups: MenuGroup[] = [
     ],
   },
   {
-    groupLabel: "OBSERVABILITY",
+    groupLabel: t("sidebar.observability").toUpperCase(),
     items: [
       {
         key: "new_usage",
         page: "new_usage",
         icon: <BarChartOutlined />,
         roles: [...all_admin_roles, ...internalUserRoles],
-        label: "Usage",
+        label: t("sidebar.usage"),
       },
       {
         key: "logs",
         page: "logs",
-        label: "Logs",
+        label: t("sidebar.logs"),
         icon: <LineChartOutlined />,
       },
       {
         key: "guardrails-monitor",
         page: "guardrails-monitor",
-        label: "Guardrails Monitor",
+        label: t("sidebar.guardrailsMonitor"),
         icon: <SafetyOutlined />,
         roles: [...all_admin_roles, ...internalUserRoles],
       },
     ],
   },
   {
-    groupLabel: "ACCESS CONTROL",
+    groupLabel: t("sidebar.accessControl").toUpperCase(),
     items: [
       {
         key: "users",
         page: "users",
-        label: "Internal Users",
+        label: t("sidebar.internalUsers"),
         icon: <UserOutlined />,
         roles: all_admin_roles,
       },
       {
         key: "teams",
         page: "teams",
-        label: "Teams",
+        label: t("sidebar.teams"),
         icon: <TeamOutlined />,
       },
       {
         key: "organizations",
         page: "organizations",
-        label: "Organizations",
+        label: t("sidebar.organizations"),
         icon: <BankOutlined />,
         roles: all_admin_roles,
       },
@@ -197,7 +198,7 @@ const menuGroups: MenuGroup[] = [
         page: "access-groups",
         label: (
           <span className="flex items-center gap-2">
-            Access Groups <NewBadge />
+            {t("sidebar.accessGroups")} <NewBadge />
           </span>
         ),
         icon: <BlockOutlined />,
@@ -206,79 +207,79 @@ const menuGroups: MenuGroup[] = [
       {
         key: "budgets",
         page: "budgets",
-        label: "Budgets",
+        label: t("sidebar.budgets"),
         icon: <CreditCardOutlined />,
         roles: all_admin_roles,
       },
     ],
   },
   {
-    groupLabel: "DEVELOPER TOOLS",
+    groupLabel: t("sidebar.apiReference").toUpperCase(),
     items: [
       {
         key: "api_ref",
         page: "api_ref",
-        label: "API Reference",
+        label: t("sidebar.apiReference"),
         icon: <ApiOutlined />,
       },
       {
         key: "model-hub-table",
         page: "model-hub-table",
-        label: "AI Hub",
+        label: t("sidebar.modelHub"),
         icon: <AppstoreOutlined />,
       },
       {
         key: "learning-resources",
         page: "learning-resources",
-        label: "Learning Resources",
+        label: t("sidebar.learningResources"),
         icon: <BookOutlined />,
         external_url: "https://models.litellm.ai/cookbook",
       },
       {
         key: "experimental",
         page: "experimental",
-        label: "Experimental",
+        label: t("sidebar.experimental"),
         icon: <ExperimentOutlined />,
         children: [
           {
             key: "caching",
             page: "caching",
-            label: "Caching",
+            label: t("sidebar.caching"),
             icon: <DatabaseOutlined />,
             roles: all_admin_roles,
           },
           {
             key: "prompts",
             page: "prompts",
-            label: "Prompts",
+            label: t("sidebar.promptManagement"),
             icon: <FileTextOutlined />,
             roles: all_admin_roles,
           },
           {
             key: "transform-request",
             page: "transform-request",
-            label: "API Playground",
+            label: t("sidebar.transformRequest"),
             icon: <ApiOutlined />,
             roles: [...all_admin_roles, ...internalUserRoles],
           },
           {
             key: "tag-management",
             page: "tag-management",
-            label: "Tag Management",
+            label: t("sidebar.tagManagement"),
             icon: <TagsOutlined />,
             roles: all_admin_roles,
           },
           {
             key: "claude-code-plugins",
             page: "claude-code-plugins",
-            label: "Claude Code Plugins",
+            label: t("sidebar.claudeCodePlugins"),
             icon: <ToolOutlined />,
             roles: all_admin_roles,
           },
           {
             key: "4",
             page: "usage",
-            label: "Old Usage",
+            label: t("sidebar.oldUsage"),
             icon: <BarChartOutlined />,
           }
         ],
@@ -286,48 +287,48 @@ const menuGroups: MenuGroup[] = [
     ],
   },
   {
-    groupLabel: "SETTINGS",
+    groupLabel: t("common.settings").toUpperCase(),
     roles: all_admin_roles,
     items: [
       {
         key: "settings",
         page: "settings",
-        label: <span className="flex items-center gap-4">Settings</span>,
+        label: <span className="flex items-center gap-4">{t("common.settings")}</span>,
         icon: <SettingOutlined />,
         roles: all_admin_roles,
         children: [
           {
             key: "router-settings",
             page: "router-settings",
-            label: "Router Settings",
+            label: t("sidebar.routerSettings"),
             icon: <SettingOutlined />,
             roles: all_admin_roles,
           },
           {
             key: "logging-and-alerts",
             page: "logging-and-alerts",
-            label: "Logging & Alerts",
+            label: t("sidebar.loggingAlerts"),
             icon: <SettingOutlined />,
             roles: all_admin_roles,
           },
           {
             key: "admin-panel",
             page: "admin-panel",
-            label: "Admin Settings",
+            label: t("sidebar.adminPanel"),
             icon: <SettingOutlined />,
             roles: all_admin_roles,
           },
           {
             key: "cost-tracking",
             page: "cost-tracking",
-            label: "Cost Tracking",
+            label: t("sidebar.costTracking"),
             icon: <BarChartOutlined />,
             roles: all_admin_roles,
           },
           {
             key: "ui-theme",
             page: "ui-theme",
-            label: "UI Theme",
+            label: t("sidebar.uiTheme"),
             icon: <BgColorsOutlined />,
             roles: all_admin_roles,
           },
@@ -340,6 +341,8 @@ const menuGroups: MenuGroup[] = [
 const Sidebar: React.FC<SidebarProps> = ({ setPage, defaultSelectedKey, collapsed = false, enabledPagesInternalUsers }) => {
   const { userId, accessToken, userRole } = useAuthorized();
   const { data: organizations } = useOrganizations();
+  const { t } = useTranslation();
+  const menuGroups = useMemo(() => getMenuGroups(t), [t]);
 
   // Check if user is an org_admin
   const isOrgAdmin = useMemo(() => {
@@ -548,5 +551,5 @@ const Sidebar: React.FC<SidebarProps> = ({ setPage, defaultSelectedKey, collapse
 
 export default Sidebar;
 
-// Also export menuGroups for advanced use cases
-export { menuGroups };
+// Also export getMenuGroups for advanced use cases
+export { getMenuGroups };
