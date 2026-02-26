@@ -13,7 +13,7 @@ WORKDIR /app
 USER root
 
 # Install build dependencies
-RUN apk add --no-cache bash gcc py3-pip python3 python3-dev openssl openssl-dev
+RUN apk add --no-cache bash gcc py3-pip python3 python3-dev openssl openssl-dev nodejs npm
 
 RUN python -m pip install build
 
@@ -118,6 +118,13 @@ RUN sed -i 's/\r$//' docker/install_auto_router.sh && chmod +x docker/install_au
 
 # Generate prisma client using the correct schema
 RUN prisma generate --schema=./litellm/proxy/schema.prisma
+
+# Sync main project schema to litellm_proxy_extras to prevent migration conflicts
+RUN EXTRAS_SCHEMA=$(find /usr/lib -path "*/litellm_proxy_extras/schema.prisma" 2>/dev/null | head -1) && \
+    if [ -n "$EXTRAS_SCHEMA" ]; then \
+        cp ./litellm/proxy/schema.prisma "$EXTRAS_SCHEMA" && \
+        echo "Synced schema.prisma to litellm_proxy_extras"; \
+    fi
 # Convert Windows line endings to Unix for entrypoint scripts
 RUN sed -i 's/\r$//' docker/entrypoint.sh && chmod +x docker/entrypoint.sh
 RUN sed -i 's/\r$//' docker/prod_entrypoint.sh && chmod +x docker/prod_entrypoint.sh
