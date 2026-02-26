@@ -1239,7 +1239,7 @@ const ChatUI: React.FC<ChatUIProps> = ({
       sessionStorage.removeItem("messageTraceId");
       sessionStorage.removeItem("responsesSessionId");
     }
-    NotificationsManager.success("Chat history cleared.");
+    NotificationsManager.success(t("playground.chatHistoryCleared"));
   };
 
   if (userRole && userRole === "Admin Viewer") {
@@ -1829,14 +1829,14 @@ const ChatUI: React.FC<ChatUIProps> = ({
           {/* Main Chat Area */}
           <div className={`flex flex-col bg-white ${simplified ? "flex-1 w-full" : "w-3/4"}`}>
             <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-              <Title className="text-xl font-semibold mb-0">{simplified ? "Chat" : "Test Key"}</Title>
+              <Title className="text-xl font-semibold mb-0">{simplified ? t("playground.chat") : t("playground.testKey")}</Title>
               <div className="flex gap-2">
                 <TremorButton
                   onClick={clearChatHistory}
                   className="bg-gray-100 hover:bg-gray-200 text-gray-700 border-gray-300"
                   icon={ClearOutlined}
                 >
-                  Clear Chat
+                  {t("playground.clearChat")}
                 </TremorButton>
                 {!simplified && (
                 <TremorButton
@@ -1844,7 +1844,7 @@ const ChatUI: React.FC<ChatUIProps> = ({
                   className="bg-gray-100 hover:bg-gray-200 text-gray-700 border-gray-300"
                   icon={CodeOutlined}
                 >
-                  Get Code
+                  {t("playground.getCode")}
                 </TremorButton>
                 )}
               </div>
@@ -1853,7 +1853,7 @@ const ChatUI: React.FC<ChatUIProps> = ({
               {chatHistory.length === 0 && (
                 <div className="h-full flex flex-col items-center justify-center text-gray-400">
                   <RobotOutlined style={{ fontSize: "48px", marginBottom: "16px" }} />
-                  <Text>Start a conversation, generate an image, or handle audio</Text>
+                  <Text>{t("playground.startConversation")}</Text>
                 </div>
               )}
 
@@ -2311,7 +2311,7 @@ const ChatUI: React.FC<ChatUIProps> = ({
                       <Tooltip
                         title={
                           codeInterpreter.enabled
-                            ? "Code Interpreter enabled (click to disable)"
+                            ? t("playground.codeInterpreterEnabledClickToDisable")
                             : t("playground.enableCodeInterpreter")
                         }
                       >
@@ -2323,7 +2323,7 @@ const ChatUI: React.FC<ChatUIProps> = ({
                           onClick={() => {
                             codeInterpreter.toggle();
                             if (!codeInterpreter.enabled) {
-                              NotificationsManager.success("Code Interpreter enabled!");
+                              NotificationsManager.success(t("playground.codeInterpreterEnabled"));
                             }
                           }}
                         >
@@ -2450,7 +2450,7 @@ const ChatUI: React.FC<ChatUIProps> = ({
           <Button
             onClick={() => {
               navigator.clipboard.writeText(generatedCode);
-              NotificationsManager.success("Copied to clipboard!");
+              NotificationsManager.success(t("playground.copiedToClipboard"));
             }}
           >
             Copy to Clipboard

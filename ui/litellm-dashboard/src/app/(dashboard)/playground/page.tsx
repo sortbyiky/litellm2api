@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import AgentBuilderView from "@/components/playground/chat_ui/AgentBuilderView";
 import ChatUI from "@/components/playground/chat_ui/ChatUI";
 import CompareUI from "@/components/playground/compareUI/CompareUI";
@@ -15,6 +16,7 @@ interface ProxySettings {
 }
 
 export default function PlaygroundPage() {
+  const { t } = useTranslation();
   const { accessToken, userRole, userId, disabledPersonalKeyCreation, token } = useAuthorized();
   const [proxySettings, setProxySettings] = useState<ProxySettings | undefined>(undefined);
 
@@ -37,10 +39,10 @@ export default function PlaygroundPage() {
   return (
     <TabGroup className="h-full w-full">
       <TabList className="mb-0">
-        <Tab>Chat</Tab>
-        <Tab>Compare</Tab>
-        <Tab>Compliance</Tab>
-        <Tab>Agent Builder (Experimental)</Tab>
+        <Tab>{t("playground.tabChat")}</Tab>
+        <Tab>{t("playground.tabCompare")}</Tab>
+        <Tab>{t("playground.tabCompliance")}</Tab>
+        <Tab>{t("playground.tabAgentBuilder")}</Tab>
       </TabList>
       <TabPanels className="h-full">
         <TabPanel className="h-full">
