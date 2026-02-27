@@ -3198,6 +3198,35 @@ class ProxyException(Exception):
         # stream_chunk_builder wraps ContextWindowExceededError in APIError, losing the type
         if self.openai_code == "context_length_exceeded" and (self.type is None or self.type == "None"):
             self.type = "invalid_request_error"
+        # Rewrite message to OpenAI standard format for Cursor context condensing compatibility
+        if self.openai_code == "context_length_exceeded":
+            import re
+            original_msg = self.message
+            max_tokens = None
+            actual_tokens = None
+            # Anthropic: "200480 tokens > 200000 maximum"
+            m = re.search(r"(\d+)\s*tokens?\s*>\s*(\d+)\s*maximum", original_msg)
+            if m:
+                actual_tokens, max_tokens = int(m.group(1)), int(m.group(2))
+            # OpenAI: "maximum context length is 128000 tokens"
+            if not max_tokens:
+                m = re.search(r"maximum context length is (\d+)", original_msg)
+                if m:
+                    max_tokens = int(m.group(1))
+            # OpenAI: "resulted in 135000 tokens"
+            if not actual_tokens:
+                m = re.search(r"resulted in (\d+)\s*tokens", original_msg)
+                if m:
+                    actual_tokens = int(m.group(1))
+            if not max_tokens:
+                max_tokens = 200000
+            if not actual_tokens:
+                actual_tokens = max_tokens + 1000
+            self.message = (
+                f"This model's maximum context length is {max_tokens} tokens. "
+                f"However, your messages resulted in {actual_tokens} tokens. "
+                f"Please reduce the length of the messages."
+            )
         # If we look on official python OpenAI lib, the code should be a string:
         # https://github.com/openai/openai-python/blob/195c05a64d39c87b2dfdf1eca2d339597f1fce03/src/openai/types/shared/error_object.py#L11
         # Related LiteLLM issue: https://github.com/BerriAI/litellm/discussions/4834
