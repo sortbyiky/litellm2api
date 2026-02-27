@@ -1,6 +1,7 @@
 import { Alert, Card, Descriptions, Input, Modal, Typography, theme } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 interface DeleteResourceModalProps {
   isOpen: boolean;
@@ -34,6 +35,7 @@ export default function DeleteResourceModal({
 }: DeleteResourceModalProps) {
   const { Title, Text } = Typography;
   const { token } = theme.useToken();
+  const { t } = useTranslation();
   const [requiredConfirmationInput, setRequiredConfirmationInput] = useState("");
 
   useEffect(() => {
@@ -49,8 +51,8 @@ export default function DeleteResourceModal({
       onOk={onOk}
       onCancel={onCancel}
       confirmLoading={confirmLoading}
-      okText={confirmLoading ? "Deleting..." : "Delete"}
-      cancelText="Cancel"
+      okText={confirmLoading ? t("commonComponents.deleting") : t("common.delete")}
+      cancelText={t("common.cancel")}
       okButtonProps={{
         danger: true,
         disabled: (!!requiredConfirmation && requiredConfirmationInput !== requiredConfirmation) || confirmLoading,
@@ -89,11 +91,11 @@ export default function DeleteResourceModal({
         {requiredConfirmation && (
           <div className="mb-6 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
             <Text className="block text-base font-medium text-gray-700 dark:text-gray-300 mb-2">
-              <Text>Type </Text>
+              <Text>{t("commonComponents.type")} </Text>
               <Text strong type="danger">
                 {requiredConfirmation}
               </Text>
-              <Text> to confirm deletion:</Text>
+              <Text> {t("commonComponents.toConfirmDeletion")}</Text>
             </Text>
             <Input
               value={requiredConfirmationInput}

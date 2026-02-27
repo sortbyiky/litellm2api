@@ -3,6 +3,7 @@
  */
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Typography, Tag } from "antd";
 import { ToolOutlined, RightOutlined, DownOutlined } from "@ant-design/icons";
 import { ParsedTool } from "./types";
@@ -15,6 +16,7 @@ interface ToolItemProps {
 }
 
 export function ToolItem({ tool }: ToolItemProps) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -47,7 +49,7 @@ export function ToolItem({ tool }: ToolItemProps) {
 
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <Tag color={tool.called ? "blue" : "default"}>
-            {tool.called ? "called" : "not called"}
+            {tool.called ? t("logViewer.called") : t("logViewer.notCalled")}
           </Tag>
           {expanded ? (
             <DownOutlined style={{ fontSize: 12, color: "#8c8c8c" }} />

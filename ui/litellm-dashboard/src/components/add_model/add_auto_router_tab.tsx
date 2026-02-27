@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, Form, Button, Tooltip, Typography, Select as AntdSelect, Modal, Radio, Badge, Space } from "antd";
 import type { FormInstance } from "antd";
 import { Text, TextInput } from "@tremor/react";
@@ -31,6 +32,7 @@ interface ComplexityTiers {
 const { Title, Link } = Typography;
 
 const AddAutoRouterTab: React.FC<AddAutoRouterTabProps> = ({ form, handleOk, accessToken, userRole }) => {
+  const { t } = useTranslation();
   // State for connection testing
   const [isResultModalVisible, setIsResultModalVisible] = useState<boolean>(false);
   const [isTestingConnection, setIsTestingConnection] = useState<boolean>(false);
@@ -211,14 +213,14 @@ const AddAutoRouterTab: React.FC<AddAutoRouterTabProps> = ({ form, handleOk, acc
 
   return (
     <>
-      <Title level={2}>Add Auto Router</Title>
+      <Title level={2}>{t("addModel.addAutoRouter")}</Title>
       <Text className="text-gray-600 mb-6">
-        Create an auto router that automatically selects the best model based on request complexity or semantic matching.
+        {t("addModel.autoRouterDescription")}
       </Text>
 
       <Card className="mb-4">
         <div className="mb-4">
-          <Text className="text-sm font-medium mb-2 block">Router Type</Text>
+          <Text className="text-sm font-medium mb-2 block">{t("addModel.routerType")}</Text>
           <Radio.Group 
             value={routerType} 
             onChange={(e) => setRouterType(e.target.value)}
@@ -228,9 +230,9 @@ const AddAutoRouterTab: React.FC<AddAutoRouterTabProps> = ({ form, handleOk, acc
               <Radio value="complexity" className="w-full">
                 <div className="flex items-center gap-2">
                   <ThunderboltOutlined className="text-yellow-500" />
-                  <span className="font-medium">Complexity Router</span>
+                  <span className="font-medium">{t("addModel.complexityRouter")}</span>
                   <Badge 
-                    count="Recommended" 
+                    count={t("addModel.recommended")} 
                     style={{ 
                       backgroundColor: '#52c41a',
                       fontSize: '10px',
@@ -239,18 +241,18 @@ const AddAutoRouterTab: React.FC<AddAutoRouterTabProps> = ({ form, handleOk, acc
                   />
                 </div>
                 <div className="text-xs text-gray-500 ml-6 mt-1">
-                  Automatically routes based on request complexity. No training data needed — just pick 4 models and go.
+                  {t("addModel.complexityRouterDesc")}
                   <br />
-                  <span className="text-green-600">✓ Zero API calls</span> · <span className="text-green-600">✓ &lt;1ms latency</span> · <span className="text-green-600">✓ No cost</span>
+                  <span className="text-green-600">✓ {t("addModel.zeroApiCalls")}</span> · <span className="text-green-600">✓ {t("addModel.subMsLatency")}</span> · <span className="text-green-600">✓ {t("addModel.noCost")}</span>
                 </div>
               </Radio>
               <Radio value="semantic" className="w-full mt-2">
                 <div className="flex items-center gap-2">
                   <BranchesOutlined className="text-blue-500" />
-                  <span className="font-medium">Semantic Router</span>
+                  <span className="font-medium">{t("addModel.semanticRouter")}</span>
                 </div>
                 <div className="text-xs text-gray-500 ml-6 mt-1">
-                  Routes based on semantic similarity to example utterances. Requires embedding model and training examples.
+                  {t("addModel.semanticRouterDesc")}
                 </div>
               </Radio>
             </Space>
@@ -268,14 +270,14 @@ const AddAutoRouterTab: React.FC<AddAutoRouterTabProps> = ({ form, handleOk, acc
         >
           {/* Auto Router Name */}
           <Form.Item
-            rules={[{ required: true, message: "Auto router name is required" }]}
-            label="Auto Router Name"
+            rules={[{ required: true, message: t("addModel.autoRouterNameRequired") }]}
+            label={t("addModel.autoRouterName")}
             name="auto_router_name"
-            tooltip="Unique name for this auto router configuration"
+            tooltip={t("addModel.autoRouterNameTooltip")}
             labelCol={{ span: 10 }}
             labelAlign="left"
           >
-            <TextInput placeholder="e.g., smart_router, auto_router_1" />
+            <TextInput placeholder={t("addModel.autoRouterNamePlaceholder")} />
           </Form.Item>
 
           {/* Conditional rendering based on router type */}
@@ -307,15 +309,15 @@ const AddAutoRouterTab: React.FC<AddAutoRouterTabProps> = ({ form, handleOk, acc
 
               {/* Auto Router Default Model */}
               <Form.Item
-                rules={[{ required: routerType === "semantic", message: "Default model is required" }]}
-                label="Default Model"
+                rules={[{ required: routerType === "semantic", message: t("addModel.defaultModelRequired") }]}
+                label={t("addModel.defaultModel")}
                 name="auto_router_default_model"
-                tooltip="Fallback model to use when auto routing logic cannot determine the best model"
+                tooltip={t("addModel.defaultModelTooltip")}
                 labelCol={{ span: 10 }}
                 labelAlign="left"
               >
                 <AntdSelect
-                  placeholder="Select a default model"
+                  placeholder={t("addModel.selectDefaultModel")}
                   onChange={(value) => {
                     setShowCustomDefaultModel(value === "custom");
                   }}
@@ -324,7 +326,7 @@ const AddAutoRouterTab: React.FC<AddAutoRouterTabProps> = ({ form, handleOk, acc
                       value: model_group,
                       label: model_group,
                     })),
-                    { value: "custom", label: "Enter custom model name" },
+                    { value: "custom", label: t("addModel.enterCustomModelName") },
                   ]}
                   style={{ width: "100%" }}
                   showSearch={true}
@@ -333,15 +335,15 @@ const AddAutoRouterTab: React.FC<AddAutoRouterTabProps> = ({ form, handleOk, acc
 
               {/* Auto Router Embedding Model */}
               <Form.Item
-                label="Embedding Model"
+                label={t("addModel.embeddingModel")}
                 name="auto_router_embedding_model"
-                tooltip="Optional: Embedding model to use for semantic routing decisions"
+                tooltip={t("addModel.embeddingModelTooltip")}
                 labelCol={{ span: 10 }}
                 labelAlign="left"
               >
                 <AntdSelect
                   value={form.getFieldValue("auto_router_embedding_model")}
-                  placeholder="Select an embedding model (optional)"
+                  placeholder={t("addModel.selectEmbeddingModel")}
                   onChange={(value) => {
                     setShowCustomEmbeddingModel(value === "custom");
                     form.setFieldValue("auto_router_embedding_model", value);
@@ -351,7 +353,7 @@ const AddAutoRouterTab: React.FC<AddAutoRouterTabProps> = ({ form, handleOk, acc
                       value: model_group,
                       label: model_group,
                     })),
-                    { value: "custom", label: "Enter custom model name" },
+                    { value: "custom", label: t("addModel.enterCustomModelName") },
                   ]}
                   style={{ width: "100%" }}
                   showSearch={true}
@@ -363,22 +365,22 @@ const AddAutoRouterTab: React.FC<AddAutoRouterTabProps> = ({ form, handleOk, acc
 
           <div className="flex items-center my-4">
             <div className="flex-grow border-t border-gray-200"></div>
-            <span className="px-4 text-gray-500 text-sm">Additional Settings</span>
+            <span className="px-4 text-gray-500 text-sm">{t("addModel.additionalSettings")}</span>
             <div className="flex-grow border-t border-gray-200"></div>
           </div>
 
           {/* Model Access Groups - Admin only */}
           {isAdmin && (
             <Form.Item
-              label="Model Access Group"
+              label={t("addModel.modelAccessGroup")}
               name="model_access_group"
               className="mb-4"
-              tooltip="Use model access groups to control who can access this auto router"
+              tooltip={t("addModel.modelAccessGroupAutoRouterTooltip")}
             >
               <AntdSelect
                 mode="tags"
                 showSearch
-                placeholder="Select existing groups or type to create new ones"
+                placeholder={t("addModel.selectOrCreateGroups")}
                 optionFilterProp="children"
                 tokenSeparators={[","]}
                 options={modelAccessGroups.map((group) => ({
@@ -392,12 +394,12 @@ const AddAutoRouterTab: React.FC<AddAutoRouterTabProps> = ({ form, handleOk, acc
           )}
 
           <div className="flex justify-between items-center mb-4">
-            <Tooltip title="Get help on our github">
-              <Typography.Link href="https://github.com/BerriAI/litellm/issues">Need Help?</Typography.Link>
+            <Tooltip title={t("addModel.getHelpTooltip")}>
+              <Typography.Link href="https://github.com/BerriAI/litellm/issues">{t("addModel.needHelp")}</Typography.Link>
             </Tooltip>
             <div className="space-x-2">
               <Button onClick={handleTestConnection} loading={isTestingConnection}>
-                Test Connection
+                {t("addModel.testConnection")}
               </Button>
               <Button
                 type="primary"
@@ -406,7 +408,7 @@ const AddAutoRouterTab: React.FC<AddAutoRouterTabProps> = ({ form, handleOk, acc
                   handleAutoRouterSubmit();
                 }}
               >
-                Add Auto Router
+                {t("addModel.addAutoRouterBtn")}
               </Button>
             </div>
           </div>
@@ -415,7 +417,7 @@ const AddAutoRouterTab: React.FC<AddAutoRouterTabProps> = ({ form, handleOk, acc
 
       {/* Test Connection Results Modal */}
       <Modal
-        title="Connection Test Results"
+        title={t("addModel.connectionTestResults")}
         open={isResultModalVisible}
         onCancel={() => {
           setIsResultModalVisible(false);
@@ -429,7 +431,7 @@ const AddAutoRouterTab: React.FC<AddAutoRouterTabProps> = ({ form, handleOk, acc
               setIsTestingConnection(false);
             }}
           >
-            Close
+            {t("addModel.close")}
           </Button>,
         ]}
         width={700}

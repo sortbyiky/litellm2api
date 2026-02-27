@@ -25,6 +25,7 @@ import {
 } from "@tremor/react";
 import { Switch, Tooltip } from "antd";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import NotificationsManager from "../molecules/notifications_manager";
 import {
   disableClaudeCodePlugin,
@@ -57,6 +58,7 @@ const PluginTable: React.FC<PluginTableProps> = ({
   const [sorting, setSorting] = useState<SortingState>([
     { id: "created_at", desc: true },
   ]);
+  const { t } = useTranslation();
   const [togglingPlugin, setTogglingPlugin] = useState<string | null>(null);
 
   const formatDate = (dateString?: string) => {
@@ -67,7 +69,7 @@ const PluginTable: React.FC<PluginTableProps> = ({
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    NotificationsManager.success("Copied to clipboard!");
+    NotificationsManager.success(t("claudeCode.copiedToClipboard"));
   };
 
   const handleToggleEnabled = async (plugin: Plugin) => {
@@ -77,14 +79,14 @@ const PluginTable: React.FC<PluginTableProps> = ({
     try {
       if (plugin.enabled) {
         await disableClaudeCodePlugin(accessToken, plugin.name);
-        NotificationsManager.success(`Plugin "${plugin.name}" disabled`);
+        NotificationsManager.success(t("claudeCode.pluginDisabled", { name: plugin.name }));
       } else {
         await enableClaudeCodePlugin(accessToken, plugin.name);
-        NotificationsManager.success(`Plugin "${plugin.name}" enabled`);
+        NotificationsManager.success(t("claudeCode.pluginEnabled", { name: plugin.name }));
       }
       onPluginUpdated();
     } catch (error) {
-      NotificationsManager.error("Failed to toggle plugin status");
+      NotificationsManager.error(t("claudeCode.failedTogglePlugin"));
     } finally {
       setTogglingPlugin(null);
     }
@@ -92,7 +94,7 @@ const PluginTable: React.FC<PluginTableProps> = ({
 
   const columns: ColumnDef<Plugin>[] = [
     {
-      header: "Plugin Name",
+      header: t("claudeCode.pluginName"),
       accessorKey: "name",
       cell: ({ row }) => {
         const plugin = row.original;
@@ -109,7 +111,7 @@ const PluginTable: React.FC<PluginTableProps> = ({
                 {name}
               </Button>
             </Tooltip>
-            <Tooltip title="Copy Plugin ID">
+            <Tooltip title={t("claudeCode.copyPluginId")}>
               <CopyOutlined
                 onClick={(e) => {
                   e.stopPropagation();
@@ -123,7 +125,7 @@ const PluginTable: React.FC<PluginTableProps> = ({
       },
     },
     {
-      header: "Version",
+      header: t("claudeCode.version"),
       accessorKey: "version",
       cell: ({ row }) => {
         const version = row.original.version || "N/A";
@@ -131,10 +133,10 @@ const PluginTable: React.FC<PluginTableProps> = ({
       },
     },
     {
-      header: "Description",
+      header: t("claudeCode.description"),
       accessorKey: "description",
       cell: ({ row }) => {
-        const description = row.original.description || "No description";
+        const description = row.original.description || t("claudeCode.noDescription");
         return (
           <Tooltip title={description}>
             <span className="text-xs text-gray-600 block max-w-[300px] truncate">
@@ -145,14 +147,14 @@ const PluginTable: React.FC<PluginTableProps> = ({
       },
     },
     {
-      header: "Category",
+      header: t("claudeCode.category"),
       accessorKey: "category",
       cell: ({ row }) => {
         const category = row.original.category;
         if (!category) {
           return (
             <Badge color="gray" className="text-xs font-normal" size="xs">
-              Uncategorized
+              {t("claudeCode.uncategorized")}
             </Badge>
           );
         }
@@ -165,7 +167,7 @@ const PluginTable: React.FC<PluginTableProps> = ({
       },
     },
     {
-      header: "Enabled",
+      header: t("claudeCode.enabled"),
       accessorKey: "enabled",
       cell: ({ row }) => {
         const plugin = row.original;
@@ -176,11 +178,11 @@ const PluginTable: React.FC<PluginTableProps> = ({
               className="text-xs font-normal"
               size="xs"
             >
-              {plugin.enabled ? "Yes" : "No"}
+              {plugin.enabled ? t("common.yes") : t("common.no")}
             </Badge>
             {isAdmin && (
               <Tooltip
-                title={plugin.enabled ? "Disable plugin" : "Enable plugin"}
+                title={plugin.enabled ? t("claudeCode.disablePlugin") : t("claudeCode.enablePlugin")}
               >
                 <Switch
                   size="small"
@@ -195,7 +197,7 @@ const PluginTable: React.FC<PluginTableProps> = ({
       },
     },
     {
-      header: "Created At",
+      header: t("claudeCode.createdAt"),
       accessorKey: "created_at",
       cell: ({ row }) => {
         const plugin = row.original;
@@ -209,7 +211,7 @@ const PluginTable: React.FC<PluginTableProps> = ({
     ...(isAdmin
       ? [
         {
-          header: "Actions",
+          header: t("claudeCode.actions"),
           id: "actions",
           enableSorting: false,
           cell: ({ row }: any) => {
@@ -217,7 +219,7 @@ const PluginTable: React.FC<PluginTableProps> = ({
 
             return (
               <div className="flex items-center gap-1">
-                <Tooltip title="Delete plugin">
+                <Tooltip title={t("claudeCode.deletePlugin")}>
                   <Button
                     size="xs"
                     variant="light"
@@ -306,7 +308,7 @@ const PluginTable: React.FC<PluginTableProps> = ({
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-8 text-center">
                   <div className="text-center text-gray-500">
-                    <p>Loading...</p>
+                    <p>{t("common.loading")}</p>
                   </div>
                 </TableCell>
               </TableRow>
@@ -333,7 +335,7 @@ const PluginTable: React.FC<PluginTableProps> = ({
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-8 text-center">
                   <div className="text-center text-gray-500">
-                    <p>No plugins found. Add one to get started.</p>
+                    <p>{t("claudeCode.noPluginsFound")}</p>
                   </div>
                 </TableCell>
               </TableRow>

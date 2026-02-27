@@ -5,6 +5,7 @@ import DeleteResourceModal from "../../../../common_components/DeleteResourceMod
 import NotificationsManager from "../../../../molecules/notifications_manager";
 import { parseErrorMessage } from "../../../../shared/errorUtils";
 import { detectSSOProvider } from "../utils";
+import { useTranslation } from "react-i18next";
 
 interface DeleteSSOSettingsModalProps {
   isVisible: boolean;
@@ -13,6 +14,7 @@ interface DeleteSSOSettingsModalProps {
 }
 
 const DeleteSSOSettingsModal: React.FC<DeleteSSOSettingsModalProps> = ({ isVisible, onCancel, onSuccess }) => {
+  const { t } = useTranslation();
   const { data: ssoSettings } = useSSOSettings();
   const { mutateAsync: editSSOSettings, isPending: isEditingSSOSettings } = useEditSSOSettings();
 
@@ -38,12 +40,12 @@ const DeleteSSOSettingsModal: React.FC<DeleteSSOSettingsModalProps> = ({ isVisib
 
     await editSSOSettings(clearSettings, {
       onSuccess: () => {
-        NotificationsManager.success("SSO settings cleared successfully");
+        NotificationsManager.success(t("sso.ssoClearedSuccess"));
         onCancel();
         onSuccess();
       },
       onError: (error) => {
-        NotificationsManager.fromBackend("Failed to clear SSO settings: " + parseErrorMessage(error));
+        NotificationsManager.fromBackend(t("sso.failedToClearSSO") + parseErrorMessage(error));
       },
     });
   };
@@ -51,12 +53,12 @@ const DeleteSSOSettingsModal: React.FC<DeleteSSOSettingsModalProps> = ({ isVisib
   return (
     <DeleteResourceModal
       isOpen={isVisible}
-      title="Confirm Clear SSO Settings"
-      alertMessage="This action cannot be undone."
-      message="Are you sure you want to clear all SSO settings? Users will no longer be able to login using SSO after this change."
-      resourceInformationTitle="SSO Settings"
+      title={t("sso.confirmClearSSOSettings")}
+      alertMessage={t("sso.actionCannotBeUndone")}
+      message={t("sso.clearSSOConfirmMessage")}
+      resourceInformationTitle={t("sso.ssoSettings")}
       resourceInformation={[
-        { label: "Provider", value: (ssoSettings?.values && detectSSOProvider(ssoSettings?.values)) || "Generic" },
+        { label: t("sso.provider"), value: (ssoSettings?.values && detectSSOProvider(ssoSettings?.values)) || "Generic" },
       ]}
       onCancel={onCancel}
       onOk={handleClearSSO}

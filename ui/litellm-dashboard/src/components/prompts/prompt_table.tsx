@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, Button } from "@tremor/react";
 import { SwitchVerticalIcon, ChevronUpIcon, ChevronDownIcon, TrashIcon } from "@heroicons/react/outline";
 import { Tooltip } from "antd";
@@ -38,6 +39,7 @@ const PromptTable: React.FC<PromptTableProps> = ({
   accessToken,
   isAdmin,
 }) => {
+  const { t } = useTranslation();
   const [sorting, setSorting] = useState<SortingState>([{ id: "created_at", desc: true }]);
   const [modelHubData, setModelHubData] = useState<Map<string, ModelGroupInfo>>(new Map());
 
@@ -75,7 +77,7 @@ const PromptTable: React.FC<PromptTableProps> = ({
 
   const columns: ColumnDef<PromptSpec>[] = [
     {
-      header: "Prompt ID",
+      header: t("prompts.promptId"),
       accessorKey: "prompt_id",
       cell: (info: any) => {
         const fullId = String(info.getValue() || "");
@@ -92,7 +94,7 @@ const PromptTable: React.FC<PromptTableProps> = ({
                 {displayId}
               </Button>
             </Tooltip>
-            <Tooltip title="Copy prompt ID">
+            <Tooltip title={t("prompts.copyPromptId")}>
               <CopyOutlined
                 onClick={(e) => {
                   e.stopPropagation();
@@ -106,7 +108,7 @@ const PromptTable: React.FC<PromptTableProps> = ({
       },
     },
     {
-      header: "Model",
+      header: t("prompts.model"),
       accessorKey: "model",
       cell: ({ row }) => {
         const prompt = row.original;
@@ -161,7 +163,7 @@ const PromptTable: React.FC<PromptTableProps> = ({
       },
     },
     {
-      header: "Created At",
+      header: t("prompts.createdAt"),
       accessorKey: "created_at",
       cell: ({ row }) => {
         const prompt = row.original;
@@ -173,7 +175,7 @@ const PromptTable: React.FC<PromptTableProps> = ({
       },
     },
     {
-      header: "Updated At",
+      header: t("prompts.updatedAt"),
       accessorKey: "updated_at",
       cell: ({ row }) => {
         const prompt = row.original;
@@ -185,7 +187,7 @@ const PromptTable: React.FC<PromptTableProps> = ({
       },
     },
     {
-      header: "Type",
+      header: t("common.type"),
       accessorKey: "prompt_info.prompt_type",
       cell: ({ row }) => {
         const prompt = row.original;
@@ -199,7 +201,7 @@ const PromptTable: React.FC<PromptTableProps> = ({
     ...(isAdmin
       ? [
           {
-            header: "Actions",
+            header: t("common.actions"),
             id: "actions",
             enableSorting: false,
             cell: ({ row }: any) => {
@@ -208,7 +210,7 @@ const PromptTable: React.FC<PromptTableProps> = ({
 
               return (
                 <div className="flex items-center gap-1">
-                  <Tooltip title="Delete prompt">
+                  <Tooltip title={t("prompts.deletePrompt")}>
                     <Button
                       size="xs"
                       variant="light"
@@ -279,7 +281,7 @@ const PromptTable: React.FC<PromptTableProps> = ({
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-8 text-center">
                   <div className="text-center text-gray-500">
-                    <p>Loading...</p>
+                    <p>{t("common.loading")}</p>
                   </div>
                 </TableCell>
               </TableRow>
@@ -297,7 +299,7 @@ const PromptTable: React.FC<PromptTableProps> = ({
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-8 text-center">
                   <div className="text-center text-gray-500">
-                    <p>No prompts found</p>
+                    <p>{t("prompts.noPromptsFound")}</p>
                   </div>
                 </TableCell>
               </TableRow>

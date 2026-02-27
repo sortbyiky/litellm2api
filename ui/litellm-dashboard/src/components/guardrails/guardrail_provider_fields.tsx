@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Form, Select, Spin, Input } from "antd";
 import {
   guardrail_provider_map,
@@ -41,6 +42,7 @@ const GuardrailProviderFields: React.FC<GuardrailProviderFieldsProps> = ({
   const [loading, setLoading] = useState(false);
   const [providerParams, setProviderParams] = useState<ProviderParamsResponse | null>(providerParamsProp);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   // Fetch provider-specific parameters when component mounts
   useEffect(() => {
@@ -66,7 +68,7 @@ const GuardrailProviderFields: React.FC<GuardrailProviderFieldsProps> = ({
         populateGuardrailProviderMap(data);
       } catch (error) {
         console.error("Error fetching provider params:", error);
-        setError("Failed to load provider parameters");
+        setError(t("guardrailsSub.failedToLoadProviderParams"));
       } finally {
         setLoading(false);
       }
@@ -85,7 +87,7 @@ const GuardrailProviderFields: React.FC<GuardrailProviderFieldsProps> = ({
 
   // Show loading state
   if (loading) {
-    return <Spin tip="Loading provider parameters..." />;
+    return <Spin tip={t("guardrailsSub.loadingProviderParams")} />;
   }
 
   // Show error state
@@ -103,7 +105,7 @@ const GuardrailProviderFields: React.FC<GuardrailProviderFieldsProps> = ({
   console.log("Provider fields:", providerFields);
 
   if (!providerFields || Object.keys(providerFields).length === 0) {
-    return <div>No configuration fields available for this provider.</div>;
+    return <div>{t("guardrailsSub.noConfigFields")}</div>;
   }
 
   console.log("Value:", value);

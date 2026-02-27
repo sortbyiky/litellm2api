@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Modal, Form, message } from "antd";
+import { useTranslation } from "react-i18next";
 import {
   AccessGroupBaseForm,
   AccessGroupFormValues,
@@ -25,6 +26,7 @@ export function AccessGroupEditModal({
 }: AccessGroupEditModalProps) {
   const [form] = Form.useForm<AccessGroupFormValues>();
   const editMutation = useEditAccessGroup();
+  const { t } = useTranslation();
 
   // Populate the form with initial values whenever the modal opens or the data changes
   useEffect(() => {
@@ -55,7 +57,7 @@ export function AccessGroupEditModal({
           { accessGroupId: accessGroup.access_group_id, params },
           {
             onSuccess: () => {
-              message.success("Access group updated successfully");
+              message.success(t("accessGroups.updatedSuccess"));
               onSuccess?.();
               onCancel();
             },
@@ -69,13 +71,13 @@ export function AccessGroupEditModal({
 
   return (
     <Modal
-      title="Edit Access Group"
+      title={t("accessGroups.editAccessGroup")}
       open={visible}
       onOk={handleOk}
       onCancel={onCancel}
       width={700}
-      okText="Save Changes"
-      cancelText="Cancel"
+      okText={t("accessGroups.saveChanges")}
+      cancelText={t("common.cancel")}
       confirmLoading={editMutation.isPending}
       destroyOnHidden
     >

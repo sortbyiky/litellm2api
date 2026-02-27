@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { TextInput, Button } from "@tremor/react";
 import { Select as AntdSelect, Form, Tooltip, Radio } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
@@ -31,22 +32,23 @@ const AddMarginForm: React.FC<AddMarginFormProps> = ({
   onFixedAmountChange,
   onAddProvider,
 }) => {
+  const { t } = useTranslation();
   return (
     <div className="space-y-6">
       <Form.Item
         label={
           <span className="text-sm font-medium text-gray-700 flex items-center">
-            Provider
-            <Tooltip title="Select 'Global' to apply margin to all providers, or select a specific provider">
+            {t("costTracking.provider")}
+            <Tooltip title={t("costTracking.selectMarginProviderTooltip")}>
               <InfoCircleOutlined className="ml-2 text-blue-400 hover:text-blue-600 cursor-help" />
             </Tooltip>
           </span>
         }
-        rules={[{ required: true, message: "Please select a provider" }]}
+        rules={[{ required: true, message: t("costTracking.pleaseSelectProvider") }]}
       >
         <AntdSelect
           showSearch
-          placeholder="Select provider or 'Global'"
+          placeholder={t("costTracking.selectProviderOrGlobal")}
           value={selectedProvider}
           onChange={onProviderChange}
           style={{ width: "100%" }}
@@ -56,9 +58,9 @@ const AddMarginForm: React.FC<AddMarginFormProps> = ({
             String(option?.label ?? "").toLowerCase().includes(input.toLowerCase())
           }
         >
-          <AntdSelect.Option key="global" value="global" label="Global (All Providers)">
+          <AntdSelect.Option key="global" value="global" label={t("costTracking.globalAllProviders")}>
             <div className="flex items-center space-x-2">
-              <span className="font-medium">Global (All Providers)</span>
+              <span className="font-medium">{t("costTracking.globalAllProviders")}</span>
             </div>
           </AntdSelect.Option>
           {Object.entries(Providers).map(([providerEnum, providerDisplayName]) => {
@@ -87,21 +89,21 @@ const AddMarginForm: React.FC<AddMarginFormProps> = ({
       <Form.Item
         label={
           <span className="text-sm font-medium text-gray-700 flex items-center">
-            Margin Type
-            <Tooltip title="Choose how to apply the margin: percentage-based or fixed amount">
+            {t("costTracking.marginType")}
+            <Tooltip title={t("costTracking.marginTypeTooltip")}>
               <InfoCircleOutlined className="ml-2 text-blue-400 hover:text-blue-600 cursor-help" />
             </Tooltip>
           </span>
         }
-        rules={[{ required: true, message: "Please select a margin type" }]}
+        rules={[{ required: true, message: t("costTracking.pleaseSelectMarginType") }]}
       >
         <Radio.Group
           value={marginType}
           onChange={(e) => onMarginTypeChange(e.target.value)}
           className="w-full"
         >
-          <Radio value="percentage">Percentage-based</Radio>
-          <Radio value="fixed">Fixed Amount</Radio>
+          <Radio value="percentage">{t("costTracking.percentageBased")}</Radio>
+          <Radio value="fixed">{t("costTracking.fixedAmount")}</Radio>
         </Radio.Group>
       </Form.Item>
 
@@ -109,14 +111,14 @@ const AddMarginForm: React.FC<AddMarginFormProps> = ({
         <Form.Item
           label={
             <span className="text-sm font-medium text-gray-700 flex items-center">
-              Margin Percentage
-              <Tooltip title="Enter a percentage value (e.g., 10 for 10% margin)">
+              {t("costTracking.marginPercentage")}
+              <Tooltip title={t("costTracking.marginPercentageTooltip")}>
                 <InfoCircleOutlined className="ml-2 text-blue-400 hover:text-blue-600 cursor-help" />
               </Tooltip>
             </span>
           }
           rules={[
-            { required: true, message: "Please enter a margin percentage" },
+            { required: true, message: t("costTracking.pleaseEnterMarginPercentage") },
             {
               validator: (_, value) => {
                 if (!value) {
@@ -147,14 +149,14 @@ const AddMarginForm: React.FC<AddMarginFormProps> = ({
         <Form.Item
           label={
             <span className="text-sm font-medium text-gray-700 flex items-center">
-              Fixed Margin Amount
-              <Tooltip title="Enter a fixed amount in USD (e.g., 0.001 for $0.001 per request)">
+              {t("costTracking.fixedMarginAmount")}
+              <Tooltip title={t("costTracking.fixedMarginAmountTooltip")}>
                 <InfoCircleOutlined className="ml-2 text-blue-400 hover:text-blue-600 cursor-help" />
               </Tooltip>
             </span>
           }
           rules={[
-            { required: true, message: "Please enter a fixed amount" },
+            { required: true, message: t("costTracking.pleaseEnterFixedAmount") },
             {
               validator: (_, value) => {
                 if (!value) {
@@ -191,7 +193,7 @@ const AddMarginForm: React.FC<AddMarginFormProps> = ({
             (marginType === "fixed" && !fixedAmountValue)
           }
         >
-          Add Provider Margin
+          {t("costTracking.addProviderMargin")}
         </Button>
       </div>
     </div>

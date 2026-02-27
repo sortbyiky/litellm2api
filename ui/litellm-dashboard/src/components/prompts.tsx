@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import { useTranslation } from "react-i18next";
 import { Button } from "@tremor/react";
 import { Modal } from "antd";
 import { getPromptsList, PromptSpec, ListPromptsResponse, deletePromptCall } from "./networking";
@@ -16,6 +16,7 @@ interface PromptsProps {
 }
 
 const PromptsPanel: React.FC<PromptsProps> = ({ accessToken, userRole }) => {
+  const { t } = useTranslation();
   const [promptsList, setPromptsList] = useState<PromptSpec[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPromptId, setSelectedPromptId] = useState<string | null>(null);
@@ -98,11 +99,11 @@ const PromptsPanel: React.FC<PromptsProps> = ({ accessToken, userRole }) => {
     setIsDeleting(true);
     try {
       await deletePromptCall(accessToken, promptToDelete.id);
-      NotificationsManager.success(`Prompt "${promptToDelete.name}" deleted successfully`);
-      fetchPrompts(); // Refresh the list
+      NotificationsManager.success(t("prompts.promptDeletedSuccess", { name: promptToDelete.name }));
+      fetchPrompts();
     } catch (error) {
       console.error("Error deleting prompt:", error);
-      NotificationsManager.fromBackend("Failed to delete prompt");
+      NotificationsManager.fromBackend(t("prompts.failedToDeletePrompt"));
     } finally {
       setIsDeleting(false);
       setPromptToDelete(null);
@@ -136,10 +137,10 @@ const PromptsPanel: React.FC<PromptsProps> = ({ accessToken, userRole }) => {
           <div className="flex justify-between items-center mb-4">
             <div className="flex gap-2">
             <Button onClick={handleAddPrompt} disabled={!accessToken}>
-              + Add New Prompt
+              {t("prompts.addNewPrompt")}
             </Button>
               <Button onClick={handleAddPromptFromFile} disabled={!accessToken} variant="secondary">
-                Upload .prompt File
+                {t("prompts.uploadPromptFile")}
               </Button>
             </div>
           </div>
@@ -164,16 +165,16 @@ const PromptsPanel: React.FC<PromptsProps> = ({ accessToken, userRole }) => {
 
       {promptToDelete && (
         <Modal
-          title="Delete Prompt"
+          title={t("prompts.deletePrompt")}
           open={promptToDelete !== null}
           onOk={handleDeleteConfirm}
           onCancel={handleDeleteCancel}
           confirmLoading={isDeleting}
-          okText="Delete"
+          okText={t("common.delete")}
           okButtonProps={{ danger: true }}
         >
-          <p>Are you sure you want to delete prompt: {promptToDelete.name} ?</p>
-          <p>This action cannot be undone.</p>
+          <p>{t("prompts.deleteConfirmMessage", { name: promptToDelete.name })}</p>
+          <p>{t("prompts.actionCannotBeUndone")}</p>
         </Modal>
       )}
     </div>

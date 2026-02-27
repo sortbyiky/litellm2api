@@ -4,6 +4,7 @@ import { Text, TextInput } from "@tremor/react";
 import { getSSOSettings, updateSSOSettings } from "./networking";
 import NotificationsManager from "./molecules/notifications_manager";
 import { parseErrorMessage } from "./shared/errorUtils";
+import { useTranslation } from "react-i18next";
 
 interface SSOModalsProps {
   isAddSSOModalVisible: boolean;
@@ -113,6 +114,7 @@ const SSOModals: React.FC<SSOModalsProps> = ({
   accessToken,
   ssoConfigured = false, // Default to false if not provided
 }) => {
+  const { t } = useTranslation();
   const [isClearConfirmModalVisible, setIsClearConfirmModalVisible] = useState(false);
 
   // Load existing SSO settings when modal opens
@@ -196,7 +198,7 @@ const SSOModals: React.FC<SSOModalsProps> = ({
   // Enhanced form submission handler
   const handleFormSubmit = async (formValues: Record<string, any>) => {
     if (!accessToken) {
-      NotificationsManager.fromBackend("No access token available");
+      NotificationsManager.fromBackend(t("sso.noAccessTokenAvailable"));
       return;
     }
 
@@ -254,14 +256,14 @@ const SSOModals: React.FC<SSOModalsProps> = ({
       // Continue with the original flow (show instructions)
       handleShowInstructions(formValues);
     } catch (error: unknown) {
-      NotificationsManager.fromBackend("Failed to save SSO settings: " + parseErrorMessage(error));
+      NotificationsManager.fromBackend(t("sso.failedToSaveSSOSettings") + parseErrorMessage(error));
     }
   };
 
   // Handle clearing SSO settings
   const handleClearSSO = async () => {
     if (!accessToken) {
-      NotificationsManager.fromBackend("No access token available");
+      NotificationsManager.fromBackend(t("sso.noAccessTokenAvailable"));
       return;
     }
 
@@ -295,10 +297,10 @@ const SSOModals: React.FC<SSOModalsProps> = ({
       // Close the main SSO modal and trigger refresh
       handleAddSSOOk();
 
-      NotificationsManager.success("SSO settings cleared successfully");
+      NotificationsManager.success(t("sso.ssoClearedSuccess"));
     } catch (error) {
       console.error("Failed to clear SSO settings:", error);
-      NotificationsManager.fromBackend("Failed to clear SSO settings");
+      NotificationsManager.fromBackend(t("sso.failedToClearSSOSettings"));
     }
   };
 
@@ -322,7 +324,7 @@ const SSOModals: React.FC<SSOModalsProps> = ({
   return (
     <>
       <Modal
-        title={ssoConfigured ? "Edit SSO Settings" : "Add SSO"}
+        title={ssoConfigured ? t("sso.editSSOSettings") : t("sso.addSSO")}
         open={isAddSSOModalVisible}
         width={800}
         footer={null}
@@ -338,9 +340,9 @@ const SSOModals: React.FC<SSOModalsProps> = ({
         >
           <>
             <Form.Item
-              label="SSO Provider"
+              label={t("sso.ssoProvider")}
               name="sso_provider"
-              rules={[{ required: true, message: "Please select an SSO provider" }]}
+              rules={[{ required: true, message: t("sso.pleaseSelectSSOProvider") }]}
             >
               <Select>
                 {Object.entries(ssoProviderLogoMap).map(([value, logo]) => (
@@ -376,27 +378,26 @@ const SSOModals: React.FC<SSOModalsProps> = ({
             </Form.Item>
 
             <Form.Item
-              label="Proxy Admin Email"
+              label={t("sso.proxyAdminEmail")}
               name="user_email"
-              rules={[{ required: true, message: "Please enter the email of the proxy admin" }]}
+              rules={[{ required: true, message: t("sso.pleaseEnterProxyAdminEmail") }]}
             >
               <TextInput />
             </Form.Item>
             <Form.Item
-              label="Proxy Base URL"
+              label={t("sso.proxyBaseURL")}
               name="proxy_base_url"
               normalize={(value) => value?.trim()}
               rules={[
-                { required: true, message: "Please enter the proxy base url" },
+                { required: true, message: t("sso.pleaseEnterProxyBaseURL") },
                 {
                   pattern: /^https?:\/\/.+/,
-                  message: "URL must start with http:// or https://",
+                  message: t("sso.urlMustStartWithHttp"),
                 },
                 {
                   validator: (_, value) => {
-                    // Only check for trailing slash if the URL starts with http:// or https://
                     if (value && /^https?:\/\/.+/.test(value) && value.endsWith("/")) {
-                      return Promise.reject("URL must not end with a trailing slash");
+                      return Promise.reject(t("sso.urlMustNotEndWithSlash"));
                     }
                     return Promise.resolve();
                   },
@@ -413,7 +414,7 @@ const SSOModals: React.FC<SSOModalsProps> = ({
               {({ getFieldValue }) => {
                 const provider = getFieldValue("sso_provider");
                 return provider === "okta" || provider === "generic" ? (
-                  <Form.Item label="Use Role Mappings" name="use_role_mappings" valuePropName="checked">
+                  <Form.Item label={t("sso.useRoleMappings")} name="use_role_mappings" valuePropName="checked">
                     <Checkbox />
                   </Form.Item>
                 ) : null;
@@ -430,9 +431,9 @@ const SSOModals: React.FC<SSOModalsProps> = ({
                 const useRoleMappings = getFieldValue("use_role_mappings");
                 return useRoleMappings ? (
                   <Form.Item
-                    label="Group Claim"
+                    label={t("sso.groupClaim")}
                     name="group_claim"
-                    rules={[{ required: true, message: "Please enter the group claim" }]}
+                    rules={[{ required: true, message: t("sso.pleaseEnterGroupClaim") }]}
                   >
                     <TextInput />
                   </Form.Item>
@@ -450,28 +451,28 @@ const SSOModals: React.FC<SSOModalsProps> = ({
                 const useRoleMappings = getFieldValue("use_role_mappings");
                 return useRoleMappings ? (
                   <>
-                    <Form.Item label="Default Role" name="default_role" initialValue="Internal User">
+                    <Form.Item label={t("sso.defaultRole")} name="default_role" initialValue="Internal User">
                       <Select>
-                        <Select.Option value="internal_user_viewer">Internal Viewer</Select.Option>
-                        <Select.Option value="internal_user">Internal User</Select.Option>
-                        <Select.Option value="proxy_admin_viewer">Admin Viewer</Select.Option>
-                        <Select.Option value="proxy_admin">Proxy Admin</Select.Option>
+                        <Select.Option value="internal_user_viewer">{t("sso.internalViewer")}</Select.Option>
+                        <Select.Option value="internal_user">{t("sso.internalUser")}</Select.Option>
+                        <Select.Option value="proxy_admin_viewer">{t("sso.adminViewer")}</Select.Option>
+                        <Select.Option value="proxy_admin">{t("sso.proxyAdmin")}</Select.Option>
                       </Select>
                     </Form.Item>
 
-                    <Form.Item label="Proxy Admin Teams" name="proxy_admin_teams">
+                    <Form.Item label={t("sso.proxyAdminTeams")} name="proxy_admin_teams">
                       <TextInput />
                     </Form.Item>
 
-                    <Form.Item label="Admin Viewer Teams" name="admin_viewer_teams">
+                    <Form.Item label={t("sso.adminViewerTeams")} name="admin_viewer_teams">
                       <TextInput />
                     </Form.Item>
 
-                    <Form.Item label="Internal User Teams" name="internal_user_teams">
+                    <Form.Item label={t("sso.internalUserTeams")} name="internal_user_teams">
                       <TextInput />
                     </Form.Item>
 
-                    <Form.Item label="Internal Viewer Teams" name="internal_viewer_teams">
+                    <Form.Item label={t("sso.internalViewerTeams")} name="internal_viewer_teams">
                       <TextInput />
                     </Form.Item>
                   </>
@@ -506,22 +507,22 @@ const SSOModals: React.FC<SSOModalsProps> = ({
                   e.currentTarget.style.borderColor = "#6366f1";
                 }}
               >
-                Clear
+                {t("sso.clear")}
               </Button2>
             )}
-            <Button2 htmlType="submit">Save</Button2>
+            <Button2 htmlType="submit">{t("common.save")}</Button2>
           </div>
         </Form>
       </Modal>
 
       {/* Clear Confirmation Modal */}
       <Modal
-        title="Confirm Clear SSO Settings"
+        title={t("sso.confirmClearSSOSettings")}
         open={isClearConfirmModalVisible}
         onOk={handleClearSSO}
         onCancel={() => setIsClearConfirmModalVisible(false)}
-        okText="Yes, Clear"
-        cancelText="Cancel"
+        okText={t("sso.yesClear")}
+        cancelText={t("common.cancel")}
         okButtonProps={{
           danger: true,
           style: {
@@ -530,25 +531,25 @@ const SSOModals: React.FC<SSOModalsProps> = ({
           },
         }}
       >
-        <p>Are you sure you want to clear all SSO settings? This action cannot be undone.</p>
-        <p>Users will no longer be able to login using SSO after this change.</p>
+        <p>{t("sso.clearSSOConfirmMessage")}</p>
+        <p>{t("sso.usersCannotLoginAfterClear")}</p>
       </Modal>
 
       <Modal
-        title="SSO Setup Instructions"
+        title={t("sso.ssoSetupInstructions")}
         open={isInstructionsModalVisible}
         width={800}
         footer={null}
         onOk={handleInstructionsOk}
         onCancel={handleInstructionsCancel}
       >
-        <p>Follow these steps to complete the SSO setup:</p>
-        <Text className="mt-2">1. DO NOT Exit this TAB</Text>
-        <Text className="mt-2">2. Open a new tab, visit your proxy base url</Text>
-        <Text className="mt-2">3. Confirm your SSO is configured correctly and you can login on the new Tab</Text>
-        <Text className="mt-2">4. If Step 3 is successful, you can close this tab</Text>
+        <p>{t("sso.followStepsToComplete")}</p>
+        <Text className="mt-2">{t("sso.step1DoNotExit")}</Text>
+        <Text className="mt-2">{t("sso.step2OpenNewTab")}</Text>
+        <Text className="mt-2">{t("sso.step3ConfirmSSO")}</Text>
+        <Text className="mt-2">{t("sso.step4CloseTab")}</Text>
         <div style={{ textAlign: "right", marginTop: "10px" }}>
-          <Button2 onClick={handleInstructionsOk}>Done</Button2>
+          <Button2 onClick={handleInstructionsOk}>{t("sso.done")}</Button2>
         </div>
       </Modal>
     </>

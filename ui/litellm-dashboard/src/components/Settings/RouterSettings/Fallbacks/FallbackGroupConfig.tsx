@@ -6,6 +6,7 @@
 import { Select, Tooltip } from "antd";
 import { AlertCircle, ArrowDown, X } from "lucide-react";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 export interface FallbackGroup {
   id: string;
@@ -26,6 +27,7 @@ export function FallbackGroupConfig({
   availableModels,
   maxFallbacks,
 }: FallbackGroupConfigProps) {
+  const { t } = useTranslation();
   // Filter available options for fallbacks (exclude primary only, allow already selected to be shown for deselection)
   const availableFallbackOptions = availableModels.filter(
     (m) => m !== group.primaryModel,
@@ -69,12 +71,12 @@ export function FallbackGroupConfig({
       {/* Primary Model Section */}
       <div className="relative">
         <label className="block text-sm font-semibold text-gray-700 mb-2">
-          Primary Model <span className="text-red-500">*</span>
+          {t("routerSettings.primaryModel")} <span className="text-red-500">*</span>
         </label>
         <Select
           className="w-full h-12"
           size="large"
-          placeholder="Select primary model"
+          placeholder={t("routerSettings.selectPrimaryModel")}
           value={group.primaryModel}
           onChange={handlePrimaryChange}
           showSearch
@@ -86,7 +88,7 @@ export function FallbackGroupConfig({
         {!group.primaryModel && (
           <div className="mt-2 flex items-center gap-2 text-amber-600 text-xs bg-amber-50 p-2 rounded">
             <AlertCircle className="w-4 h-4" />
-            <span>Select a model to begin configuring fallbacks</span>
+            <span>{t("routerSettings.selectModelToBegin")}</span>
           </div>
         )}
       </div>
@@ -95,7 +97,7 @@ export function FallbackGroupConfig({
       <div className="flex items-center justify-center -my-4 z-10">
         <div className="bg-indigo-50 text-indigo-500 px-4 py-1 rounded-full text-xs font-bold border border-indigo-100 flex items-center gap-2 shadow-sm">
           <ArrowDown className="w-4 h-4" />
-          IF FAILS, TRY...
+          {t("routerSettings.ifFailsTry")}
         </div>
       </div>
 
@@ -104,9 +106,9 @@ export function FallbackGroupConfig({
         className={`transition-opacity duration-300 ${!group.primaryModel ? "opacity-50 pointer-events-none" : "opacity-100"}`}
       >
         <label className="block text-sm font-semibold text-gray-700 mb-2">
-          Fallback Chain <span className="text-red-500">*</span>
+          {t("routerSettings.fallbackChain")} <span className="text-red-500">*</span>
           <span className="text-xs text-gray-500 font-normal ml-2">
-            (Max {maxFallbacks} fallbacks at a time)
+            ({t("routerSettings.maxFallbacks", { count: maxFallbacks })})
           </span>
         </label>
 
@@ -119,8 +121,8 @@ export function FallbackGroupConfig({
               size="large"
               placeholder={
                 canAddMoreFallbacks
-                  ? "Select fallback models to add..."
-                  : `Maximum ${maxFallbacks} fallbacks reached`
+                  ? t("routerSettings.selectFallbackModels")
+                  : t("routerSettings.maxFallbacksReached", { count: maxFallbacks })
               }
               value={group.fallbackModels}
               onChange={handleFallbackSelect}
@@ -161,8 +163,8 @@ export function FallbackGroupConfig({
             />
             <p className="text-xs text-gray-500 mt-1 ml-1">
               {canAddMoreFallbacks
-                ? `Search and select multiple models. Selected models will appear below in order. (${group.fallbackModels.length}/${maxFallbacks} used)`
-                : `Maximum ${maxFallbacks} fallbacks reached. Remove some to add more.`}
+                ? t("routerSettings.searchAndSelectModels", { used: group.fallbackModels.length, max: maxFallbacks })
+                : t("routerSettings.maxFallbacksReachedRemove", { count: maxFallbacks })}
             </p>
           </div>
 
@@ -170,8 +172,8 @@ export function FallbackGroupConfig({
           <div className="space-y-2 min-h-[100px]">
             {group.fallbackModels.length === 0 ? (
               <div className="h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center text-gray-400">
-                <span className="text-sm">No fallback models selected</span>
-                <span className="text-xs mt-1">Add models from the dropdown above</span>
+                <span className="text-sm">{t("routerSettings.noFallbackModelsSelected")}</span>
+                <span className="text-xs mt-1">{t("routerSettings.addModelsFromDropdown")}</span>
               </div>
             ) : (
               group.fallbackModels.map((modelValue, index) => {

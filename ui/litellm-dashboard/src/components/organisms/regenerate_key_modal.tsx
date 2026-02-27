@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { KeyResponse } from "../key_team_helpers/key_list";
 import NotificationManager from "../molecules/notifications_manager";
+import { useTranslation } from "react-i18next";
 import { regenerateKeyCall } from "../networking";
 
 interface RegenerateKeyModalProps {
@@ -16,6 +17,7 @@ interface RegenerateKeyModalProps {
 }
 
 export function RegenerateKeyModal({ selectedToken, visible, onClose, onKeyUpdate }: RegenerateKeyModalProps) {
+  const { t } = useTranslation();
   const { accessToken } = useAuthorized();
   const [form] = Form.useForm();
   const [regeneratedKey, setRegeneratedKey] = useState<string | null>(null);
@@ -105,7 +107,7 @@ export function RegenerateKeyModal({ selectedToken, visible, onClose, onKeyUpdat
         formValues,
       );
       setRegeneratedKey(response.key);
-      NotificationManager.success("Virtual Key regenerated successfully");
+      NotificationManager.success(t("keys.regenerateKeySuccess"));
 
       console.log("Full regenerate response:", response); // Debug log to see what's returned
 
@@ -148,50 +150,48 @@ export function RegenerateKeyModal({ selectedToken, visible, onClose, onKeyUpdat
 
   return (
     <Modal
-      title="Regenerate Virtual Key"
+      title={t("keys.regenerateKey")}
       open={visible}
       onCancel={handleClose}
       footer={
         regeneratedKey
           ? [
               <Button key="close" onClick={handleClose}>
-                Close
+                {t("common.close")}
               </Button>,
             ]
           : [
               <Button key="cancel" onClick={handleClose} className="mr-2">
-                Cancel
+                {t("common.cancel")}
               </Button>,
               <Button key="regenerate" onClick={handleRegenerateKey} disabled={isRegenerating}>
-                {isRegenerating ? "Regenerating..." : "Regenerate"}
+                {isRegenerating ? t("keys.regenerateKeyModal.regenerating") : t("keys.regenerateKeyModal.regenerate")}
               </Button>,
             ]
       }
     >
       {regeneratedKey ? (
         <Grid numItems={1} className="gap-2 w-full">
-          <Title>Regenerated Key</Title>
+          <Title>{t("keys.regeneratedKey")}</Title>
           <Col numColSpan={1}>
             <p>
-              Please replace your old key with the new key generated. For security reasons,{" "}
-              <b>you will not be able to view it again</b> through your LiteLLM account. If you lose this secret key,
-              you will need to generate a new one.
+              {t("keys.regeneratedKeyWarning")}
             </p>
           </Col>
           <Col numColSpan={1}>
-            <Text className="mt-3">Key Alias:</Text>
+            <Text className="mt-3">{t("keys.keyAlias")}:</Text>
             <div className="bg-gray-100 p-2 rounded mb-2">
-              <pre className="break-words whitespace-normal">{selectedToken?.key_alias || "No alias set"}</pre>
+              <pre className="break-words whitespace-normal">{selectedToken?.key_alias || t("keys.noAliasSet")}</pre>
             </div>
-            <Text className="mt-3">New Virtual Key:</Text>
+            <Text className="mt-3">{t("keys.newVirtualKey")}:</Text>
             <div className="bg-gray-100 p-2 rounded mb-2">
               <pre className="break-words whitespace-normal">{regeneratedKey}</pre>
             </div>
             <CopyToClipboard
               text={regeneratedKey}
-              onCopy={() => NotificationManager.success("Virtual Key copied to clipboard")}
+              onCopy={() => NotificationManager.success(t("keys.keyCopied"))}
             >
-              <Button className="mt-3">Copy Virtual Key</Button>
+              <Button className="mt-3">{t("keys.copyKey")}</Button>
             </CopyToClipboard>
           </Col>
         </Grid>
@@ -205,41 +205,41 @@ export function RegenerateKeyModal({ selectedToken, visible, onClose, onKeyUpdat
             }
           }}
         >
-          <Form.Item name="key_alias" label="Key Alias">
+          <Form.Item name="key_alias" label={t("keys.keyAlias")}>
             <TextInput disabled={true} />
           </Form.Item>
-          <Form.Item name="max_budget" label="Max Budget (USD)">
+          <Form.Item name="max_budget" label={t("keys.maxBudgetUsd")}>
             <InputNumber step={0.01} precision={2} style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="tpm_limit" label="TPM Limit">
+          <Form.Item name="tpm_limit" label={t("keys.tpmLimit")}>
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="rpm_limit" label="RPM Limit">
+          <Form.Item name="rpm_limit" label={t("keys.rpmLimit")}>
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
-          <Form.Item name="duration" label="Expire Key (eg: 30s, 30h, 30d)" className="mt-8">
+          <Form.Item name="duration" label={t("keys.expireKey")} className="mt-8">
             <TextInput placeholder="" />
           </Form.Item>
           <div className="mt-2 text-sm text-gray-500">
-            Current expiry: {selectedToken?.expires ? new Date(selectedToken.expires).toLocaleString() : "Never"}
+            {t("keys.currentExpiry")}: {selectedToken?.expires ? new Date(selectedToken.expires).toLocaleString() : t("keys.never")}
           </div>
-          {newExpiryTime && <div className="mt-2 text-sm text-green-600">New expiry: {newExpiryTime}</div>}
+          {newExpiryTime && <div className="mt-2 text-sm text-green-600">{t("keys.newExpiry")}: {newExpiryTime}</div>}
           <Form.Item
             name="grace_period"
-            label="Grace Period (eg: 24h, 2d)"
-            tooltip="Keep the old key valid for this duration after rotation. Both keys work during this period for seamless cutover. Empty = immediate revoke."
+            label={t("keys.gracePeriod")}
+            tooltip={t("keys.gracePeriodTooltip")}
             className="mt-8"
             rules={[
               {
                 pattern: /^(\d+(s|m|h|d|w|mo))?$/,
-                message: "Must be a duration like 30s, 30m, 24h, 2d, 1w, or 1mo",
+                message: t("keys.durationFormatError"),
               },
             ]}
           >
-            <TextInput placeholder="e.g. 24h, 2d (empty = immediate revoke)" />
+            <TextInput placeholder={t("keys.gracePeriodPlaceholder")} />
           </Form.Item>
           <div className="mt-2 text-sm text-gray-500">
-            Recommended: 24h to 72h for production keys to allow seamless client migration.
+            {t("keys.gracePeriodRecommendation")}
           </div>
         </Form>
       )}

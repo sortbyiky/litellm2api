@@ -34,6 +34,7 @@ import {
   ServerIcon
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import DeleteResourceModal from "../common_components/DeleteResourceModal";
 import TableIconActionButton from "../common_components/IconActionButton/TableIconActionButtons/TableIconActionButton";
 import {
@@ -130,6 +131,7 @@ function buildAntdColumns(
 
 export function AccessGroupsPage() {
   const { token } = theme.useToken();
+  const { t } = useTranslation();
   const { data: groupsData, isLoading } = useAccessGroups();
   const groups = useMemo(
     () => (groupsData ?? []).map(mapResponseToAccessGroup),
@@ -189,13 +191,13 @@ export function AccessGroupsPage() {
       {
         id: "name",
         accessorKey: "name",
-        header: () => <span>Name</span>,
+        header: () => <span>{t("accessGroups.name")}</span>,
         enableSorting: true,
         cell: ({ getValue }) => getValue() as string,
       },
       {
         id: "resources",
-        header: () => <span>Resources</span>,
+        header: () => <span>{t("accessGroups.resources")}</span>,
         enableSorting: false,
         cell: ({ row }) => {
           const record = row.original;
@@ -204,7 +206,7 @@ export function AccessGroupsPage() {
           const agentIds = record.agentIds ?? [];
           return (
             <Flex gap={12} align="center">
-              <Tooltip title={`${modelIds?.length} Models`}>
+              <Tooltip title={t("accessGroups.modelsCount", { count: modelIds?.length })}>
                 <Tag color="blue" style={{ fontSize: 14, padding: "2px 8px", margin: 0 }}>
                   <Flex align="center" gap={6}>
                     <LayersIcon size={14} />
@@ -212,7 +214,7 @@ export function AccessGroupsPage() {
                   </Flex>
                 </Tag>
               </Tooltip>
-              <Tooltip title={`${mcpServerIds?.length} MCP Servers`}>
+              <Tooltip title={t("accessGroups.mcpServersCount", { count: mcpServerIds?.length })}>
                 <Tag color="cyan" style={{ fontSize: 14, padding: "2px 8px", margin: 0 }}>
                   <Flex align="center" gap={6}>
                     <ServerIcon size={14} />
@@ -220,7 +222,7 @@ export function AccessGroupsPage() {
                   </Flex>
                 </Tag>
               </Tooltip>
-              <Tooltip title={`${agentIds?.length} Agents`}>
+              <Tooltip title={t("accessGroups.agentsCount", { count: agentIds?.length })}>
                 <Tag color="purple" style={{ fontSize: 14, padding: "2px 8px", margin: 0 }}>
                   <Flex align="center" gap={6}>
                     <BotIcon size={14} />
@@ -235,7 +237,7 @@ export function AccessGroupsPage() {
       {
         id: "createdAt",
         accessorKey: "createdAt",
-        header: () => <span>Created</span>,
+        header: () => <span>{t("accessGroups.created")}</span>,
         enableSorting: true,
         sortingFn: "datetime",
         cell: ({ getValue }) =>
@@ -245,7 +247,7 @@ export function AccessGroupsPage() {
       {
         id: "updatedAt",
         accessorKey: "updatedAt",
-        header: () => <span>Updated</span>,
+        header: () => <span>{t("accessGroups.updated")}</span>,
         enableSorting: false,
         cell: ({ getValue }) =>
           new Date(getValue() as string).toLocaleDateString(),
@@ -253,13 +255,13 @@ export function AccessGroupsPage() {
       },
       {
         id: "actions",
-        header: () => <span>Actions</span>,
+        header: () => <span>{t("accessGroups.actions")}</span>,
         enableSorting: false,
         cell: ({ row }) => (
           <Space>
             <TableIconActionButton
               variant="Delete"
-              tooltipText="Delete access group"
+              tooltipText={t("accessGroups.deleteAccessGroup")}
               onClick={() => setGroupToDelete(row.original)}
             />
           </Space>
@@ -268,7 +270,7 @@ export function AccessGroupsPage() {
     ],
     // setSelectedGroup is stable (useState setter)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [t],
   );
 
   // ---------- TanStack table instance ----------
@@ -323,10 +325,10 @@ export function AccessGroupsPage() {
       >
         <Space direction="vertical" size={0}>
           <Title level={2} style={{ margin: 0 }}>
-            Access Groups
+            {t("accessGroups.title")}
           </Title>
           <Text type="secondary">
-            Manage resource permissions for your organization
+            {t("accessGroups.subtitle")}
           </Text>
         </Space>
         <Button
@@ -334,7 +336,7 @@ export function AccessGroupsPage() {
           icon={<PlusOutlined />}
           onClick={() => setIsCreateModalVisible(true)}
         >
-          Create Access Group
+          {t("accessGroups.createAccessGroup")}
         </Button>
       </Flex>
 
@@ -348,7 +350,7 @@ export function AccessGroupsPage() {
         >
           <Input
             prefix={<SearchIcon size={16} />}
-            placeholder="Search groups by name, ID, or description..."
+            placeholder={t("accessGroups.searchPlaceholder")}
             style={{ maxWidth: 400 }}
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
@@ -360,7 +362,7 @@ export function AccessGroupsPage() {
             pageSize={pageSize}
             onChange={(page) => setCurrentPage(page)}
             size="small"
-            showTotal={(total) => `${total} groups`}
+            showTotal={(total) => t("accessGroups.totalGroups", { total })}
             showSizeChanger={false}
           />
         </Flex>
@@ -380,13 +382,13 @@ export function AccessGroupsPage() {
 
       <DeleteResourceModal
         isOpen={!!groupToDelete}
-        title="Delete Access Group"
-        message="Are you sure you want to delete this access group? This action cannot be undone."
-        resourceInformationTitle="Access Group Information"
+        title={t("accessGroups.deleteAccessGroup")}
+        message={t("accessGroups.deleteConfirmMessage")}
+        resourceInformationTitle={t("accessGroups.accessGroupInformation")}
         resourceInformation={[
-          { label: "ID", value: groupToDelete?.id, code: true },
-          { label: "Name", value: groupToDelete?.name },
-          { label: "Description", value: groupToDelete?.description || "—" },
+          { label: t("accessGroups.id"), value: groupToDelete?.id, code: true },
+          { label: t("accessGroups.name"), value: groupToDelete?.name },
+          { label: t("accessGroups.description"), value: groupToDelete?.description || "—" },
         ]}
         onCancel={() => setGroupToDelete(null)}
         onOk={() => {

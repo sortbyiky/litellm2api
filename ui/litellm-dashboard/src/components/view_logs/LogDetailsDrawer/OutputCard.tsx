@@ -4,6 +4,7 @@
  */
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Typography, message as antdMessage } from 'antd';
 import { ParsedMessage } from './prettyMessagesTypes';
 import { SectionHeader } from './SectionHeader';
@@ -18,6 +19,7 @@ interface OutputCardProps {
 }
 
 export function OutputCard({ message, completionTokens, outputCost }: OutputCardProps) {
+  const { t } = useTranslation();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleCopy = () => {
@@ -25,7 +27,7 @@ export function OutputCard({ message, completionTokens, outputCost }: OutputCard
     
     const content = message.content || '';
     navigator.clipboard.writeText(content);
-    antdMessage.success('Output copied');
+    antdMessage.success(t("logViewer.outputCopied"));
   };
 
   if (!message) {
@@ -55,7 +57,7 @@ export function OutputCard({ message, completionTokens, outputCost }: OutputCard
         >
           <div style={{ padding: '12px 16px' }}>
             <Text type="secondary" style={{ fontSize: 13, fontStyle: 'italic' }}>
-              No response data available
+              {t("logViewer.noResponseData")}
             </Text>
           </div>
         </div>

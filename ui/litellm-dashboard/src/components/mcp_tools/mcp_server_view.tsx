@@ -11,6 +11,7 @@ import { getMaskedAndFullUrl } from "./utils";
 import { copyToClipboard as utilCopyToClipboard } from "@/utils/dataUtils";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import { Button as AntdButton } from "antd";
+import { useTranslation } from "react-i18next";
 
 interface MCPServerViewProps {
   mcpServer: MCPServer;
@@ -33,6 +34,7 @@ export const MCPServerView: React.FC<MCPServerViewProps> = ({
   userID,
   availableAccessGroups,
 }) => {
+  const { t } = useTranslation();
   const [editing, setEditing] = useState(isEditing);
   const [showFullUrl, setShowFullUrl] = useState(false);
   const [copiedStates, setCopiedStates] = useState<Record<string, boolean>>({});
@@ -67,7 +69,7 @@ export const MCPServerView: React.FC<MCPServerViewProps> = ({
       <div className="flex justify-between items-center mb-6">
         <div>
           <Button icon={ArrowLeftIcon} variant="light" className="mb-4" onClick={onBack}>
-            Back to All Servers
+            {t("mcp.backToAllServers")}
           </Button>
           <div className="flex items-center cursor-pointer">
             <Title>{mcpServer.server_name}</Title>
@@ -83,7 +85,7 @@ export const MCPServerView: React.FC<MCPServerViewProps> = ({
             />
             {mcpServer.alias && (
               <>
-                <span className="ml-4 text-gray-500">Alias:</span>
+                <span className="ml-4 text-gray-500">{t("mcp.alias")}:</span>
                 <span className="ml-1 font-mono text-blue-600">{mcpServer.alias}</span>
                 <AntdButton
                   type="text"
@@ -118,9 +120,9 @@ export const MCPServerView: React.FC<MCPServerViewProps> = ({
       <TabGroup index={selectedTabIndex} onIndexChange={setSelectedTabIndex}>
         <TabList className="mb-4">
           {[
-            <Tab key="overview">Overview</Tab>,
-            <Tab key="tools">MCP Tools</Tab>,
-            ...(isProxyAdmin ? [<Tab key="settings">Settings</Tab>] : []),
+            <Tab key="overview">{t("mcp.overview")}</Tab>,
+            <Tab key="tools">{t("mcp.mcpTools")}</Tab>,
+            ...(isProxyAdmin ? [<Tab key="settings">{t("common.settings")}</Tab>] : []),
           ]}
         </TabList>
 
@@ -129,21 +131,21 @@ export const MCPServerView: React.FC<MCPServerViewProps> = ({
           <TabPanel>
             <Grid numItems={1} numItemsSm={2} numItemsLg={3} className="gap-6">
               <Card>
-                <Text>Transport</Text>
+                <Text>{t("mcp.transport")}</Text>
                 <div className="mt-2">
                   <Title>{handleTransport(mcpServer.transport ?? undefined, mcpServer.spec_path ?? undefined).toUpperCase()}</Title>
                 </div>
               </Card>
 
               <Card>
-                <Text>Auth Type</Text>
+                <Text>{t("mcp.authType")}</Text>
                 <div className="mt-2">
                   <Text>{handleAuth(mcpServer.auth_type ?? undefined)}</Text>
                 </div>
               </Card>
 
               <Card>
-                <Text>Host Url</Text>
+                <Text>{t("mcp.hostUrl")}</Text>
                 <div className="mt-2 flex items-center gap-2">
                   <Text className="break-all overflow-wrap-anywhere">
                     {renderUrlWithToggle(mcpServer.url, showFullUrl)}
@@ -157,7 +159,7 @@ export const MCPServerView: React.FC<MCPServerViewProps> = ({
               </Card>
             </Grid>
             <Card className="mt-2">
-              <Title>Cost Configuration</Title>
+              <Title>{t("mcp.costConfiguration")}</Title>
               <MCPServerCostDisplay costConfig={mcpServer.mcp_info?.mcp_server_cost_info} />
             </Card>
           </TabPanel>
@@ -179,10 +181,10 @@ export const MCPServerView: React.FC<MCPServerViewProps> = ({
           <TabPanel>
             <Card>
               <div className="flex justify-between items-center mb-4">
-                <Title>MCP Server Settings</Title>
+                <Title>{t("mcp.mcpServerSettings")}</Title>
                 {editing ? null : (
                   <Button variant="light" onClick={() => setEditing(true)}>
-                    Edit Settings
+                    {t("mcp.editSettings")}
                   </Button>
                 )}
               </div>
@@ -197,19 +199,19 @@ export const MCPServerView: React.FC<MCPServerViewProps> = ({
               ) : (
                 <div className="space-y-4">
                   <div>
-                    <Text className="font-medium">Server Name</Text>
+                    <Text className="font-medium">{t("mcp.serverName")}</Text>
                     <div>{mcpServer.server_name}</div>
                   </div>
                   <div>
-                    <Text className="font-medium">Alias</Text>
+                    <Text className="font-medium">{t("mcp.alias")}</Text>
                     <div>{mcpServer.alias}</div>
                   </div>
                   <div>
-                    <Text className="font-medium">Description</Text>
+                    <Text className="font-medium">{t("common.description")}</Text>
                     <div>{mcpServer.description}</div>
                   </div>
                   <div>
-                    <Text className="font-medium">URL</Text>
+                    <Text className="font-medium">{t("mcp.url")}</Text>
                     <div className="font-mono break-all overflow-wrap-anywhere max-w-full flex items-center gap-2">
                       {renderUrlWithToggle(mcpServer.url, showFullUrl)}
                       {hasToken && (
@@ -220,57 +222,57 @@ export const MCPServerView: React.FC<MCPServerViewProps> = ({
                     </div>
                   </div>
                   <div>
-                    <Text className="font-medium">Transport</Text>
+                    <Text className="font-medium">{t("mcp.transport")}</Text>
                     <div>{handleTransport(mcpServer.transport, mcpServer.spec_path).toUpperCase()}</div>
                   </div>
                   <div>
-                    <Text className="font-medium">Extra Headers</Text>
+                    <Text className="font-medium">{t("mcp.extraHeaders")}</Text>
                     <div>{mcpServer.extra_headers?.join(", ")}</div>
                   </div>
                   <div>
-                    <Text className="font-medium">Auth Type</Text>
+                    <Text className="font-medium">{t("mcp.authType")}</Text>
                     <div>{handleAuth(mcpServer.auth_type)}</div>
                   </div>
                   <div>
-                    <Text className="font-medium">Allow All LiteLLM Keys</Text>
+                    <Text className="font-medium">{t("mcp.allowAllKeys")}</Text>
                     <div className="flex items-center gap-2">
                       {mcpServer.allow_all_keys ? (
                         <span className="px-2 py-1 bg-green-50 text-green-700 rounded-md text-sm">
-                          Enabled
+                          {t("common.enabled")}
                         </span>
                       ) : (
                         <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-md text-sm">
-                          Disabled
+                          {t("common.disabled")}
                         </span>
                       )}
                       {mcpServer.allow_all_keys && (
                         <Text className="text-xs text-gray-500">
-                          All keys can access this MCP server
+                          {t("mcp.allKeysCanAccess")}
                         </Text>
                       )}
                     </div>
                   </div>
                   <div>
-                    <Text className="font-medium">Available on Public Internet</Text>
+                    <Text className="font-medium">{t("mcp.availableOnPublicInternet")}</Text>
                     <div className="flex items-center gap-2">
                       {mcpServer.available_on_public_internet ? (
                         <span className="px-2 py-1 bg-green-50 text-green-700 rounded-md text-sm">
-                          Public
+                          {t("mcp.public")}
                         </span>
                       ) : (
                         <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-md text-sm">
-                          Internal
+                          {t("mcp.internal")}
                         </span>
                       )}
                       {mcpServer.available_on_public_internet && (
                         <Text className="text-xs text-gray-500">
-                          Accessible from external/public IPs
+                          {t("mcp.accessibleFromPublicIPs")}
                         </Text>
                       )}
                     </div>
                   </div>
                   <div>
-                    <Text className="font-medium">Access Groups</Text>
+                    <Text className="font-medium">{t("mcp.accessGroups")}</Text>
                     <div>
                       {mcpServer.mcp_access_groups && mcpServer.mcp_access_groups.length > 0 ? (
                         <div className="flex flex-wrap gap-2">
@@ -281,12 +283,12 @@ export const MCPServerView: React.FC<MCPServerViewProps> = ({
                           ))}
                         </div>
                       ) : (
-                        <Text className="text-gray-500">No access groups defined</Text>
+                        <Text className="text-gray-500">{t("mcp.noAccessGroupsDefined")}</Text>
                       )}
                     </div>
                   </div>
                   <div>
-                    <Text className="font-medium">Allowed Tools</Text>
+                    <Text className="font-medium">{t("mcp.allowedTools")}</Text>
                     <div>
                       {mcpServer.allowed_tools && mcpServer.allowed_tools.length > 0 ? (
                         <div className="flex flex-wrap gap-2">
@@ -300,12 +302,12 @@ export const MCPServerView: React.FC<MCPServerViewProps> = ({
                           ))}
                         </div>
                       ) : (
-                        <Text className="text-gray-500">All tools enabled</Text>
+                        <Text className="text-gray-500">{t("mcp.allToolsEnabled")}</Text>
                       )}
                     </div>
                   </div>
                   <div>
-                    <Text className="font-medium">Cost Configuration</Text>
+                    <Text className="font-medium">{t("mcp.costConfiguration")}</Text>
                     <MCPServerCostDisplay costConfig={mcpServer.mcp_info?.mcp_server_cost_info} />
                   </div>
                 </div>

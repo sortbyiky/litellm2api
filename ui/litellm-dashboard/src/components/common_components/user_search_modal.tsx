@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { Modal, Form, Button, Select, Tooltip } from "antd";
 import debounce from "lodash/debounce";
+import { useTranslation } from "react-i18next";
 import { userFilterUICall } from "@/components/networking";
 interface User {
   user_id: string;
@@ -41,17 +42,20 @@ const UserSearchModal: React.FC<UserSearchModalProps> = ({
   onCancel,
   onSubmit,
   accessToken,
-  title = "Add Team Member",
-  roles = [
+  title,
+  roles,
+  defaultRole = "user",
+}) => {
+  const { t } = useTranslation();
+  const resolvedTitle = title || t("commonComponents.addTeamMember");
+  const resolvedRoles = roles || [
     {
       label: "admin",
       value: "admin",
-      description: "Admin role. Can create team keys, add members, and manage settings.",
+      description: t("commonComponents.adminRoleDesc"),
     },
-    { label: "user", value: "user", description: "User role. Can view team info, but not manage it." },
-  ],
-  defaultRole = "user",
-}) => {
+    { label: "user", value: "user", description: t("commonComponents.userRoleDesc") },
+  ];
   const [form] = Form.useForm<FormValues>();
   const [userOptions, setUserOptions] = useState<UserOption[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -112,7 +116,7 @@ const UserSearchModal: React.FC<UserSearchModalProps> = ({
   };
 
   return (
-    <Modal title={title} open={isVisible} onCancel={handleClose} footer={null} width={800}>
+    <Modal title={resolvedTitle} open={isVisible} onCancel={handleClose} footer={null} width={800}>
       <Form<FormValues>
         form={form}
         onFinish={onSubmit}
@@ -123,11 +127,11 @@ const UserSearchModal: React.FC<UserSearchModalProps> = ({
           role: defaultRole,
         }}
       >
-        <Form.Item label="Email" name="user_email" className="mb-4">
+        <Form.Item label={t("commonComponents.email")} name="user_email" className="mb-4">
           <Select
             showSearch
             className="w-full"
-            placeholder="Search by email"
+            placeholder={t("commonComponents.searchByEmail")}
             filterOption={false}
             onSearch={(value) => handleSearch(value, "user_email")}
             onSelect={(value, option) => handleSelect(value, option as UserOption)}
@@ -137,13 +141,13 @@ const UserSearchModal: React.FC<UserSearchModalProps> = ({
           />
         </Form.Item>
 
-        <div className="text-center mb-4">OR</div>
+        <div className="text-center mb-4">{t("commonComponents.or")}</div>
 
-        <Form.Item label="User ID" name="user_id" className="mb-4">
+        <Form.Item label={t("commonComponents.userId")} name="user_id" className="mb-4">
           <Select
             showSearch
             className="w-full"
-            placeholder="Search by user ID"
+            placeholder={t("commonComponents.searchByUserId")}
             filterOption={false}
             onSearch={(value) => handleSearch(value, "user_id")}
             onSelect={(value, option) => handleSelect(value, option as UserOption)}
@@ -153,9 +157,9 @@ const UserSearchModal: React.FC<UserSearchModalProps> = ({
           />
         </Form.Item>
 
-        <Form.Item label="Member Role" name="role" className="mb-4">
+        <Form.Item label={t("commonComponents.memberRole")} name="role" className="mb-4">
           <Select defaultValue={defaultRole}>
-            {roles.map((role) => (
+            {resolvedRoles.map((role) => (
               <Select.Option key={role.value} value={role.value}>
                 <Tooltip title={role.description}>
                   <span className="font-medium">{role.label}</span>
@@ -168,7 +172,7 @@ const UserSearchModal: React.FC<UserSearchModalProps> = ({
 
         <div className="text-right mt-4">
           <Button type="default" htmlType="submit">
-            Add Member
+            {t("commonComponents.addMember")}
           </Button>
         </div>
       </Form>

@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Alert, Tag, Typography } from "antd";
 
 const { Text } = Typography;
@@ -15,12 +16,13 @@ interface ImpactPreviewAlertProps {
 }
 
 const ImpactPreviewAlert: React.FC<ImpactPreviewAlertProps> = ({ impactResult }) => {
+  const { t } = useTranslation();
   return (
     <Alert
       type={impactResult.affected_keys_count === -1 ? "warning" : "info"}
       showIcon
       className="mb-4"
-      message="Impact Preview"
+      message={t("policies.impact.impactPreview")}
       description={
         impactResult.affected_keys_count === -1 ? (
           <Text>Global scope — this will affect <strong>all keys and teams</strong>.</Text>

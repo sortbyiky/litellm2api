@@ -1,6 +1,7 @@
 import { BarChart } from "@tremor/react";
 import { Segmented } from "antd";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { formatNumberWithCommas } from "../../../../utils/dataUtils";
 import { DataTable } from "../../../view_logs/table";
 
@@ -19,16 +20,17 @@ interface TopModelViewProps {
 }
 
 export default function TopModelView({ topModels, topModelsLimit, setTopModelsLimit }: TopModelViewProps) {
+  const { t } = useTranslation();
   const [modelViewMode, setModelViewMode] = useState<"chart" | "table">("table");
 
   const columns = [
     {
-      header: "Model",
+      header: t("usage.topModels.model"),
       accessorKey: "key",
       cell: (info: any) => info.getValue() || "-",
     },
     {
-      header: "Spend (USD)",
+      header: t("usage.topModels.spendUsd"),
       accessorKey: "spend",
       cell: (info: any) => {
         const value = info.getValue();
@@ -36,17 +38,17 @@ export default function TopModelView({ topModels, topModelsLimit, setTopModelsLi
       },
     },
     {
-      header: "Successful",
+      header: t("usage.topModels.successful"),
       accessorKey: "successful_requests",
       cell: (info: any) => <span className="text-green-600">{info.getValue()?.toLocaleString() || 0}</span>,
     },
     {
-      header: "Failed",
+      header: t("usage.topModels.failed"),
       accessorKey: "failed_requests",
       cell: (info: any) => <span className="text-red-600">{info.getValue()?.toLocaleString() || 0}</span>,
     },
     {
-      header: "Tokens",
+      header: t("usage.topModels.tokens"),
       accessorKey: "tokens",
       cell: (info: any) => info.getValue()?.toLocaleString() || 0,
     },
@@ -71,13 +73,13 @@ export default function TopModelView({ topModels, topModelsLimit, setTopModelsLi
             onClick={() => setModelViewMode("table")}
             className={`px-3 py-1 text-sm rounded-md ${modelViewMode === "table" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-700"}`}
           >
-            Table View
+            {t("usage.topModels.tableView")}
           </button>
           <button
             onClick={() => setModelViewMode("chart")}
             className={`px-3 py-1 text-sm rounded-md ${modelViewMode === "chart" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-700"}`}
           >
-            Chart View
+            {t("usage.topModels.chartView")}
           </button>
         </div>
       </div>

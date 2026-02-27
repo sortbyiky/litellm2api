@@ -14,6 +14,7 @@ import { isAdminRole } from "@/utils/roles";
 import { validateMCPServerUrl, validateMCPServerName } from "./utils";
 import NotificationsManager from "../molecules/notifications_manager";
 import { useMcpOAuthFlow } from "@/hooks/useMcpOAuthFlow";
+import { useTranslation } from "react-i18next";
 
 const asset_logos_folder = "../ui/assets/logos/";
 export const mcpLogoImg = `${asset_logos_folder}mcp_logo.png`;
@@ -44,6 +45,7 @@ const CreateMCPServer: React.FC<CreateMCPServerProps> = ({
   onBackToDiscovery,
 }) => {
   const [form] = Form.useForm();
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [costConfig, setCostConfig] = useState<MCPServerCostInfo>({});
   const [formValues, setFormValues] = useState<Record<string, any>>({});
@@ -481,7 +483,7 @@ const CreateMCPServer: React.FC<CreateMCPServerProps> = ({
               objectFit: "contain",
             }}
           />
-          <h2 className="text-xl font-semibold text-gray-900">Add New MCP Server</h2>
+          <h2 className="text-xl font-semibold text-gray-900">{t("mcp.addNewMcpServer")}</h2>
         </div>
       }
       open={isModalVisible}
@@ -719,10 +721,10 @@ const CreateMCPServer: React.FC<CreateMCPServerProps> = ({
 
           <div className="flex items-center justify-end space-x-3 pt-6 border-t border-gray-100">
             <Button variant="secondary" onClick={handleCancel}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button variant="primary" loading={isLoading}>
-              {isLoading ? "Creating..." : "Add MCP Server"}
+              {isLoading ? t("mcp.creating") : t("mcp.addMcpServer")}
             </Button>
           </div>
         </Form>

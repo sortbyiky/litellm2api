@@ -23,6 +23,7 @@ import { Tooltip } from "antd";
 import React, { useState } from "react";
 import { DeletedTeam } from "@/app/(dashboard)/hooks/teams/useTeams";
 import { getModelDisplayName } from "@/components/key_team_helpers/fetch_available_models_team_key";
+import { useTranslation } from "react-i18next";
 
 interface DeletedTeamsTableProps {
   teams: DeletedTeam[];
@@ -41,12 +42,13 @@ export function DeletedTeamsTable({
       desc: true,
     },
   ]);
+  const { t } = useTranslation();
 
   const columns: ColumnDef<DeletedTeam>[] = [
     {
       id: "team_alias",
       accessorKey: "team_alias",
-      header: "Team Name",
+      header: t("deletedRecords.teamName"),
       size: 150,
       maxSize: 200,
       cell: (info) => {
@@ -63,7 +65,7 @@ export function DeletedTeamsTable({
     {
       id: "team_id",
       accessorKey: "team_id",
-      header: "Team ID",
+      header: t("deletedRecords.teamId"),
       size: 150,
       maxSize: 250,
       cell: (info) => {
@@ -80,7 +82,7 @@ export function DeletedTeamsTable({
     {
       id: "created_at",
       accessorKey: "created_at",
-      header: "Created",
+      header: t("deletedRecords.created"),
       size: 120,
       maxSize: 140,
       cell: (info) => {
@@ -95,7 +97,7 @@ export function DeletedTeamsTable({
     {
       id: "spend",
       accessorKey: "spend",
-      header: "Spend (USD)",
+      header: t("deletedRecords.spendUsd"),
       size: 100,
       maxSize: 140,
       cell: (info) => {
@@ -110,14 +112,14 @@ export function DeletedTeamsTable({
     {
       id: "max_budget",
       accessorKey: "max_budget",
-      header: "Budget (USD)",
+      header: t("deletedRecords.budgetUsd"),
       size: 110,
       maxSize: 150,
       cell: (info) => {
         const maxBudget = info.getValue() as number | null;
         return (
           <span className="block max-w-[150px]">
-            {maxBudget === null || maxBudget === undefined ? "No limit" : `$${formatNumberWithCommas(maxBudget)}`}
+            {maxBudget === null || maxBudget === undefined ? t("deletedRecords.noLimit") : `$${formatNumberWithCommas(maxBudget)}`}
           </span>
         );
       },
@@ -125,7 +127,7 @@ export function DeletedTeamsTable({
     {
       id: "models",
       accessorKey: "models",
-      header: "Models",
+      header: t("deletedRecords.models"),
       size: 200,
       maxSize: 300,
       cell: (info) => {
@@ -133,7 +135,7 @@ export function DeletedTeamsTable({
         if (!Array.isArray(models) || models.length === 0) {
           return (
             <Badge size={"xs"} color="red">
-              <Text>All Proxy Models</Text>
+              <Text>{t("deletedRecords.allProxyModels")}</Text>
             </Badge>
           );
         }
@@ -142,7 +144,7 @@ export function DeletedTeamsTable({
             {models.slice(0, 3).map((model: string, index: number) =>
               model === "all-proxy-models" ? (
                 <Badge key={index} size={"xs"} color="red">
-                  <Text>All Proxy Models</Text>
+                  <Text>{t("deletedRecords.allProxyModels")}</Text>
                 </Badge>
               ) : (
                 <Badge key={index} size={"xs"} color="blue">
@@ -157,7 +159,7 @@ export function DeletedTeamsTable({
             {models.length > 3 && (
               <Badge size={"xs"} color="gray">
                 <Text>
-                  +{models.length - 3} {models.length - 3 === 1 ? "more model" : "more models"}
+                  +{models.length - 3} {models.length - 3 === 1 ? t("deletedRecords.moreModel") : t("deletedRecords.moreModels")}
                 </Text>
               </Badge>
             )}
@@ -168,7 +170,7 @@ export function DeletedTeamsTable({
     {
       id: "organization_id",
       accessorKey: "organization_id",
-      header: "Organization",
+      header: t("deletedRecords.organization"),
       size: 150,
       maxSize: 200,
       cell: (info) => {
@@ -185,7 +187,7 @@ export function DeletedTeamsTable({
     {
       id: "deleted_at",
       accessorKey: "deleted_at",
-      header: "Deleted At",
+      header: t("deletedRecords.deletedAt"),
       size: 120,
       maxSize: 140,
       cell: (info) => {
@@ -200,7 +202,7 @@ export function DeletedTeamsTable({
     {
       id: "deleted_by",
       accessorKey: "deleted_by",
-      header: "Deleted By",
+      header: t("deletedRecords.deletedBy"),
       size: 120,
       maxSize: 180,
       cell: (info) => {
@@ -236,10 +238,10 @@ export function DeletedTeamsTable({
       <div className="border-b py-4 flex-1 overflow-hidden">
         <div className="flex items-center justify-between w-full mb-4">
           {isLoading || isFetching ? (
-            <span className="inline-flex text-sm text-gray-700">Loading...</span>
+            <span className="inline-flex text-sm text-gray-700">{t("common.loading")}</span>
           ) : (
             <span className="inline-flex text-sm text-gray-700">
-              Showing {teams.length} {teams.length === 1 ? "team" : "teams"}
+              {t("deletedRecords.showingTeams", { count: teams.length })}
             </span>
           )}
         </div>
@@ -319,7 +321,7 @@ export function DeletedTeamsTable({
                     <TableRow>
                       <TableCell colSpan={columns.length} className="h-8 text-center">
                         <div className="text-center text-gray-500">
-                          <p>🚅 Loading teams...</p>
+                          <p>{t("deletedRecords.loadingTeams")}</p>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -346,7 +348,7 @@ export function DeletedTeamsTable({
                     <TableRow>
                       <TableCell colSpan={columns.length} className="h-8 text-center">
                         <div className="text-center text-gray-500">
-                          <p>No deleted teams found</p>
+                          <p>{t("deletedRecords.noDeletedTeamsFound")}</p>
                         </div>
                       </TableCell>
                     </TableRow>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, Button } from "@tremor/react";
 import { SwitchVerticalIcon, ChevronUpIcon, ChevronDownIcon, TrashIcon } from "@heroicons/react/outline";
 import { Tooltip } from "antd";
@@ -33,6 +34,7 @@ const AgentTable: React.FC<AgentTableProps> = ({
   onAgentClick,
 }) => {
   const [sorting, setSorting] = useState<SortingState>([{ id: "created_at", desc: true }]);
+  const { t } = useTranslation();
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return "-";
@@ -46,7 +48,7 @@ const AgentTable: React.FC<AgentTableProps> = ({
 
   const columns: ColumnDef<Agent>[] = [
     {
-      header: "Agent Name",
+      header: t("agentsSub.agentName"),
       accessorKey: "agent_name",
       cell: ({ row }) => {
         const agent = row.original;
@@ -63,7 +65,7 @@ const AgentTable: React.FC<AgentTableProps> = ({
                 {name}
                 </Button>
               </Tooltip>
-            <Tooltip title="Copy Agent ID">
+            <Tooltip title={t("agentsSub.copyAgentId")}>
               <CopyOutlined
                 onClick={(e) => {
                   e.stopPropagation();
@@ -77,10 +79,10 @@ const AgentTable: React.FC<AgentTableProps> = ({
       },
     },
     {
-      header: "Description",
+      header: t("agentsSub.description"),
       accessorKey: "agent_card_params.description",
       cell: ({ row }) => {
-        const description = row.original.agent_card_params?.description || "No description";
+        const description = row.original.agent_card_params?.description || t("agentsSub.noDescription");
         return (
           <span className="text-xs text-gray-600 block max-w-[300px] truncate">
             {description}
@@ -89,7 +91,7 @@ const AgentTable: React.FC<AgentTableProps> = ({
       },
     },
     {
-      header: "Created At",
+      header: t("agentsSub.createdAt"),
       accessorKey: "created_at",
       cell: ({ row }) => {
         const agent = row.original;
@@ -103,7 +105,7 @@ const AgentTable: React.FC<AgentTableProps> = ({
     ...(isAdmin
       ? [
           {
-            header: "Actions",
+            header: t("agentsSub.actions"),
             id: "actions",
             enableSorting: false,
             cell: ({ row }: any) => {
@@ -111,7 +113,7 @@ const AgentTable: React.FC<AgentTableProps> = ({
               
               return (
                 <div className="flex items-center gap-1">
-                  <Tooltip title="Delete agent">
+                    <Tooltip title={t("agentsSub.deleteAgent")}>
                     <Button
                       size="xs"
                       variant="light"
@@ -182,7 +184,7 @@ const AgentTable: React.FC<AgentTableProps> = ({
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-8 text-center">
                   <div className="text-center text-gray-500">
-                    <p>Loading...</p>
+                    <p>{t("common.loading")}</p>
                   </div>
                 </TableCell>
               </TableRow>
@@ -200,7 +202,7 @@ const AgentTable: React.FC<AgentTableProps> = ({
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-8 text-center">
                   <div className="text-center text-gray-500">
-                    <p>No agents found. Create one to get started.</p>
+                    <p>{t("agentsSub.noAgentsFound")}</p>
                 </div>
               </TableCell>
               </TableRow>

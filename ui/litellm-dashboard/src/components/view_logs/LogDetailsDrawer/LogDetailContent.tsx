@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Typography, Descriptions, Card, Tag, Tabs, Alert, Collapse, Radio, Space, Spin } from "antd";
 import moment from "moment";
 import { LogEntry } from "../columns";
@@ -53,6 +54,7 @@ export interface LogDetailContentProps {
  * be reused for both single-log and session-mode views.
  */
 export function LogDetailContent({ logEntry, onOpenSettings, isLoadingDetails = false, accessToken }: LogDetailContentProps) {
+  const { t } = useTranslation();
   const metadata = logEntry.metadata || {};
   const hasError = metadata.status === "failure";
   const errorInfo = hasError ? metadata.error_information : null;
@@ -97,7 +99,7 @@ export function LogDetailContent({ logEntry, onOpenSettings, isLoadingDetails = 
         <Alert
           type="error"
           showIcon
-          message="Request Failed"
+          message={t("logViewer.requestFailed")}
           description={<ErrorDescription errorInfo={errorInfo} />}
           className="mb-6"
         />
@@ -110,7 +112,7 @@ export function LogDetailContent({ logEntry, onOpenSettings, isLoadingDetails = 
 
       {/* Request Details */}
       <div className="bg-white rounded-lg shadow w-full max-w-full overflow-hidden mb-6">
-        <Card title="Request Details" size="small" bordered={false} style={{ marginBottom: 0 }}>
+        <Card title={t("logViewer.requestDetails")} size="small" bordered={false} style={{ marginBottom: 0 }}>
           <Descriptions column={2} size="small">
             <Descriptions.Item label="Model">{logEntry.model}</Descriptions.Item>
             <Descriptions.Item label="Provider">{logEntry.custom_llm_provider || "-"}</Descriptions.Item>
@@ -159,7 +161,7 @@ export function LogDetailContent({ logEntry, onOpenSettings, isLoadingDetails = 
       {isLoadingDetails ? (
         <div className="bg-white rounded-lg shadow w-full max-w-full overflow-hidden mb-6 p-8 text-center">
           <Spin size="default" />
-          <div style={{ marginTop: 8, color: "#999" }}>Loading request &amp; response data...</div>
+          <div style={{ marginTop: 8, color: "#999" }}>{t("logViewer.loadingRequestResponse")}</div>
         </div>
       ) : (
         <RequestResponseSection
@@ -207,16 +209,17 @@ export function LogDetailContent({ logEntry, onOpenSettings, isLoadingDetails = 
 // ============================================================================
 
 function ErrorDescription({ errorInfo }: { errorInfo: any }) {
+  const { t } = useTranslation();
   return (
     <div>
       {errorInfo.error_code && (
         <div>
-          <Text strong>Error Code:</Text> {errorInfo.error_code}
+          <Text strong>{t("logViewer.errorCode")}:</Text> {errorInfo.error_code}
         </div>
       )}
       {errorInfo.error_message && (
         <div>
-          <Text strong>Message:</Text> {errorInfo.error_message}
+          <Text strong>{t("logViewer.message")}:</Text> {errorInfo.error_message}
         </div>
       )}
     </div>
@@ -224,10 +227,11 @@ function ErrorDescription({ errorInfo }: { errorInfo: any }) {
 }
 
 function TagsSection({ tags }: { tags: Record<string, any> }) {
+  const { t } = useTranslation();
   return (
     <div className="bg-white rounded-lg shadow w-full max-w-full overflow-hidden p-4 mb-6">
       <Text strong style={{ display: "block", marginBottom: 8, fontSize: 16 }}>
-        Tags
+        {t("logViewer.tags")}
       </Text>
       <Space size={SPACING_MEDIUM} wrap>
         {Object.entries(tags).map(([key, value]) => (
@@ -259,6 +263,7 @@ function GuardrailLabel({ label, maskedCount }: { label: string; maskedCount: nu
 }
 
 function MetricsSection({ logEntry, metadata }: { logEntry: LogEntry; metadata: Record<string, any> }) {
+  const { t } = useTranslation();
   const hasCacheActivity =
     logEntry.cache_hit ||
     (metadata?.additional_usage_values?.cache_read_input_tokens &&
@@ -274,7 +279,7 @@ function MetricsSection({ logEntry, metadata }: { logEntry: LogEntry; metadata: 
 
   return (
     <div className="bg-white rounded-lg shadow w-full max-w-full overflow-hidden mb-6">
-      <Card title="Metrics" size="small" style={{ marginBottom: 0 }}>
+      <Card title={t("logViewer.metrics")} size="small" style={{ marginBottom: 0 }}>
         <Descriptions column={2} size="small">
           <Descriptions.Item label="Tokens">
             <TokenFlow
@@ -345,6 +350,7 @@ function RequestResponseSection({
   getFormattedResponse,
   logEntry,
 }: RequestResponseSectionProps) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<typeof TAB_REQUEST | typeof TAB_RESPONSE>(TAB_REQUEST);
   const [viewMode, setViewMode] = useState<'pretty' | 'json'>('pretty');
 
@@ -390,13 +396,13 @@ function RequestResponseSection({
                   }
                 }}
               >
-                <h3 className="text-lg font-medium text-gray-900" style={{ margin: 0 }}>Request & Response</h3>
+                <h3 className="text-lg font-medium text-gray-900" style={{ margin: 0 }}>{t("logViewer.requestAndResponse")}</h3>
                 <Radio.Group
                   size="small"
                   value={viewMode}
                   onChange={(e) => setViewMode(e.target.value)}
                 >
-                  <Radio.Button value="pretty">Pretty</Radio.Button>
+                  <Radio.Button value="pretty">{t("logViewer.pretty")}</Radio.Button>
                   <Radio.Button value="json">JSON</Radio.Button>
                 </Radio.Group>
               </div>
@@ -430,7 +436,7 @@ function RequestResponseSection({
                     items={[
                       {
                         key: TAB_REQUEST,
-                        label: "Request",
+                        label: t("logViewer.request"),
                         children: (
                           <div style={{ paddingTop: SPACING_XLARGE, paddingBottom: SPACING_XLARGE }}>
                             <JsonViewer data={getRawRequest()} mode="formatted" />
@@ -439,14 +445,14 @@ function RequestResponseSection({
                       },
                       {
                         key: TAB_RESPONSE,
-                        label: "Response",
+                        label: t("logViewer.response"),
                         children: (
                           <div style={{ paddingTop: SPACING_XLARGE, paddingBottom: SPACING_XLARGE }}>
                             {hasResponse || hasError ? (
                               <JsonViewer data={getFormattedResponse()} mode="formatted" />
                             ) : (
                               <div style={{ textAlign: "center", padding: 20, color: "#999", fontStyle: "italic" }}>
-                                Response data not available
+                                {t("logViewer.responseNotAvailable")}
                               </div>
                             )}
                           </div>
@@ -501,6 +507,7 @@ export function GuardrailJumpLink({ guardrailEntries }: { guardrailEntries: any[
 }
 
 function MetadataSection({ metadata }: { metadata: Record<string, any> }) {
+  const { t } = useTranslation();
   return (
     <div className="bg-white rounded-lg shadow w-full max-w-full overflow-hidden mb-6">
       <Collapse
@@ -509,7 +516,7 @@ function MetadataSection({ metadata }: { metadata: Record<string, any> }) {
         items={[
           {
             key: "1",
-            label: <h3 className="text-lg font-medium text-gray-900">Metadata</h3>,
+            label: <h3 className="text-lg font-medium text-gray-900">{t("logViewer.metadata")}</h3>,
             children: (
               <div>
                 <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 8 }}>

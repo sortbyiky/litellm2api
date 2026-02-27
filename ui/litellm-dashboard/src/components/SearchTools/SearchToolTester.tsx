@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, Input, Typography, Spin, message } from "antd";
 import { SearchOutlined, LoadingOutlined } from "@ant-design/icons";
 import { searchToolQueryCall } from "../networking";
@@ -24,6 +25,7 @@ interface SearchToolTesterProps {
 }
 
 export const SearchToolTester: React.FC<SearchToolTesterProps> = ({ searchToolName, accessToken, className = "" }) => {
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [searchHistory, setSearchHistory] = useState<
@@ -39,7 +41,7 @@ export const SearchToolTester: React.FC<SearchToolTesterProps> = ({ searchToolNa
 
   const handleSearch = async () => {
     if (!query.trim()) {
-      message.warning("Please enter a search query");
+      message.warning(t("searchTools.pleaseEnterQuery"));
       return;
     }
 
@@ -62,7 +64,7 @@ export const SearchToolTester: React.FC<SearchToolTesterProps> = ({ searchToolNa
       // Don't clear query after search so user can modify it
     } catch (error) {
       console.error("Error querying search tool:", error);
-      NotificationsManager.fromBackend("Failed to query search tool");
+      NotificationsManager.fromBackend(t("searchTools.failedToQuery"));
     } finally {
       setIsLoading(false);
     }
@@ -75,7 +77,7 @@ export const SearchToolTester: React.FC<SearchToolTesterProps> = ({ searchToolNa
   const clearHistory = () => {
     setSearchHistory([]);
     setExpandedResults({});
-    NotificationsManager.success("Search history cleared");
+    NotificationsManager.success(t("searchTools.searchHistoryCleared"));
   };
 
   const toggleResultExpansion = (historyIndex: number, resultIndex: number) => {
@@ -93,7 +95,7 @@ export const SearchToolTester: React.FC<SearchToolTesterProps> = ({ searchToolNa
   return (
     <Card className="mt-6">
       <div className="mb-6">
-        <TremorTitle>Test Search Tool</TremorTitle>
+        <TremorTitle>{t("searchTools.testSearchTool")}</TremorTitle>
       </div>
       
       <div className="flex flex-col" style={{ minHeight: "600px" }}>
@@ -120,7 +122,7 @@ export const SearchToolTester: React.FC<SearchToolTesterProps> = ({ searchToolNa
                   handleSearch();
                 }
               }}
-              placeholder="Enter your search query..."
+              placeholder={t("searchTools.enterSearchQuery")}
               disabled={isLoading}
               bordered={false}
               style={{ fontSize: "15px", padding: 0, height: "100%", boxShadow: "none" }}
@@ -144,7 +146,7 @@ export const SearchToolTester: React.FC<SearchToolTesterProps> = ({ searchToolNa
                 boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)"
               }}
             >
-              Search
+              {t("common.search")}
             </Button>
           </div>
         </div>
@@ -156,15 +158,15 @@ export const SearchToolTester: React.FC<SearchToolTesterProps> = ({ searchToolNa
               <div className="flex items-center justify-center w-24 h-24 rounded-full bg-gray-100 mb-6">
                 <SearchOutlined style={{ fontSize: "48px", color: "#9ca3af" }} />
               </div>
-              <Text className="text-lg text-gray-600 font-medium">Test your search tool</Text>
-              <Text className="text-sm text-gray-500 mt-2">Enter a query above to see search results</Text>
+              <Text className="text-lg text-gray-600 font-medium">{t("searchTools.testYourSearchTool")}</Text>
+              <Text className="text-sm text-gray-500 mt-2">{t("searchTools.enterQueryToSeeResults")}</Text>
             </div>
           ) : (
             <div>
               {isLoading && (
                 <div className="flex flex-col justify-center items-center py-16">
                   <Spin indicator={antIcon} />
-                  <Text className="mt-4 text-gray-600 font-medium">Searching...</Text>
+                  <Text className="mt-4 text-gray-600 font-medium">{t("searchTools.searching")}</Text>
                 </div>
               )}
 
@@ -174,14 +176,14 @@ export const SearchToolTester: React.FC<SearchToolTesterProps> = ({ searchToolNa
                   <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg" style={{ boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)" }}>
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
-                        <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Search Query</Text>
+                        <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{t("searchTools.searchQuery")}</Text>
                         <div className="text-base font-semibold text-gray-900 mt-1.5">{latestResults.query}</div>
                       </div>
                       <div className="text-right ml-4">
                         <Text className="text-xs text-gray-500">{formatTimestamp(latestResults.timestamp)}</Text>
                         <div className="flex items-center gap-3 mt-1">
                           <div className="text-sm font-semibold text-blue-600">
-                            {latestResults.response?.results?.length || 0} {latestResults.response?.results?.length === 1 ? 'result' : 'results'}
+                            {latestResults.response?.results?.length || 0} {latestResults.response?.results?.length === 1 ? t("searchTools.result") : t("searchTools.results")}
                           </div>
                           {latestResults.latency !== undefined && (
                             <>
@@ -265,7 +267,7 @@ export const SearchToolTester: React.FC<SearchToolTesterProps> = ({ searchToolNa
                                     color: "#3b82f6"
                                   }}
                                 >
-                                  {isResultExpanded ? "Show less" : "Show more"}
+                                  {isResultExpanded ? t("searchTools.showLess") : t("searchTools.showMore")}
                                 </Button>
                               )}
                             </div>
@@ -278,8 +280,8 @@ export const SearchToolTester: React.FC<SearchToolTesterProps> = ({ searchToolNa
                       <div className="flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mx-auto mb-4">
                         <SearchOutlined style={{ fontSize: "24px", color: "#9ca3af" }} />
                       </div>
-                      <Text className="text-gray-600 font-medium">No results found</Text>
-                      <Text className="text-sm text-gray-500 mt-1">Try a different search query</Text>
+                      <Text className="text-gray-600 font-medium">{t("searchTools.noResultsFound")}</Text>
+                      <Text className="text-sm text-gray-500 mt-1">{t("searchTools.tryDifferentQuery")}</Text>
                     </div>
                   )}
                 </>
@@ -289,7 +291,7 @@ export const SearchToolTester: React.FC<SearchToolTesterProps> = ({ searchToolNa
               {searchHistory.length > 1 && (
                 <div className="mt-8 pt-6 border-t border-gray-200">
                   <div className="flex items-center justify-between mb-4">
-                    <Text className="text-sm font-semibold text-gray-700">Previous Searches</Text>
+                    <Text className="text-sm font-semibold text-gray-700">{t("searchTools.previousSearches")}</Text>
                     <Button 
                       onClick={clearHistory} 
                       size="small" 
@@ -299,7 +301,7 @@ export const SearchToolTester: React.FC<SearchToolTesterProps> = ({ searchToolNa
                         fontWeight: 500,
                       }}
                     >
-                      Clear All
+                      {t("searchTools.clearAll")}
                     </Button>
                   </div>
                   <div className="space-y-2">
@@ -314,7 +316,7 @@ export const SearchToolTester: React.FC<SearchToolTesterProps> = ({ searchToolNa
                         <div className="text-sm font-medium text-gray-800 truncate">{entry.query}</div>
                         <div className="text-xs text-gray-500 mt-1.5 flex items-center gap-2">
                           <span className="font-medium text-blue-600">
-                            {entry.response?.results?.length || 0} {entry.response?.results?.length === 1 ? 'result' : 'results'}
+                            {entry.response?.results?.length || 0} {entry.response?.results?.length === 1 ? t("searchTools.result") : t("searchTools.results")}
                           </span>
                           {entry.latency !== undefined && (
                             <>

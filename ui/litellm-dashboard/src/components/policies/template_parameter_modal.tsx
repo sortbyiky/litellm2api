@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Modal, Spin, Radio, Select } from "antd";
 import { Button, TextInput } from "@tremor/react";
 import { modelHubCall, enrichPolicyTemplateStream } from "../networking";
@@ -32,6 +33,7 @@ const TemplateParameterModal: React.FC<TemplateParameterModalProps> = ({
   accessToken,
 }) => {
   const [parameterValues, setParameterValues] = useState<Record<string, string>>({});
+  const { t } = useTranslation();
   const [competitorMode, setCompetitorMode] = useState<"ai" | "manual">("ai");
   const [selectedModel, setSelectedModel] = useState<string | undefined>(undefined);
   const [availableModels, setAvailableModels] = useState<string[]>([]);
@@ -197,7 +199,7 @@ const TemplateParameterModal: React.FC<TemplateParameterModalProps> = ({
         <div>
           <h3 className="text-lg font-semibold mb-1">{template?.title}</h3>
           <p className="text-sm text-gray-500 font-normal">
-            Configure competitor blocking for your brand
+            {t("policies.paramModal.configureCompetitor")}
           </p>
         </div>
       }
@@ -206,7 +208,7 @@ const TemplateParameterModal: React.FC<TemplateParameterModalProps> = ({
       width={700}
       footer={[
         <Button key="cancel" variant="secondary" onClick={onCancel} disabled={isLoading}>
-          Cancel
+          {t("common.cancel")}
         </Button>,
         <Button
           key="confirm"
@@ -214,7 +216,7 @@ const TemplateParameterModal: React.FC<TemplateParameterModalProps> = ({
           loading={isLoading}
           disabled={!canContinue || isLoading}
         >
-          {isLoading ? "Creating guardrails..." : "Continue"}
+          {isLoading ? t("policies.paramModal.creatingGuardrails") : t("policies.paramModal.continue")}
         </Button>,
       ]}
     >

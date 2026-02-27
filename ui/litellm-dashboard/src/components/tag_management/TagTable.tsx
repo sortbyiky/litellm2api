@@ -21,6 +21,7 @@ import {
 } from "@tremor/react";
 import { Tooltip } from "antd";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Tag } from "./types";
 
 interface TagTableProps {
@@ -34,11 +35,12 @@ const DYNAMIC_SPEND_TAG_DESCRIPTION =
   "This is just a spend tag that was passed dynamically in a request. It does not control any LLM models.";
 
 const TagTable: React.FC<TagTableProps> = ({ data, onEdit, onDelete, onSelectTag }) => {
+  const { t } = useTranslation();
   const [sorting, setSorting] = React.useState<SortingState>([{ id: "created_at", desc: true }]);
 
   const columns: ColumnDef<Tag>[] = [
     {
-      header: "Tag Name",
+      header: t("tagManagement.tagName"),
       accessorKey: "name",
       cell: ({ row }) => {
         const tag = row.original;
@@ -47,7 +49,7 @@ const TagTable: React.FC<TagTableProps> = ({ data, onEdit, onDelete, onSelectTag
           <div className="overflow-hidden">
             <Tooltip
               title={
-                isDynamicSpendTag ? "You cannot view the information of a dynamically generated spend tag" : tag.name
+                isDynamicSpendTag ? t("tagManagement.cannotViewDynamicTag") : tag.name
               }
             >
               <Button
@@ -65,7 +67,7 @@ const TagTable: React.FC<TagTableProps> = ({ data, onEdit, onDelete, onSelectTag
       },
     },
     {
-      header: "Description",
+      header: t("common.description"),
       accessorKey: "description",
       cell: ({ row }) => {
         const tag = row.original;
@@ -77,7 +79,7 @@ const TagTable: React.FC<TagTableProps> = ({ data, onEdit, onDelete, onSelectTag
       },
     },
     {
-      header: "Allowed Models",
+      header: t("tagManagement.allowedModels"),
       accessorKey: "models",
       cell: ({ row }) => {
         const tag = row.original;
@@ -85,7 +87,7 @@ const TagTable: React.FC<TagTableProps> = ({ data, onEdit, onDelete, onSelectTag
           <div style={{ display: "flex", flexDirection: "column" }}>
             {tag?.models?.length === 0 ? (
               <Badge size="xs" className="mb-1" color="red">
-                All Models
+                {t("tagManagement.allModels")}
               </Badge>
             ) : (
               tag?.models?.map((modelId) => (
@@ -101,7 +103,7 @@ const TagTable: React.FC<TagTableProps> = ({ data, onEdit, onDelete, onSelectTag
       },
     },
     {
-      header: "Created",
+      header: t("tagManagement.created"),
       accessorKey: "created_at",
       sortingFn: "datetime",
       cell: ({ row }) => {
@@ -111,23 +113,23 @@ const TagTable: React.FC<TagTableProps> = ({ data, onEdit, onDelete, onSelectTag
     },
     {
       id: "actions",
-      header: "Actions",
+      header: t("common.actions"),
       cell: ({ row }) => {
         const tag = row.original;
         const isDynamicSpendTag = tag.description === DYNAMIC_SPEND_TAG_DESCRIPTION;
         return (
           <div className="flex space-x-2">
             {isDynamicSpendTag ? (
-              <Tooltip title="Dynamically generated spend tags cannot be edited">
+              <Tooltip title={t("tagManagement.dynamicTagCannotEdit")}>
                 <Icon
                   icon={PencilAltIcon}
                   size="sm"
                   className="opacity-50 cursor-not-allowed"
-                  aria-label="Edit tag (disabled)"
+                  aria-label={t("tagManagement.editTagDisabled")}
                 />
               </Tooltip>
             ) : (
-              <Tooltip title="Edit tag">
+              <Tooltip title={t("tagManagement.editTag")}>
                 <Icon
                   icon={PencilAltIcon}
                   size="sm"
@@ -137,16 +139,16 @@ const TagTable: React.FC<TagTableProps> = ({ data, onEdit, onDelete, onSelectTag
               </Tooltip>
             )}
             {isDynamicSpendTag ? (
-              <Tooltip title="Dynamically generated spend tags cannot be deleted">
+              <Tooltip title={t("tagManagement.dynamicTagCannotDelete")}>
                 <Icon
                   icon={TrashIcon}
                   size="sm"
                   className="opacity-50 cursor-not-allowed"
-                  aria-label="Delete tag (disabled)"
+                  aria-label={t("tagManagement.deleteTagDisabled")}
                 />
               </Tooltip>
             ) : (
-              <Tooltip title="Delete tag">
+              <Tooltip title={t("tagManagement.deleteTag")}>
                 <Icon
                   icon={TrashIcon}
                   size="sm"
@@ -232,7 +234,7 @@ const TagTable: React.FC<TagTableProps> = ({ data, onEdit, onDelete, onSelectTag
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-8 text-center">
                   <div className="text-center text-gray-500">
-                    <p>No tags found</p>
+                    <p>{t("tagManagement.noTagsFound")}</p>
                   </div>
                 </TableCell>
               </TableRow>

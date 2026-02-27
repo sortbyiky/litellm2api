@@ -22,6 +22,7 @@ import {
 import { Tooltip } from "antd";
 import React, { useState } from "react";
 import { KeyResponse } from "../../key_team_helpers/key_list";
+import { useTranslation } from "react-i18next";
 
 interface DeletedKeysTableProps {
   keys: KeyResponse[];
@@ -54,6 +55,8 @@ export function DeletedKeysTable({
     pageSize,
   });
 
+  const { t } = useTranslation();
+
   // Sync pagination state when prop changes
   React.useEffect(() => {
     setTablePagination({ pageIndex, pageSize });
@@ -63,7 +66,7 @@ export function DeletedKeysTable({
     {
       id: "token",
       accessorKey: "token",
-      header: "Key ID",
+      header: t("deletedRecords.keyId"),
       size: 150,
       maxSize: 250,
       cell: (info) => {
@@ -80,7 +83,7 @@ export function DeletedKeysTable({
     {
       id: "key_alias",
       accessorKey: "key_alias",
-      header: "Key Alias",
+      header: t("deletedRecords.keyAlias"),
       size: 150,
       maxSize: 200,
       cell: (info) => {
@@ -97,7 +100,7 @@ export function DeletedKeysTable({
     {
       id: "team_alias",
       accessorKey: "team_alias",
-      header: "Team Alias",
+      header: t("deletedRecords.teamAlias"),
       size: 120,
       maxSize: 180,
       cell: (info) => {
@@ -112,7 +115,7 @@ export function DeletedKeysTable({
     {
       id: "spend",
       accessorKey: "spend",
-      header: "Spend (USD)",
+      header: t("deletedRecords.spendUsd"),
       size: 100,
       maxSize: 140,
       cell: (info) => (
@@ -124,14 +127,14 @@ export function DeletedKeysTable({
     {
       id: "max_budget",
       accessorKey: "max_budget",
-      header: "Budget (USD)",
+      header: t("deletedRecords.budgetUsd"),
       size: 110,
       maxSize: 150,
       cell: (info) => {
         const maxBudget = info.getValue() as number | null;
         return (
           <span className="block max-w-[150px]">
-            {maxBudget === null ? "Unlimited" : `$${formatNumberWithCommas(maxBudget)}`}
+            {maxBudget === null ? t("deletedRecords.unlimited") : `$${formatNumberWithCommas(maxBudget)}`}
           </span>
         );
       },
@@ -139,7 +142,7 @@ export function DeletedKeysTable({
     {
       id: "user_email",
       accessorKey: "user_email",
-      header: "User Email",
+      header: t("deletedRecords.userEmail"),
       size: 160,
       maxSize: 250,
       cell: (info) => {
@@ -156,7 +159,7 @@ export function DeletedKeysTable({
     {
       id: "user_id",
       accessorKey: "user_id",
-      header: "User ID",
+      header: t("deletedRecords.userId"),
       size: 120,
       maxSize: 200,
       cell: (info) => {
@@ -173,7 +176,7 @@ export function DeletedKeysTable({
     {
       id: "created_at",
       accessorKey: "created_at",
-      header: "Created At",
+      header: t("deletedRecords.createdAt"),
       size: 120,
       maxSize: 140,
       cell: (info) => {
@@ -188,7 +191,7 @@ export function DeletedKeysTable({
     {
       id: "created_by",
       accessorKey: "created_by",
-      header: "Created By",
+      header: t("deletedRecords.createdBy"),
       size: 120,
       maxSize: 180,
       cell: (info) => {
@@ -205,7 +208,7 @@ export function DeletedKeysTable({
     {
       id: "deleted_at",
       accessorKey: "deleted_at",
-      header: "Deleted At",
+      header: t("deletedRecords.deletedAt"),
       size: 120,
       maxSize: 140,
       cell: (info) => {
@@ -220,7 +223,7 @@ export function DeletedKeysTable({
     {
       id: "deleted_by",
       accessorKey: "deleted_by",
-      header: "Deleted By",
+      header: t("deletedRecords.deletedBy"),
       size: 120,
       maxSize: 180,
       cell: (info) => {
@@ -270,19 +273,19 @@ export function DeletedKeysTable({
       <div className="border-b py-4 flex-1 overflow-hidden">
         <div className="flex items-center justify-between w-full mb-4">
           {isLoading || isFetching ? (
-            <span className="inline-flex text-sm text-gray-700">Loading...</span>
+            <span className="inline-flex text-sm text-gray-700">{t("common.loading")}</span>
           ) : (
             <span className="inline-flex text-sm text-gray-700">
-              Showing {rangeLabel} of {totalCount} results
+              {t("deletedRecords.showingRange", { range: rangeLabel, total: totalCount })}
             </span>
           )}
 
           <div className="inline-flex items-center gap-2">
             {isLoading || isFetching ? (
-              <span className="text-sm text-gray-700">Loading...</span>
+              <span className="text-sm text-gray-700">{t("common.loading")}</span>
             ) : (
               <span className="text-sm text-gray-700">
-                Page {currentPageIndex + 1} of {table.getPageCount()}
+                {t("deletedRecords.pageOf", { current: currentPageIndex + 1, total: table.getPageCount() })}
               </span>
             )}
 
@@ -291,7 +294,7 @@ export function DeletedKeysTable({
               disabled={isLoading || isFetching || !table.getCanPreviousPage()}
               className="px-3 py-1 text-sm border rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Previous
+              {t("deletedRecords.previous")}
             </button>
 
             <button
@@ -299,7 +302,7 @@ export function DeletedKeysTable({
               disabled={isLoading || isFetching || !table.getCanNextPage()}
               className="px-3 py-1 text-sm border rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Next
+              {t("deletedRecords.next")}
             </button>
           </div>
         </div>
@@ -379,7 +382,7 @@ export function DeletedKeysTable({
                     <TableRow>
                       <TableCell colSpan={columns.length} className="h-8 text-center">
                         <div className="text-center text-gray-500">
-                          <p>🚅 Loading keys...</p>
+                          <p>{t("deletedRecords.loadingKeys")}</p>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -406,7 +409,7 @@ export function DeletedKeysTable({
                     <TableRow>
                       <TableCell colSpan={columns.length} className="h-8 text-center">
                         <div className="text-center text-gray-500">
-                          <p>No deleted keys found</p>
+                          <p>{t("deletedRecords.noDeletedKeysFound")}</p>
                         </div>
                       </TableCell>
                     </TableRow>

@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Card, Text } from "@tremor/react";
 import VariableTextArea from "../variable_textarea";
 
@@ -11,17 +12,18 @@ const DeveloperMessageCard: React.FC<DeveloperMessageCardProps> = ({
   value,
   onChange,
 }) => {
+  const { t } = useTranslation();
   return (
     <Card className="p-3">
-      <Text className="block mb-2 text-sm font-medium">Developer message</Text>
+      <Text className="block mb-2 text-sm font-medium">{t("prompts.developerMessage")}</Text>
       <Text className="text-gray-500 text-xs mb-2">
-        Optional system instructions for the model
+        {t("prompts.developerMessageDesc")}
       </Text>
       <VariableTextArea
         value={value}
         onChange={onChange}
         rows={3}
-        placeholder="e.g., You are a helpful assistant..."
+        placeholder={t("prompts.developerMessagePlaceholder")}
       />
     </Card>
   );

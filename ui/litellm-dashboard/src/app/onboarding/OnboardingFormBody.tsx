@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Alert, Button, Card, Form, Input, Typography } from "antd";
 
 type OnboardingFormBodyProps = {
@@ -17,6 +18,7 @@ export function OnboardingFormBody({
   onSubmit,
 }: OnboardingFormBodyProps) {
   const [form] = Form.useForm();
+  const { t } = useTranslation();
 
   React.useEffect(() => {
     if (userEmail) form.setFieldValue("user_email", userEmail);
@@ -26,32 +28,32 @@ export function OnboardingFormBody({
     <div className="mx-auto w-full max-w-md mt-10">
       <Card>
         <Typography.Title level={5} className="text-center mb-5">
-          🚅 LiteLLM
+          🚅 {t("onboarding.litellm")}
         </Typography.Title>
         <Typography.Title level={3}>
-          {variant === "reset_password" ? "Reset Password" : "Sign Up"}
+          {variant === "reset_password" ? t("onboarding.resetPassword") : t("onboarding.signUp")}
         </Typography.Title>
         <Typography.Text>
           {variant === "reset_password"
-            ? "Reset your password to access Admin UI."
-            : "Claim your user account to login to Admin UI."}
+            ? t("onboarding.resetPasswordDesc")
+            : t("onboarding.signUpDesc")}
         </Typography.Text>
 
         {variant === "signup" && (
           <Alert
             className="mt-4"
             type="info"
-            message="SSO"
+            message={t("onboarding.sso")}
             description={
               <div className="flex justify-between items-center">
-                <span>SSO is under the Enterprise Tier.</span>
+                <span>{t("onboarding.ssoEnterprise")}</span>
                 <Button
                   type="primary"
                   size="small"
                   href="https://forms.gle/W3U4PZpJGFHWtHyA9"
                   target="_blank"
                 >
-                  Get Free Trial
+                  {t("onboarding.getFreeTrial")}
                 </Button>
               </div>
             }
@@ -60,18 +62,18 @@ export function OnboardingFormBody({
         )}
 
         <Form className="mt-10 mb-5" layout="vertical" form={form} onFinish={(values) => onSubmit({ password: values.password })}>
-          <Form.Item label="Email Address" name="user_email">
+          <Form.Item label={t("onboarding.emailAddress")} name="user_email">
             <Input type="email" disabled />
           </Form.Item>
 
           <Form.Item
-            label="Password"
+            label={t("onboarding.password")}
             name="password"
-            rules={[{ required: true, message: "password required to sign up" }]}
+            rules={[{ required: true, message: t("onboarding.passwordRequired") }]}
             help={
               variant === "reset_password"
-                ? "Enter your new password"
-                : "Create a password for your account"
+                ? t("onboarding.enterNewPassword")
+                : t("onboarding.createPassword")
             }
           >
             <Input.Password />
@@ -83,7 +85,7 @@ export function OnboardingFormBody({
 
           <div className="mt-10">
             <Button htmlType="submit" loading={isPending}>
-              {variant === "reset_password" ? "Reset Password" : "Sign Up"}
+              {variant === "reset_password" ? t("onboarding.resetPassword") : t("onboarding.signUp")}
             </Button>
           </div>
         </Form>

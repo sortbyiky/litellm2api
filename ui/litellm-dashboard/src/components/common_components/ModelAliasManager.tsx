@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { PlusCircleIcon, PencilIcon, TrashIcon } from "@heroicons/react/outline";
 import { Card, Title, Text, Table, TableHead, TableHeaderCell, TableBody, TableRow, TableCell } from "@tremor/react";
+import { useTranslation } from "react-i18next";
 import ModelSelector from "./ModelSelector";
 import NotificationsManager from "../molecules/notifications_manager";
 
@@ -23,6 +24,7 @@ const ModelAliasManager: React.FC<ModelAliasManagerProps> = ({
   onAliasUpdate,
   showExampleConfig = true,
 }) => {
+  const { t } = useTranslation();
   const [aliases, setAliases] = useState<AliasItem[]>([]);
   const [newAlias, setNewAlias] = useState({ aliasName: "", targetModel: "" });
   const [editingAlias, setEditingAlias] = useState<AliasItem | null>(null);
@@ -39,13 +41,12 @@ const ModelAliasManager: React.FC<ModelAliasManagerProps> = ({
 
   const handleAddAlias = () => {
     if (!newAlias.aliasName || !newAlias.targetModel) {
-      NotificationsManager.fromBackend("Please provide both alias name and target model");
+      NotificationsManager.fromBackend(t("commonComponents.provideBothAliasAndModel"));
       return;
     }
 
-    // Check for duplicate alias names
     if (aliases.some((alias) => alias.aliasName === newAlias.aliasName)) {
-      NotificationsManager.fromBackend("An alias with this name already exists");
+      NotificationsManager.fromBackend(t("commonComponents.aliasAlreadyExists"));
       return;
     }
 
@@ -59,7 +60,6 @@ const ModelAliasManager: React.FC<ModelAliasManagerProps> = ({
     setAliases(updatedAliases);
     setNewAlias({ aliasName: "", targetModel: "" });
 
-    // Convert array back to object format and notify parent
     const aliasObject: { [key: string]: string } = {};
     updatedAliases.forEach((alias) => {
       aliasObject[alias.aliasName] = alias.targetModel;
@@ -69,7 +69,7 @@ const ModelAliasManager: React.FC<ModelAliasManagerProps> = ({
       onAliasUpdate(aliasObject);
     }
 
-    NotificationsManager.success("Alias added successfully");
+    NotificationsManager.success(t("commonComponents.aliasAddedSuccess"));
   };
 
   const handleEditAlias = (alias: AliasItem) => {
@@ -80,13 +80,12 @@ const ModelAliasManager: React.FC<ModelAliasManagerProps> = ({
     if (!editingAlias) return;
 
     if (!editingAlias.aliasName || !editingAlias.targetModel) {
-      NotificationsManager.fromBackend("Please provide both alias name and target model");
+      NotificationsManager.fromBackend(t("commonComponents.provideBothAliasAndModel"));
       return;
     }
 
-    // Check for duplicate alias names (excluding current alias)
     if (aliases.some((alias) => alias.id !== editingAlias.id && alias.aliasName === editingAlias.aliasName)) {
-      NotificationsManager.fromBackend("An alias with this name already exists");
+      NotificationsManager.fromBackend(t("commonComponents.aliasAlreadyExists"));
       return;
     }
 
@@ -95,7 +94,6 @@ const ModelAliasManager: React.FC<ModelAliasManagerProps> = ({
     setAliases(updatedAliases);
     setEditingAlias(null);
 
-    // Convert array back to object format and notify parent
     const aliasObject: { [key: string]: string } = {};
     updatedAliases.forEach((alias) => {
       aliasObject[alias.aliasName] = alias.targetModel;
@@ -105,7 +103,7 @@ const ModelAliasManager: React.FC<ModelAliasManagerProps> = ({
       onAliasUpdate(aliasObject);
     }
 
-    NotificationsManager.success("Alias updated successfully");
+    NotificationsManager.success(t("commonComponents.aliasUpdatedSuccess"));
   };
 
   const handleCancelEdit = () => {
@@ -126,7 +124,7 @@ const ModelAliasManager: React.FC<ModelAliasManagerProps> = ({
       onAliasUpdate(aliasObject);
     }
 
-    NotificationsManager.success("Alias deleted successfully");
+    NotificationsManager.success(t("commonComponents.aliasDeletedSuccess"));
   };
 
   // Convert current aliases to object for config example
@@ -141,10 +139,10 @@ const ModelAliasManager: React.FC<ModelAliasManagerProps> = ({
   return (
     <div className="mt-4">
       <div className="mb-6">
-        <Text className="text-sm font-medium text-gray-700 mb-2">Add New Alias</Text>
+        <Text className="text-sm font-medium text-gray-700 mb-2">{t("commonComponents.addNewAlias")}</Text>
         <div className="grid grid-cols-3 gap-4">
           <div>
-            <label className="block text-xs text-gray-500 mb-1">Alias Name</label>
+            <label className="block text-xs text-gray-500 mb-1">{t("commonComponents.aliasName")}</label>
             <input
               type="text"
               value={newAlias.aliasName}
@@ -159,11 +157,11 @@ const ModelAliasManager: React.FC<ModelAliasManagerProps> = ({
             />
           </div>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">Target Model</label>
+            <label className="block text-xs text-gray-500 mb-1">{t("commonComponents.targetModel")}</label>
             <ModelSelector
               accessToken={accessToken}
               value={newAlias.targetModel}
-              placeholder="Select target model"
+              placeholder={t("commonComponents.selectTargetModel")}
               onChange={(value) =>
                 setNewAlias({
                   ...newAlias,
@@ -180,21 +178,21 @@ const ModelAliasManager: React.FC<ModelAliasManagerProps> = ({
               className={`flex items-center px-4 py-2 rounded-md text-sm ${!newAlias.aliasName || !newAlias.targetModel ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-green-600 text-white hover:bg-green-700"}`}
             >
               <PlusCircleIcon className="w-4 h-4 mr-1" />
-              Add Alias
+              {t("commonComponents.addAlias")}
             </button>
           </div>
         </div>
       </div>
 
-      <Text className="text-sm font-medium text-gray-700 mb-2">Manage Existing Aliases</Text>
+      <Text className="text-sm font-medium text-gray-700 mb-2">{t("commonComponents.manageExistingAliases")}</Text>
       <div className="rounded-lg custom-border relative mb-6">
         <div className="overflow-x-auto">
           <Table className="[&_td]:py-0.5 [&_th]:py-1">
             <TableHead>
               <TableRow>
-                <TableHeaderCell className="py-1 h-8">Alias Name</TableHeaderCell>
-                <TableHeaderCell className="py-1 h-8">Target Model</TableHeaderCell>
-                <TableHeaderCell className="py-1 h-8">Actions</TableHeaderCell>
+                <TableHeaderCell className="py-1 h-8">{t("commonComponents.aliasName")}</TableHeaderCell>
+                <TableHeaderCell className="py-1 h-8">{t("commonComponents.targetModel")}</TableHeaderCell>
+                <TableHeaderCell className="py-1 h-8">{t("common.actions")}</TableHeaderCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -235,13 +233,13 @@ const ModelAliasManager: React.FC<ModelAliasManagerProps> = ({
                             onClick={handleUpdateAlias}
                             className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded hover:bg-blue-100"
                           >
-                            Save
+                            {t("common.save")}
                           </button>
                           <button
                             onClick={handleCancelEdit}
                             className="text-xs bg-gray-50 text-gray-600 px-2 py-1 rounded hover:bg-gray-100"
                           >
-                            Cancel
+                            {t("common.cancel")}
                           </button>
                         </div>
                       </TableCell>
@@ -273,7 +271,7 @@ const ModelAliasManager: React.FC<ModelAliasManagerProps> = ({
               {aliases.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={3} className="py-0.5 text-sm text-gray-500 text-center">
-                    No aliases added yet. Add a new alias above.
+                    {t("commonComponents.noAliasesYet")}
                   </TableCell>
                 </TableRow>
               )}
@@ -285,15 +283,15 @@ const ModelAliasManager: React.FC<ModelAliasManagerProps> = ({
       {/* Configuration Example */}
       {showExampleConfig && (
         <Card>
-          <Title className="mb-4">Configuration Example</Title>
-          <Text className="text-gray-600 mb-4">Here&apos;s how your current aliases would look in the config:</Text>
+          <Title className="mb-4">{t("commonComponents.configurationExample")}</Title>
+          <Text className="text-gray-600 mb-4">{t("commonComponents.configExampleDesc")}</Text>
           <div className="bg-gray-100 rounded-lg p-4 font-mono text-sm">
             <div className="text-gray-700">
               model_aliases:
               {Object.keys(aliasObject).length === 0 ? (
                 <span className="text-gray-500">
                   <br />
-                  &nbsp;&nbsp;# No aliases configured yet
+                  &nbsp;&nbsp;# {t("commonComponents.noAliasesConfigured")}
                 </span>
               ) : (
                 Object.entries(aliasObject).map(([key, value]) => (

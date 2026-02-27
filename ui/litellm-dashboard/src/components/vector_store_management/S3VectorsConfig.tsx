@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Alert, Form, Input, Select, Tooltip } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { fetchAvailableModels, ModelGroup } from "../playground/llm_calls/fetch_models";
@@ -14,6 +15,7 @@ const S3VectorsConfig: React.FC<S3VectorsConfigProps> = ({
   providerParams,
   onParamsChange,
 }) => {
+  const { t } = useTranslation();
   const [embeddingModels, setEmbeddingModels] = useState<ModelGroup[]>([]);
   const [isLoadingModels, setIsLoadingModels] = useState(false);
 
@@ -48,22 +50,22 @@ const S3VectorsConfig: React.FC<S3VectorsConfigProps> = ({
     <>
       {/* S3 Vectors Setup Instructions */}
       <Alert
-        message="AWS S3 Vectors Setup"
+        message={t("vectorStores.awsS3VectorsSetup")}
         description={
           <div>
-            <p>AWS S3 Vectors allows you to store and query vector embeddings directly in S3:</p>
+            <p>{t("vectorStores.s3VectorsDescription")}</p>
             <ul style={{ marginLeft: "16px", marginTop: "8px" }}>
-              <li>Vector buckets and indexes will be automatically created if they don&apos;t exist</li>
-              <li>Vector dimensions are auto-detected from your selected embedding model</li>
-              <li>Ensure your AWS credentials have permissions for S3 Vectors operations</li>
+              <li>{t("vectorStores.s3AutoCreate")}</li>
+              <li>{t("vectorStores.s3AutoDetect")}</li>
+              <li>{t("vectorStores.s3Permissions")}</li>
               <li>
-                Learn more:{" "}
+                  {t("vectorStores.learnMore")}:{" "}
                 <a
                   href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-vector-buckets.html"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  AWS S3 Vectors Documentation
+                  {t("vectorStores.awsS3VectorsDocs")}
                 </a>
               </li>
             </ul>
@@ -79,7 +81,7 @@ const S3VectorsConfig: React.FC<S3VectorsConfigProps> = ({
         label={
           <span>
             Vector Bucket Name{" "}
-            <Tooltip title="S3 bucket name for vector storage (must be at least 3 characters, lowercase letters, numbers, hyphens, and periods only)">
+            <Tooltip title={t("vectorStores.vectorBucketNameTooltip")}>
               <InfoCircleOutlined style={{ marginLeft: "4px" }} />
             </Tooltip>
           </span>
@@ -92,14 +94,14 @@ const S3VectorsConfig: React.FC<S3VectorsConfigProps> = ({
         }
         help={
           providerParams.vector_bucket_name && providerParams.vector_bucket_name.length < 3
-            ? "Bucket name must be at least 3 characters"
+            ? t("vectorStores.bucketNameMinChars")
             : undefined
         }
       >
         <Input
           value={providerParams.vector_bucket_name || ""}
           onChange={(e) => handleFieldChange("vector_bucket_name", e.target.value)}
-          placeholder="my-vector-bucket (min 3 chars)"
+          placeholder={t("vectorStores.vectorBucketPlaceholder")}
           size="large"
           className="rounded-md"
         />
@@ -110,7 +112,7 @@ const S3VectorsConfig: React.FC<S3VectorsConfigProps> = ({
         label={
           <span>
             Index Name{" "}
-            <Tooltip title="Name for the vector index (optional, will be auto-generated if not provided). If provided, must be at least 3 characters.">
+            <Tooltip title={t("vectorStores.indexNameTooltip")}>
               <InfoCircleOutlined style={{ marginLeft: "4px" }} />
             </Tooltip>
           </span>
@@ -122,14 +124,14 @@ const S3VectorsConfig: React.FC<S3VectorsConfigProps> = ({
         }
         help={
           providerParams.index_name && providerParams.index_name.length > 0 && providerParams.index_name.length < 3
-            ? "Index name must be at least 3 characters if provided"
+            ? t("vectorStores.indexNameMinChars")
             : undefined
         }
       >
         <Input
           value={providerParams.index_name || ""}
           onChange={(e) => handleFieldChange("index_name", e.target.value)}
-          placeholder="my-vector-index (optional, min 3 chars)"
+          placeholder={t("vectorStores.indexNamePlaceholder")}
           size="large"
           className="rounded-md"
         />
@@ -140,7 +142,7 @@ const S3VectorsConfig: React.FC<S3VectorsConfigProps> = ({
         label={
           <span>
             AWS Region{" "}
-            <Tooltip title="AWS region where the S3 bucket is located (e.g., us-west-2)">
+            <Tooltip title={t("vectorStores.awsRegionTooltip")}>
               <InfoCircleOutlined style={{ marginLeft: "4px" }} />
             </Tooltip>
           </span>
@@ -161,7 +163,7 @@ const S3VectorsConfig: React.FC<S3VectorsConfigProps> = ({
         label={
           <span>
             Embedding Model{" "}
-            <Tooltip title="Select the embedding model to use for vector generation">
+            <Tooltip title={t("vectorStores.embeddingModelTooltip")}>
               <InfoCircleOutlined style={{ marginLeft: "4px" }} />
             </Tooltip>
           </span>
@@ -171,7 +173,7 @@ const S3VectorsConfig: React.FC<S3VectorsConfigProps> = ({
         <Select
           value={providerParams.embedding_model || undefined}
           onChange={(value) => handleFieldChange("embedding_model", value)}
-          placeholder="Select an embedding model"
+          placeholder={t("vectorStores.selectEmbeddingModel")}
           size="large"
           showSearch
           loading={isLoadingModels}

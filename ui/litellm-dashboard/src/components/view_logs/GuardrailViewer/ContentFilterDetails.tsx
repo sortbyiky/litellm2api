@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export interface ContentFilterDetection {
   type: "pattern" | "blocked_word" | "category_keyword";
@@ -74,6 +75,7 @@ const KV: React.FC<KVProps> = ({ label, children, mono }) => (
 );
 
 const ContentFilterDetails: React.FC<ContentFilterDetailsProps> = ({ response }) => {
+  const { t } = useTranslation();
   // Handle case where response is a string (error message) or null
   if (!response || typeof response === "string") {
     if (typeof response === "string" && response) {
@@ -95,7 +97,7 @@ const ContentFilterDetails: React.FC<ContentFilterDetailsProps> = ({ response })
   if (detections.length === 0) {
     return (
       <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <div className="text-gray-600 text-sm">No detections found</div>
+        <div className="text-gray-600 text-sm">{t("logViewer.noDetectionsFound")}</div>
       </div>
     );
   }
@@ -213,7 +215,7 @@ const ContentFilterDetails: React.FC<ContentFilterDetailsProps> = ({ response })
       )}
 
       {/* Raw JSON (for debugging) */}
-      <Section title="Raw Detection Data" defaultOpen={false}>
+      <Section title={t("logViewer.rawDetectionData")} defaultOpen={false}>
         <pre className="bg-gray-50 rounded p-3 text-xs overflow-x-auto">{JSON.stringify(detections, null, 2)}</pre>
       </Section>
     </div>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Typography, Space, Upload, Card, Button } from "antd";
 import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { validateBlockedWordsFile } from "../../networking";
@@ -120,10 +121,11 @@ const ContentFilterConfiguration: React.FC<ContentFilterConfigurationProps> = ({
   const [newKeywordAction, setNewKeywordAction] = useState<"BLOCK" | "MASK">("BLOCK");
   const [newKeywordDescription, setNewKeywordDescription] = useState<string>("");
   const [uploadValidating, setUploadValidating] = useState(false);
+  const { t } = useTranslation();
 
   const handleAddPrebuiltPattern = () => {
     if (!selectedPatternName) {
-      NotificationsManager.error("Please select a pattern");
+      NotificationsManager.error(t("guardrailsSub.pleaseSelectPattern"));
       return;
     }
 
@@ -144,7 +146,7 @@ const ContentFilterConfiguration: React.FC<ContentFilterConfigurationProps> = ({
 
   const handleAddCustomPattern = () => {
     if (!customPatternName || !customPatternRegex) {
-      NotificationsManager.error("Please provide pattern name and regex");
+      NotificationsManager.error(t("guardrailsSub.providePatternNameAndRegex"));
       return;
     }
 
@@ -164,7 +166,7 @@ const ContentFilterConfiguration: React.FC<ContentFilterConfigurationProps> = ({
 
   const handleAddKeyword = () => {
     if (!newKeyword) {
-      NotificationsManager.error("Please enter a keyword");
+      NotificationsManager.error(t("guardrailsSub.pleaseEnterKeyword"));
       return;
     }
 
@@ -192,14 +194,14 @@ const ContentFilterConfiguration: React.FC<ContentFilterConfigurationProps> = ({
           if (onFileUpload) {
             onFileUpload(content);
           }
-          NotificationsManager.success(result.message || "File uploaded successfully");
+          NotificationsManager.success(result.message || t("guardrailsSub.fileUploadedSuccess"));
         } else {
-          const errorMessage = result.error || (result.errors && result.errors.join(", ")) || "Invalid file";
-          NotificationsManager.error(`Validation failed: ${errorMessage}`);
+          const errorMessage = result.error || (result.errors && result.errors.join(", ")) || t("guardrailsSub.invalidFile");
+          NotificationsManager.error(`${t("guardrailsSub.validationFailed")}: ${errorMessage}`);
         }
       }
     } catch (error) {
-      NotificationsManager.error(`Failed to upload file: ${error}`);
+      NotificationsManager.error(`${t("guardrailsSub.failedToUploadFile")}: ${error}`);
     } finally {
       setUploadValidating(false);
     }
@@ -217,7 +219,7 @@ const ContentFilterConfiguration: React.FC<ContentFilterConfigurationProps> = ({
       {!showStep && (
         <div>
           <Text type="secondary">
-            Configure patterns, keywords, and content categories to detect and filter sensitive information in requests and responses.
+            {t("guardrailsSub.configureContentFilterDesc")}
           </Text>
         </div>
       )}
@@ -227,10 +229,10 @@ const ContentFilterConfiguration: React.FC<ContentFilterConfigurationProps> = ({
           title={
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <Title level={5} style={{ margin: 0 }}>
-                Pattern Detection
+                {t("guardrailsSub.patternDetection")}
               </Title>
               <Text type="secondary" style={{ fontSize: 14, fontWeight: 400 }}>
-                Detect sensitive information using regex patterns (SSN, credit cards, API keys, etc.)
+                {t("guardrailsSub.patternDetectionDesc")}
               </Text>
             </div>
           }
@@ -239,10 +241,10 @@ const ContentFilterConfiguration: React.FC<ContentFilterConfigurationProps> = ({
           <div style={{ marginBottom: 16 }}>
             <Space>
               <Button type="primary" onClick={() => setPatternModalVisible(true)} icon={<PlusOutlined />}>
-                Add prebuilt pattern
+                {t("guardrailsSub.addPrebuiltPattern")}
               </Button>
               <Button onClick={() => setCustomPatternModalVisible(true)} icon={<PlusOutlined />}>
-                Add custom regex
+                {t("guardrailsSub.addCustomRegex")}
               </Button>
             </Space>
           </div>
@@ -259,10 +261,10 @@ const ContentFilterConfiguration: React.FC<ContentFilterConfigurationProps> = ({
           title={
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <Title level={5} style={{ margin: 0 }}>
-                Blocked Keywords
+                {t("guardrailsSub.blockedKeywords")}
               </Title>
               <Text type="secondary" style={{ fontSize: 14, fontWeight: 400 }}>
-                Block or mask specific sensitive terms and phrases
+                {t("guardrailsSub.blockedKeywordsDesc")}
               </Text>
             </div>
           }
@@ -271,11 +273,11 @@ const ContentFilterConfiguration: React.FC<ContentFilterConfigurationProps> = ({
           <div style={{ marginBottom: 16 }}>
             <Space>
               <Button type="primary" onClick={() => setKeywordModalVisible(true)} icon={<PlusOutlined />}>
-                Add keyword
+                {t("guardrailsSub.addKeyword")}
               </Button>
               <Upload beforeUpload={handleFileUpload} accept=".yaml,.yml" showUploadList={false}>
                 <Button icon={<UploadOutlined />} loading={uploadValidating}>
-                  Upload YAML file
+                  {t("guardrailsSub.uploadYamlFile")}
                 </Button>
               </Upload>
             </Space>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Icon } from "@tremor/react";
 import { EyeIcon } from "@heroicons/react/outline";
 import { Tooltip, Tag, Popover, Spin } from "antd";
@@ -9,6 +10,7 @@ const ImpactPopover: React.FC<{ attachment: PolicyAttachment; accessToken: strin
   attachment,
   accessToken,
 }) => {
+  const { t } = useTranslation();
   const [impact, setImpact] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -35,11 +37,11 @@ const ImpactPopover: React.FC<{ attachment: PolicyAttachment; accessToken: strin
   };
 
   const content = loading ? (
-    <div className="p-2 text-center"><Spin size="small" /> Loading...</div>
+    <div className="p-2 text-center"><Spin size="small" /> {t("common.loading")}</div>
   ) : impact ? (
     <div className="text-xs" style={{ maxWidth: 280 }}>
       {impact.affected_keys_count === -1 ? (
-        <p className="font-medium text-amber-600">Global scope — affects all keys and teams</p>
+        <p className="font-medium text-amber-600">{t("policies.impact.globalScope")}</p>
       ) : (
         <>
           <p className="mb-1">
@@ -63,18 +65,18 @@ const ImpactPopover: React.FC<{ attachment: PolicyAttachment; accessToken: strin
             </div>
           )}
           {impact.affected_keys_count === 0 && impact.affected_teams_count === 0 && (
-            <p className="text-gray-400">No keys or teams currently affected</p>
+            <p className="text-gray-400">{t("policies.impact.noAffected")}</p>
           )}
         </>
       )}
     </div>
   ) : (
-    <p className="text-xs text-gray-400">Click to load</p>
+    <p className="text-xs text-gray-400">{t("policies.impact.clickToLoad")}</p>
   );
 
   return (
-    <Popover content={content} title="Blast Radius" trigger="click" onOpenChange={(open) => { if (open) loadImpact(); }}>
-      <Tooltip title="View blast radius">
+    <Popover content={content} title={t("policies.impact.blastRadius")} trigger="click" onOpenChange={(open) => { if (open) loadImpact(); }}>
+      <Tooltip title={t("policies.impact.viewBlastRadius")}>
         <Icon icon={EyeIcon} size="sm" className="cursor-pointer hover:text-blue-500" />
       </Tooltip>
     </Popover>

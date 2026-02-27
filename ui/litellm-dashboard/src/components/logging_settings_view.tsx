@@ -2,6 +2,7 @@ import React from "react";
 import { Text, Badge } from "@tremor/react";
 import { CogIcon, BanIcon } from "@heroicons/react/outline";
 import { callbackInfo, callback_map, reverse_callback_map } from "./callback_info_helpers";
+import { useTranslation } from "react-i18next";
 
 interface LoggingConfig {
   callback_name: string;
@@ -22,6 +23,7 @@ export function LoggingSettingsView({
   variant = "card",
   className = "",
 }: LoggingSettingsViewProps) {
+  const { t } = useTranslation();
   const getLoggingDisplayName = (callbackName: string) => {
     // Find the display name for the callback
     const callbackDisplayName = Object.entries(callback_map).find(([_, value]) => value === callbackName)?.[0];
@@ -44,11 +46,11 @@ export function LoggingSettingsView({
   const getEventTypeLabel = (eventType: string) => {
     switch (eventType) {
       case "success":
-        return "Success Only";
+        return t("logging.successOnly");
       case "failure":
-        return "Failure Only";
+        return t("logging.failureOnly");
       case "success_and_failure":
-        return "Success & Failure";
+        return t("logging.successAndFailure");
       default:
         return eventType;
     }
@@ -60,7 +62,7 @@ export function LoggingSettingsView({
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <CogIcon className="h-4 w-4 text-blue-600" />
-          <Text className="font-semibold text-gray-900">Logging Integrations</Text>
+          <Text className="font-semibold text-gray-900">{t("logging.loggingIntegrations")}</Text>
           <Badge color="blue" size="xs">
             {loggingConfigs.length}
           </Badge>
@@ -86,7 +88,7 @@ export function LoggingSettingsView({
                     <div>
                       <Text className="font-medium text-blue-800">{displayName}</Text>
                       <Text className="text-xs text-blue-600">
-                        {Object.keys(config.callback_vars).length} parameters configured
+                        {Object.keys(config.callback_vars).length} {t("logging.parametersConfigured")}
                       </Text>
                     </div>
                   </div>
@@ -100,7 +102,7 @@ export function LoggingSettingsView({
         ) : (
           <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200">
             <CogIcon className="h-4 w-4 text-gray-400" />
-            <Text className="text-gray-500 text-sm">No logging integrations configured</Text>
+            <Text className="text-gray-500 text-sm">{t("logging.noLoggingIntegrations")}</Text>
           </div>
         )}
       </div>
@@ -109,7 +111,7 @@ export function LoggingSettingsView({
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <BanIcon className="h-4 w-4 text-red-600" />
-          <Text className="font-semibold text-gray-900">Disabled Callbacks</Text>
+          <Text className="font-semibold text-gray-900">{t("logging.disabledCallbacks")}</Text>
           <Badge color="red" size="xs">
             {disabledCallbacks.length}
           </Badge>
@@ -135,11 +137,11 @@ export function LoggingSettingsView({
                     )}
                     <div>
                       <Text className="font-medium text-red-800">{displayName}</Text>
-                      <Text className="text-xs text-red-600">Disabled for this key</Text>
+                      <Text className="text-xs text-red-600">{t("logging.disabledForThisKey")}</Text>
                     </div>
                   </div>
                   <Badge color="red" size="sm">
-                    Disabled
+                    {t("common.disabled")}
                   </Badge>
                 </div>
               );
@@ -148,7 +150,7 @@ export function LoggingSettingsView({
         ) : (
           <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200">
             <BanIcon className="h-4 w-4 text-gray-400" />
-            <Text className="text-gray-500 text-sm">No callbacks disabled</Text>
+            <Text className="text-gray-500 text-sm">{t("logging.noCallbacksDisabled")}</Text>
           </div>
         )}
       </div>
@@ -160,9 +162,9 @@ export function LoggingSettingsView({
       <div className={`bg-white border border-gray-200 rounded-lg p-6 ${className}`}>
         <div className="flex items-center gap-2 mb-6">
           <div>
-            <Text className="font-semibold text-gray-900">Logging Settings</Text>
+            <Text className="font-semibold text-gray-900">{t("logging.loggingSettings")}</Text>
             <Text className="text-xs text-gray-500">
-              Active logging integrations and disabled callbacks for this key
+              {t("logging.loggingSettingsDesc")}
             </Text>
           </div>
         </div>
@@ -173,7 +175,7 @@ export function LoggingSettingsView({
 
   return (
     <div className={`${className}`}>
-      <Text className="font-medium text-gray-900 mb-3">Logging Settings</Text>
+      <Text className="font-medium text-gray-900 mb-3">{t("logging.loggingSettings")}</Text>
       {content}
     </div>
   );

@@ -4,6 +4,7 @@ import { ServerIcon, ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/
 import { Tooltip } from "antd";
 import { fetchMCPServers } from "../networking";
 import { MCPServer } from "../mcp_tools/types";
+import { useTranslation } from "react-i18next";
 
 interface MCPServerPermissionsProps {
   mcpServers: string[];
@@ -21,6 +22,7 @@ export function MCPServerPermissions({
   const [mcpServerDetails, setMCPServerDetails] = useState<MCPServer[]>([]);
   const [accessGroupNames, setAccessGroupNames] = useState<string[]>([]);
   const [expandedServers, setExpandedServers] = useState<Set<string>>(new Set());
+  const { t } = useTranslation();
 
   const toggleServerExpansion = (serverId: string) => {
     setExpandedServers((prev) => {
@@ -94,7 +96,7 @@ export function MCPServerPermissions({
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <ServerIcon className="h-4 w-4 text-blue-600" />
-        <Text className="font-semibold text-gray-900">MCP Servers</Text>
+        <Text className="font-semibold text-gray-900">{t("permissions.mcpServers")}</Text>
         <Badge color="blue" size="xs">
           {totalCount}
         </Badge>
@@ -130,7 +132,7 @@ export function MCPServerPermissions({
                         <span className="inline-block w-1.5 h-1.5 bg-green-500 rounded-full flex-shrink-0"></span>
                         <span className="text-sm font-medium text-gray-900 truncate">{getAccessGroupDisplayName(item.value)}</span>
                         <span className="ml-1 px-1.5 py-0.5 text-[9px] font-semibold text-green-600 bg-green-50 border border-green-200 rounded uppercase tracking-wide flex-shrink-0">
-                          Group
+                          {t("permissions.group")}
                         </span>
                       </div>
                     )}
@@ -139,7 +141,7 @@ export function MCPServerPermissions({
                   {hasToolRestrictions && (
                     <div className="flex items-center gap-1 flex-shrink-0 whitespace-nowrap">
                       <span className="text-xs font-medium text-gray-600">{toolsForServer.length}</span>
-                      <span className="text-xs text-gray-500">{toolsForServer.length === 1 ? "tool" : "tools"}</span>
+                      <span className="text-xs text-gray-500">{toolsForServer.length === 1 ? t("permissions.tool") : t("permissions.tools")}</span>
                       {isExpanded ? (
                         <ChevronDownIcon className="h-3.5 w-3.5 text-gray-400 ml-0.5" />
                       ) : (
@@ -171,7 +173,7 @@ export function MCPServerPermissions({
       ) : (
         <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200">
           <ServerIcon className="h-4 w-4 text-gray-400" />
-          <Text className="text-gray-500 text-sm">No MCP servers or access groups configured</Text>
+          <Text className="text-gray-500 text-sm">{t("permissions.noMcpServersOrAccessGroups")}</Text>
         </div>
       )}
     </div>

@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Typography, Select, Modal, Space, Button, Input } from "antd";
 
 const { Text } = Typography;
@@ -27,9 +28,10 @@ const KeywordModal: React.FC<KeywordModalProps> = ({
   onAdd,
   onCancel,
 }) => {
+  const { t } = useTranslation();
   return (
     <Modal
-      title="Add blocked keyword"
+      title={t("guardrailsSub.addBlockedKeyword")}
       open={visible}
       onCancel={onCancel}
       footer={null}
@@ -37,9 +39,9 @@ const KeywordModal: React.FC<KeywordModalProps> = ({
     >
       <Space direction="vertical" style={{ width: "100%" }} size="large">
         <div>
-          <Text strong>Keyword</Text>
+          <Text strong>{t("guardrailsSub.keyword")}</Text>
           <Input
-            placeholder="Enter sensitive keyword or phrase"
+            placeholder={t("guardrailsSub.enterSensitiveKeyword")}
             value={keyword}
             onChange={(e) => onKeywordChange(e.target.value)}
             style={{ marginTop: 8 }}
@@ -47,24 +49,24 @@ const KeywordModal: React.FC<KeywordModalProps> = ({
         </div>
 
         <div>
-          <Text strong>Action</Text>
+          <Text strong>{t("guardrailsSub.action")}</Text>
           <Text type="secondary" style={{ display: "block", marginTop: 4, marginBottom: 8 }}>
-            Choose what action the guardrail should take when this keyword is detected
+            {t("guardrailsSub.chooseActionOnKeyword")}
           </Text>
           <Select
             value={action}
             onChange={onActionChange}
             style={{ width: "100%" }}
           >
-            <Option value="BLOCK">Block</Option>
-            <Option value="MASK">Mask</Option>
+            <Option value="BLOCK">{t("guardrailsSub.block")}</Option>
+            <Option value="MASK">{t("guardrailsSub.mask")}</Option>
           </Select>
         </div>
 
         <div>
-          <Text strong>Description (optional)</Text>
+          <Text strong>{t("guardrailsSub.descriptionOptional")}</Text>
           <Input.TextArea
-            placeholder="Explain why this keyword is sensitive"
+            placeholder={t("guardrailsSub.explainWhyKeywordSensitive")}
             value={description}
             onChange={(e) => onDescriptionChange(e.target.value)}
             rows={3}
@@ -75,10 +77,10 @@ const KeywordModal: React.FC<KeywordModalProps> = ({
 
       <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "24px" }}>
         <Button onClick={onCancel}>
-          Cancel
+          {t("guardrailsSub.cancel")}
         </Button>
         <Button type="primary" onClick={onAdd}>
-          Add
+          {t("guardrailsSub.add")}
         </Button>
       </div>
     </Modal>

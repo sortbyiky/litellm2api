@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Typography, Select, Modal, Space, Button } from "antd";
 
 const { Text } = Typography;
@@ -34,9 +35,10 @@ const PatternModal: React.FC<PatternModalProps> = ({
   onAdd,
   onCancel,
 }) => {
+  const { t } = useTranslation();
   return (
     <Modal
-      title="Add prebuilt pattern"
+      title={t("guardrailsSub.addPrebuiltPattern")}
       open={visible}
       onCancel={onCancel}
       footer={null}
@@ -44,9 +46,9 @@ const PatternModal: React.FC<PatternModalProps> = ({
     >
       <Space direction="vertical" style={{ width: "100%" }} size="large">
         <div>
-          <Text strong>Pattern type</Text>
+          <Text strong>{t("guardrailsSub.patternType")}</Text>
           <Select
-            placeholder="Choose pattern type"
+            placeholder={t("guardrailsSub.choosePatternType")}
             value={selectedPatternName}
             onChange={onPatternNameChange}
             style={{ width: "100%", marginTop: 8 }}
@@ -80,27 +82,27 @@ const PatternModal: React.FC<PatternModalProps> = ({
         </div>
 
         <div>
-          <Text strong>Action</Text>
+          <Text strong>{t("guardrailsSub.action")}</Text>
           <Text type="secondary" style={{ display: "block", marginTop: 4, marginBottom: 8 }}>
-            Choose what action the guardrail should take when this pattern is detected
+            {t("guardrailsSub.chooseActionOnPattern")}
           </Text>
           <Select
             value={patternAction}
             onChange={onActionChange}
             style={{ width: "100%" }}
           >
-            <Option value="BLOCK">Block</Option>
-            <Option value="MASK">Mask</Option>
+            <Option value="BLOCK">{t("guardrailsSub.block")}</Option>
+            <Option value="MASK">{t("guardrailsSub.mask")}</Option>
           </Select>
         </div>
       </Space>
 
       <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "24px" }}>
         <Button onClick={onCancel}>
-          Cancel
+          {t("guardrailsSub.cancel")}
         </Button>
         <Button type="primary" onClick={onAdd}>
-          Add
+          {t("guardrailsSub.add")}
         </Button>
       </div>
     </Modal>

@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Typography, Select, Table, Tag, Button } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 
@@ -25,32 +26,33 @@ const PatternTable: React.FC<PatternTableProps> = ({
   onActionChange,
   onRemove,
 }) => {
+  const { t } = useTranslation();
   const columns = [
     {
-      title: "Type",
+      title: t("guardrailsSub.type"),
       dataIndex: "type",
       key: "type",
       width: 100,
       render: (type: string) => (
         <Tag color={type === "prebuilt" ? "blue" : "green"}>
-          {type === "prebuilt" ? "Prebuilt" : "Custom"}
+          {type === "prebuilt" ? t("guardrailsSub.prebuilt") : t("guardrailsSub.custom")}
         </Tag>
       ),
     },
     {
-      title: "Pattern name",
+      title: t("guardrailsSub.patternName"),
       dataIndex: "name",
       key: "name",
       render: (_: string, record: Pattern) => record.display_name || record.name,
     },
     {
-      title: "Regex pattern",
+      title: t("guardrailsSub.regexPattern"),
       dataIndex: "pattern",
       key: "pattern",
       render: (pattern: string) => (pattern ? <Text code style={{ fontSize: 12 }}>{pattern.substring(0, 40)}...</Text> : "-"),
     },
     {
-      title: "Action",
+      title: t("guardrailsSub.action"),
       dataIndex: "action",
       key: "action",
       width: 150,
@@ -61,8 +63,8 @@ const PatternTable: React.FC<PatternTableProps> = ({
           style={{ width: 120 }}
           size="small"
         >
-          <Option value="BLOCK">Block</Option>
-          <Option value="MASK">Mask</Option>
+          <Option value="BLOCK">{t("guardrailsSub.block")}</Option>
+          <Option value="MASK">{t("guardrailsSub.mask")}</Option>
         </Select>
       ),
     },
@@ -78,7 +80,7 @@ const PatternTable: React.FC<PatternTableProps> = ({
           icon={<DeleteOutlined />}
           onClick={() => onRemove(record.id)}
         >
-          Delete
+          {t("guardrailsSub.delete")}
         </Button>
       ),
     },
@@ -87,7 +89,7 @@ const PatternTable: React.FC<PatternTableProps> = ({
   if (patterns.length === 0) {
     return (
       <div style={{ textAlign: "center", padding: "40px 0", color: "#999" }}>
-        No patterns added.
+        {t("guardrailsSub.noPatternsAdded")}
       </div>
     );
   }

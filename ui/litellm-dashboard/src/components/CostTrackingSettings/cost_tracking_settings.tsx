@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Title, Text, Button, Accordion, AccordionHeader, AccordionBody, TabGroup, TabList, Tab, TabPanels, TabPanel } from "@tremor/react";
 import { Modal, Form } from "antd";
 import { CostTrackingSettingsProps } from "./types";
@@ -24,6 +25,7 @@ const CostTrackingSettings: React.FC<CostTrackingSettingsProps> = ({
   userRole, 
   accessToken 
 }) => {
+  const { t } = useTranslation();
   const [selectedProvider, setSelectedProvider] = useState<string | undefined>(undefined);
   const [newDiscount, setNewDiscount] = useState<string>("");
   const [isFetching, setIsFetching] = useState(true);
@@ -98,12 +100,12 @@ const CostTrackingSettings: React.FC<CostTrackingSettingsProps> = ({
 
   const handleRemoveProvider = async (provider: string, providerDisplayName: string) => {
     modal.confirm({
-      title: 'Remove Provider Discount',
+      title: t("costTracking.removeProviderDiscount"),
       icon: <ExclamationCircleOutlined />,
-      content: `Are you sure you want to remove the discount for ${providerDisplayName}?`,
-      okText: 'Remove',
+      content: t("costTracking.confirmRemoveDiscount", { provider: providerDisplayName }),
+      okText: t("common.remove"),
       okType: 'danger',
-      cancelText: 'Cancel',
+      cancelText: t("common.cancel"),
       onOk: () => removeProvider(provider),
     });
   };
@@ -135,12 +137,12 @@ const CostTrackingSettings: React.FC<CostTrackingSettingsProps> = ({
 
   const handleRemoveMargin = async (provider: string, providerDisplayName: string) => {
     modal.confirm({
-      title: 'Remove Provider Margin',
+      title: t("costTracking.removeProviderMargin"),
       icon: <ExclamationCircleOutlined />,
-      content: `Are you sure you want to remove the margin for ${providerDisplayName}?`,
-      okText: 'Remove',
+      content: t("costTracking.confirmRemoveMargin", { provider: providerDisplayName }),
+      okText: t("common.remove"),
       okType: 'danger',
-      cancelText: 'Cancel',
+      cancelText: t("common.cancel"),
       onOk: () => removeMargin(provider),
     });
   };
@@ -157,11 +159,11 @@ const CostTrackingSettings: React.FC<CostTrackingSettingsProps> = ({
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
         <div>
           <div className="flex items-center gap-2">
-            <Title>Cost Tracking Settings</Title>
+            <Title>{t("costTracking.title")}</Title>
             <DocsMenu items={DOCS_LINKS} />
           </div>
           <Text className="text-gray-500 mt-1">
-            Configure cost discounts and margins for different LLM providers. Changes are saved automatically.
+            {t("costTracking.subtitle")}
           </Text>
         </div>
       </div>
@@ -173,17 +175,17 @@ const CostTrackingSettings: React.FC<CostTrackingSettingsProps> = ({
           <Accordion>
             <AccordionHeader className="px-6 py-4">
               <div className="flex flex-col items-start w-full">
-                <Text className="text-lg font-semibold text-gray-900">Provider Discounts</Text>
+                <Text className="text-lg font-semibold text-gray-900">{t("costTracking.providerDiscounts")}</Text>
                 <Text className="text-sm text-gray-500 mt-1">
-                  Apply percentage-based discounts to reduce costs for specific providers
+                  {t("costTracking.providerDiscountsDesc")}
                 </Text>
               </div>
             </AccordionHeader>
             <AccordionBody className="px-0">
               <TabGroup>
                 <TabList className="px-6 pt-4">
-                  <Tab>Discounts</Tab>
-                  <Tab>Test It</Tab>
+                  <Tab>{t("costTracking.discounts")}</Tab>
+                  <Tab>{t("costTracking.testIt")}</Tab>
                 </TabList>
                 <TabPanels>
                   <TabPanel>
@@ -192,12 +194,12 @@ const CostTrackingSettings: React.FC<CostTrackingSettingsProps> = ({
                         <Button
                           onClick={() => setIsModalVisible(true)}
                         >
-                          + Add Provider Discount
+                          + {t("costTracking.addProviderDiscount")}
                         </Button>
                       </div>
                       {isFetching ? (
                         <div className="py-12 text-center">
-                          <Text className="text-gray-500">Loading configuration...</Text>
+                          <Text className="text-gray-500">{t("costTracking.loadingConfiguration")}</Text>
                         </div>
                       ) : Object.keys(discountConfig).length > 0 ? (
                         <ProviderDiscountTable
@@ -221,10 +223,10 @@ const CostTrackingSettings: React.FC<CostTrackingSettingsProps> = ({
                             />
                           </svg>
                           <Text className="text-gray-700 font-medium mb-2">
-                            No provider discounts configured
+                            {t("costTracking.noProviderDiscounts")}
                           </Text>
                           <Text className="text-gray-500 text-sm">
-                            Click &quot;Add Provider Discount&quot; to get started
+                            {t("costTracking.clickAddProviderDiscount")}
                           </Text>
                         </div>
                       )}
@@ -246,9 +248,9 @@ const CostTrackingSettings: React.FC<CostTrackingSettingsProps> = ({
           <Accordion>
             <AccordionHeader className="px-6 py-4">
               <div className="flex flex-col items-start w-full">
-                <Text className="text-lg font-semibold text-gray-900">Fee/Price Margin</Text>
+                <Text className="text-lg font-semibold text-gray-900">{t("costTracking.feeMargin")}</Text>
                 <Text className="text-sm text-gray-500 mt-1">
-                  Add fees or margins to LLM costs for internal billing and cost recovery
+                  {t("costTracking.feeMarginDesc")}
                 </Text>
               </div>
             </AccordionHeader>
@@ -258,12 +260,12 @@ const CostTrackingSettings: React.FC<CostTrackingSettingsProps> = ({
                   <Button
                     onClick={() => setIsMarginModalVisible(true)}
                   >
-                    + Add Provider Margin
+                    + {t("costTracking.addProviderMargin")}
                   </Button>
                 </div>
                 {isFetching ? (
                   <div className="py-12 text-center">
-                    <Text className="text-gray-500">Loading configuration...</Text>
+                    <Text className="text-gray-500">{t("costTracking.loadingConfiguration")}</Text>
                   </div>
                 ) : Object.keys(marginConfig).length > 0 ? (
                   <ProviderMarginTable
@@ -287,10 +289,10 @@ const CostTrackingSettings: React.FC<CostTrackingSettingsProps> = ({
                       />
                     </svg>
                     <Text className="text-gray-700 font-medium mb-2">
-                      No provider margins configured
+                      {t("costTracking.noProviderMargins")}
                     </Text>
                     <Text className="text-gray-500 text-sm">
-                      Click &quot;Add Provider Margin&quot; to get started
+                      {t("costTracking.clickAddProviderMargin")}
                     </Text>
                   </div>
                 )}
@@ -303,9 +305,9 @@ const CostTrackingSettings: React.FC<CostTrackingSettingsProps> = ({
         <Accordion defaultOpen={true}>
           <AccordionHeader className="px-6 py-4">
             <div className="flex flex-col items-start w-full">
-              <Text className="text-lg font-semibold text-gray-900">Pricing Calculator</Text>
+              <Text className="text-lg font-semibold text-gray-900">{t("costTracking.pricingCalculator")}</Text>
               <Text className="text-sm text-gray-500 mt-1">
-                Estimate LLM costs based on expected token usage and request volume
+                {t("costTracking.pricingCalculatorDesc")}
               </Text>
             </div>
           </AccordionHeader>
@@ -323,7 +325,7 @@ const CostTrackingSettings: React.FC<CostTrackingSettingsProps> = ({
       <Modal
         title={
           <div className="flex items-center space-x-3 pb-4 border-b border-gray-100">
-            <h2 className="text-xl font-semibold text-gray-900">Add Provider Discount</h2>
+            <h2 className="text-xl font-semibold text-gray-900">{t("costTracking.addProviderDiscount")}</h2>
           </div>
         }
         open={isModalVisible}
@@ -338,7 +340,7 @@ const CostTrackingSettings: React.FC<CostTrackingSettingsProps> = ({
       >
         <div className="mt-6">
           <Text className="text-sm text-gray-600 mb-6">
-            Select a provider and set its discount percentage. Enter a value between 0% and 100% (e.g., 5 for a 5% discount).
+            {t("costTracking.addDiscountDesc")}
           </Text>
           <Form
             form={form}
@@ -361,7 +363,7 @@ const CostTrackingSettings: React.FC<CostTrackingSettingsProps> = ({
       <Modal
         title={
           <div className="flex items-center space-x-3 pb-4 border-b border-gray-100">
-            <h2 className="text-xl font-semibold text-gray-900">Add Provider Margin</h2>
+            <h2 className="text-xl font-semibold text-gray-900">{t("costTracking.addProviderMargin")}</h2>
           </div>
         }
         open={isMarginModalVisible}
@@ -376,7 +378,7 @@ const CostTrackingSettings: React.FC<CostTrackingSettingsProps> = ({
       >
         <div className="mt-6">
           <Text className="text-sm text-gray-600 mb-6">
-            Select a provider (or &quot;Global&quot; for all providers) and configure the margin. You can use percentage-based or fixed amount.
+            {t("costTracking.addMarginDesc")}
           </Text>
           <Form
             form={marginForm}

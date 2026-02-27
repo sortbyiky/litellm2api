@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@tremor/react";
 import { Modal } from "antd";
 import {
@@ -22,6 +23,7 @@ const ClaudeCodePluginsPanel: React.FC<ClaudeCodePluginsPanelProps> = ({
   userRole,
 }) => {
   const [pluginsList, setPluginsList] = useState<Plugin[]>([]);
+  const { t } = useTranslation();
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -85,12 +87,12 @@ const ClaudeCodePluginsPanel: React.FC<ClaudeCodePluginsPanelProps> = ({
     try {
       await deleteClaudeCodePlugin(accessToken, pluginToDelete.name);
       NotificationsManager.success(
-        `Plugin "${pluginToDelete.displayName}" deleted successfully`
+        t("claudeCode.pluginDeletedSuccess", { name: pluginToDelete.displayName })
       );
       fetchPlugins();
     } catch (error) {
       console.error("Error deleting plugin:", error);
-      NotificationsManager.error("Failed to delete plugin");
+      NotificationsManager.error(t("claudeCode.failedDeletePlugin"));
     } finally {
       setIsDeleting(false);
       setPluginToDelete(null);
@@ -104,16 +106,14 @@ const ClaudeCodePluginsPanel: React.FC<ClaudeCodePluginsPanelProps> = ({
   return (
     <div className="w-full mx-auto flex-auto overflow-y-auto m-8 p-2">
       <div className="flex flex-col gap-2 mb-4">
-        <h1 className="text-2xl font-bold">Claude Code Plugins</h1>
+        <h1 className="text-2xl font-bold">{t("claudeCode.title")}</h1>
         <p className="text-sm text-gray-600">
-          Manage Claude Code marketplace plugins. Add, enable, disable, or
-          delete plugins that will be available in your marketplace catalog.
-          Enabled plugins will appear in the public marketplace at{" "}
+          {t("claudeCode.description")}
           <code className="bg-gray-100 px-1 rounded">/claude-code/marketplace.json</code>.
         </p>
         <div className="mt-2">
           <Button onClick={handleAddPlugin} disabled={!accessToken || !isAdmin}>
-            + Add New Plugin
+            + {t("claudeCode.addNewPlugin")}
           </Button>
         </div>
       </div>
@@ -147,19 +147,19 @@ const ClaudeCodePluginsPanel: React.FC<ClaudeCodePluginsPanelProps> = ({
 
       {pluginToDelete && (
         <Modal
-          title="Delete Plugin"
+          title={t("claudeCode.deletePlugin")}
           open={pluginToDelete !== null}
           onOk={handleDeleteConfirm}
           onCancel={handleDeleteCancel}
           confirmLoading={isDeleting}
-          okText="Delete"
+          okText={t("common.delete")}
           okButtonProps={{ danger: true }}
         >
           <p>
-            Are you sure you want to delete plugin:{" "}
+            {t("claudeCode.confirmDeletePlugin")}{" "}
             <strong>{pluginToDelete.displayName}</strong>?
           </p>
-          <p>This action cannot be undone.</p>
+          <p>{t("claudeCode.cannotBeUndone")}</p>
         </Modal>
       )}
     </div>

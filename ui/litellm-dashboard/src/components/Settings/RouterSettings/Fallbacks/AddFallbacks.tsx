@@ -7,6 +7,7 @@
 import { Button as TremorButton } from "@tremor/react";
 import { Button, message } from "antd";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import NotificationManager from "../../../molecules/notifications_manager";
 import { fetchAvailableModels, ModelGroup } from "../../../playground/llm_calls/fetch_models";
 import { AddFallbacksModal } from "./AddFallbacksModal";
@@ -29,6 +30,7 @@ export default function AddFallbacks({
   value = [],
   onChange,
 }: AddFallbacksProps) {
+  const { t } = useTranslation();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modelInfo, setModelInfo] = useState<ModelGroup[]>([]);
   const [modalKey, setModalKey] = useState(0); // Key to force remount of form when modal opens
@@ -91,7 +93,7 @@ export default function AddFallbacks({
     );
     if (invalidGroups.length > 0) {
       message.error(
-        `Please complete configuration for all groups. ${invalidGroups.length} group(s) incomplete.`,
+        t("routerSettings.completeAllGroups", { count: invalidGroups.length }),
       );
       return;
     }
@@ -112,7 +114,7 @@ export default function AddFallbacks({
       setIsSaving(true);
       try {
         await onChange(updatedFallbacks);
-        NotificationManager.success(`${groups.length} fallback configuration(s) added successfully!`);
+        NotificationManager.success(t("routerSettings.fallbackConfigsAdded", { count: groups.length }));
         handleCancel();
       } catch (error) {
         // Error handling is done in handleFallbacksChange, so we don't need to show another notification here
@@ -132,7 +134,7 @@ export default function AddFallbacks({
         onClick={() => setIsModalVisible(true)}
         icon={() => <span className="mr-1">+</span>}
       >
-        Add Fallbacks
+        {t("routerSettings.addFallbacks")}
       </TremorButton>
       <AddFallbacksModal open={isModalVisible} onCancel={handleCancel}>
         <FallbackSelectionForm
@@ -151,7 +153,7 @@ export default function AddFallbacks({
               onClick={handleCancel}
               disabled={isSaving}
             >
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button
               type="default"
@@ -159,7 +161,7 @@ export default function AddFallbacks({
               disabled={groups.length === 0 || isSaving}
               loading={isSaving}
             >
-              {isSaving ? "Saving Configuration..." : "Save All Configurations"}
+              {isSaving ? t("routerSettings.savingConfiguration") : t("routerSettings.saveAllConfigurations")}
             </Button>
           </div>
         )}

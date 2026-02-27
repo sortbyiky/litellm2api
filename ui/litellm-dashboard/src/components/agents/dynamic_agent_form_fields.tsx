@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Form, Input, Select, Collapse } from "antd";
 import { AgentCreateInfo, AgentCredentialFieldMetadata } from "../networking";
 import { AGENT_FORM_CONFIG } from "./agent_config";
@@ -18,23 +19,24 @@ interface DynamicAgentFormFieldsProps {
 const DynamicAgentFormFields: React.FC<DynamicAgentFormFieldsProps> = ({
   agentTypeInfo,
 }) => {
+  const { t } = useTranslation();
   return (
     <>
       <Form.Item
-        label="Agent Name"
+        label={t("agentsSub.agentName")}
         name="agent_name"
-        rules={[{ required: true, message: "Please enter a unique agent name" }]}
-        tooltip="Unique identifier for the agent"
+        rules={[{ required: true, message: t("agentsSub.pleaseEnterAgentName") }]}
+        tooltip={t("agentsSub.uniqueIdentifier")}
       >
-        <Input placeholder="e.g., my-langgraph-agent" />
+        <Input placeholder={t("agentsSub.dynamicAgentNamePlaceholder")} />
       </Form.Item>
 
       <Form.Item
-        label="Description"
+        label={t("agentsSub.description")}
         name="description"
-        tooltip="Brief description of what this agent does"
+        tooltip={t("agentsSub.briefDescription")}
       >
-        <Input.TextArea rows={2} placeholder="Describe what this agent does..." />
+        <Input.TextArea rows={2} placeholder={t("agentsSub.descriptionPlaceholder")} />
       </Form.Item>
 
       {agentTypeInfo.credential_fields.map((field: AgentCredentialFieldMetadata) => (

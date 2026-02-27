@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { TextInput, SelectItem } from "@tremor/react";
+import { useTranslation } from "react-i18next";
 
 import { Button as Button2, Modal, Form, Select as Select2, InputNumber } from "antd";
 
@@ -17,6 +18,7 @@ interface EditUserModalProps {
 const EditUserModal: React.FC<EditUserModalProps> = ({ visible, possibleUIRoles, onCancel, user, onSubmit }) => {
   const [editedUser, setEditedUser] = useState(user);
   const [form] = Form.useForm();
+  const { t } = useTranslation();
 
   useEffect(() => {
     form.resetFields();
@@ -39,17 +41,17 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ visible, possibleUIRoles,
   }
 
   return (
-    <Modal open={visible} onCancel={handleCancel} footer={null} title={"Edit User " + user.user_id} width={1000}>
+    <Modal open={visible} onCancel={handleCancel} footer={null} title={t("users.editUser") + " " + user.user_id} width={1000}>
       <Form
         form={form}
         onFinish={handleEditSubmit}
-        initialValues={user} // Pass initial values here
+        initialValues={user}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
         labelAlign="left"
       >
         <>
-          <Form.Item className="mt-8" label="User Email" tooltip="Email of the User" name="user_email">
+          <Form.Item className="mt-8" label={t("users.userEmail")} tooltip={t("users.userEmailTooltip")} name="user_email">
             <TextInput />
           </Form.Item>
 
@@ -57,7 +59,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ visible, possibleUIRoles,
             <TextInput />
           </Form.Item>
 
-          <Form.Item label="User Role" name="user_role">
+          <Form.Item label={t("users.userRole")} name="user_role">
             <Select2>
               {possibleUIRoles &&
                 Object.entries(possibleUIRoles).map(([role, { ui_label, description }]) => (
@@ -74,33 +76,33 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ visible, possibleUIRoles,
           </Form.Item>
 
           <Form.Item
-            label="Spend (USD)"
+            label={t("users.spendUsd")}
             name="spend"
-            tooltip="(float) - Spend of all LLM calls completed by this user"
-            help="Across all keys (including keys with team_id)."
+            tooltip={t("users.spendTooltip")}
+            help={t("users.spendHelp")}
           >
             <InputNumber min={0} step={0.01} />
           </Form.Item>
 
           <Form.Item
-            label="User Budget (USD)"
+            label={t("users.userBudgetUsd")}
             name="max_budget"
-            tooltip="(float) - Maximum budget of this user"
-            help="Maximum budget of this user."
+            tooltip={t("users.userBudgetTooltip")}
+            help={t("users.userBudgetHelp")}
           >
             <NumericalInput min={0} step={0.01} />
           </Form.Item>
 
-          <Form.Item label="Reset Budget" name="budget_duration">
+          <Form.Item label={t("users.resetBudget")} name="budget_duration">
             <BudgetDurationDropdown />
           </Form.Item>
 
           <div style={{ textAlign: "right", marginTop: "10px" }}>
-            <Button2 htmlType="submit">Save</Button2>
+            <Button2 htmlType="submit">{t("common.save")}</Button2>
           </div>
 
           <div style={{ textAlign: "right", marginTop: "10px" }}>
-            <Button2 htmlType="submit">Save</Button2>
+            <Button2 htmlType="submit">{t("common.save")}</Button2>
           </div>
         </>
       </Form>

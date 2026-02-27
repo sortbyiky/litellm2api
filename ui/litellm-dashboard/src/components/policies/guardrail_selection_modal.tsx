@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Modal, Checkbox, Button, Divider, Tag } from "antd";
 import { CheckCircleOutlined, InfoCircleOutlined } from "@ant-design/icons";
 
@@ -31,6 +32,7 @@ const GuardrailSelectionModal: React.FC<GuardrailSelectionModalProps> = ({
   const [selectedGuardrails, setSelectedGuardrails] = useState<Set<string>>(
     new Set()
   );
+  const { t } = useTranslation();
 
   // Prepare guardrail info with existence status
   const guardrailsInfo: GuardrailInfo[] = (
@@ -101,7 +103,7 @@ const GuardrailSelectionModal: React.FC<GuardrailSelectionModalProps> = ({
             )}
           </div>
           <p className="text-sm text-gray-500 font-normal mt-1">
-            Review and select guardrails to create for this template
+            {t("policies.guardrailModal.reviewAndSelect")}
           </p>
         </div>
       }
@@ -110,7 +112,7 @@ const GuardrailSelectionModal: React.FC<GuardrailSelectionModalProps> = ({
       width={700}
       footer={[
         <Button key="cancel" onClick={onCancel} disabled={isLoading}>
-          Cancel
+          {t("common.cancel")}
         </Button>,
         <Button
           key="confirm"
@@ -120,8 +122,8 @@ const GuardrailSelectionModal: React.FC<GuardrailSelectionModalProps> = ({
           disabled={selectedCount === 0 && existingCount === 0}
         >
           {selectedCount > 0
-            ? `Create ${selectedCount} Guardrail${selectedCount > 1 ? "s" : ""} & Use Template`
-            : "Use Template"}
+            ? t("policies.guardrailModal.createAndUse", { count: selectedCount })
+            : t("policies.templates.useTemplate")}
         </Button>,
       ]}
     >
@@ -151,10 +153,10 @@ const GuardrailSelectionModal: React.FC<GuardrailSelectionModalProps> = ({
           {newGuardrailsCount > 0 && (
             <div className="flex gap-2">
               <Button size="small" onClick={handleSelectAll}>
-                Select All New
+                {t("policies.guardrailModal.selectAllNew")}
               </Button>
               <Button size="small" onClick={handleDeselectAll}>
-                Deselect All
+                {t("policies.guardrailModal.deselectAll")}
               </Button>
             </div>
           )}
@@ -189,7 +191,7 @@ const GuardrailSelectionModal: React.FC<GuardrailSelectionModalProps> = ({
                     </span>
                     {guardrail.alreadyExists && (
                       <Tag color="green" className="text-xs">
-                        Already exists
+                        {t("policies.guardrailModal.alreadyExists")}
                       </Tag>
                     )}
                   </div>
@@ -224,9 +226,9 @@ const GuardrailSelectionModal: React.FC<GuardrailSelectionModalProps> = ({
 
         {guardrailsInfo.length === 0 && (
           <div className="text-center py-8 text-gray-500">
-            <p>No guardrails defined for this template.</p>
+            <p>{t("policies.guardrailModal.noGuardrailsDefined")}</p>
             <p className="text-sm mt-2">
-              This template will use existing guardrails in your system.
+              {t("policies.guardrailModal.useExistingGuardrails")}
             </p>
           </div>
         )}

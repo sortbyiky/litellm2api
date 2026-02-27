@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { TextInput, Button } from "@tremor/react";
 import { Select as AntdSelect, Form, Tooltip } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
@@ -23,22 +24,23 @@ const AddProviderForm: React.FC<AddProviderFormProps> = ({
   onDiscountChange,
   onAddProvider,
 }) => {
+  const { t } = useTranslation();
   return (
     <div className="space-y-6">
       <Form.Item
         label={
           <span className="text-sm font-medium text-gray-700 flex items-center">
-            Provider
-            <Tooltip title="Select the LLM provider you want to configure a discount for">
+            {t("costTracking.provider")}
+            <Tooltip title={t("costTracking.selectProviderTooltip")}>
               <InfoCircleOutlined className="ml-2 text-blue-400 hover:text-blue-600 cursor-help" />
             </Tooltip>
           </span>
         }
-        rules={[{ required: true, message: "Please select a provider" }]}
+        rules={[{ required: true, message: t("costTracking.pleaseSelectProvider") }]}
       >
         <AntdSelect
           showSearch
-          placeholder="Select provider"
+          placeholder={t("costTracking.selectProvider")}
           value={selectedProvider}
           onChange={onProviderChange}
           style={{ width: "100%" }}
@@ -74,13 +76,13 @@ const AddProviderForm: React.FC<AddProviderFormProps> = ({
       <Form.Item
         label={
           <span className="text-sm font-medium text-gray-700 flex items-center">
-            Discount Percentage
-            <Tooltip title="Enter a percentage value (e.g., 5 for 5% discount)">
+            {t("costTracking.discountPercentage")}
+            <Tooltip title={t("costTracking.discountPercentageTooltip")}>
               <InfoCircleOutlined className="ml-2 text-blue-400 hover:text-blue-600 cursor-help" />
             </Tooltip>
           </span>
         }
-        rules={[{ required: true, message: "Please enter a discount percentage" }]}
+        rules={[{ required: true, message: t("costTracking.pleaseEnterDiscount") }]}
       >
         <div className="flex items-center gap-2">
           <TextInput
@@ -99,7 +101,7 @@ const AddProviderForm: React.FC<AddProviderFormProps> = ({
           onClick={onAddProvider} 
           disabled={!selectedProvider || !newDiscount}
         >
-          Add Provider Discount
+          {t("costTracking.addProviderDiscount")}
         </Button>
       </div>
     </div>

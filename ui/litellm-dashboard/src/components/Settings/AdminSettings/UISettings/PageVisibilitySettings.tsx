@@ -3,6 +3,7 @@
 import { getAvailablePages } from "@/components/page_utils";
 import { Button, Checkbox, Collapse, Space, Tag, Typography } from "antd";
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface PageVisibilitySettingsProps {
   enabledPagesInternalUsers: string[] | null | undefined;
@@ -19,6 +20,7 @@ export default function PageVisibilitySettings({
 }: PageVisibilitySettingsProps) {
   // Check if page visibility is set (null/undefined means "not set" = all pages visible)
   const isPageVisibilitySet = enabledPagesInternalUsers !== null && enabledPagesInternalUsers !== undefined;
+  const { t } = useTranslation();
 
   // Get available pages from leftnav configuration
   const availablePages = useMemo(() => getAvailablePages(), []);
@@ -60,10 +62,10 @@ export default function PageVisibilitySettings({
     <Space direction="vertical" size="middle" style={{ width: "100%" }}>
       <Space direction="vertical" size={4}>
         <Space align="center">
-          <Typography.Text strong>Internal User Page Visibility</Typography.Text>
+          <Typography.Text strong>{t("uiTheme.internalUserPageVisibility")}</Typography.Text>
           {!isPageVisibilitySet && (
             <Tag color="default" style={{ marginLeft: "8px" }}>
-              Not set (all pages visible)
+              {t("uiTheme.notSetAllPagesVisible")}
             </Tag>
           )}
           {isPageVisibilitySet && (
@@ -76,11 +78,10 @@ export default function PageVisibilitySettings({
           <Typography.Text type="secondary">{enabledPagesPropertyDescription}</Typography.Text>
         )}
         <Typography.Text type="secondary" style={{ fontSize: "12px", fontStyle: "italic" }}>
-          By default, all pages are visible to internal users. Select specific pages to restrict visibility.
+          {t("uiTheme.defaultAllPagesVisible")}
         </Typography.Text>
         <Typography.Text type="secondary" style={{ fontSize: "12px", color: "#8b5cf6" }}>
-          Note: Only pages accessible to internal user roles are shown here. Admin-only pages are excluded as they
-          cannot be made visible to internal users regardless of this setting.
+          {t("uiTheme.adminOnlyPagesNote")}
         </Typography.Text>
       </Space>
 
@@ -88,7 +89,7 @@ export default function PageVisibilitySettings({
         items={[
           {
             key: "page-visibility",
-            label: "Configure Page Visibility",
+            label: t("uiTheme.configurePageVisibility"),
             children: (
               <Space direction="vertical" size="middle" style={{ width: "100%" }}>
                 <Checkbox.Group value={selectedPages} onChange={setSelectedPages} style={{ width: "100%" }}>
@@ -128,11 +129,11 @@ export default function PageVisibilitySettings({
 
                 <Space>
                   <Button type="primary" onClick={handleSavePageVisibility} loading={isUpdating} disabled={isUpdating}>
-                    Save Page Visibility Settings
+                    {t("uiTheme.savePageVisibility")}
                   </Button>
                   {isPageVisibilitySet && (
                     <Button onClick={handleResetToDefault} loading={isUpdating} disabled={isUpdating}>
-                      Reset to Default (All Pages)
+                      {t("uiTheme.resetToDefaultAllPages")}
                     </Button>
                   )}
                 </Space>

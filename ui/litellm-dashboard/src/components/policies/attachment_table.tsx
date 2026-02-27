@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, Icon, Badge } from "@tremor/react";
 import { TrashIcon, SwitchVerticalIcon, ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/outline";
 import { Tooltip, Tag } from "antd";
@@ -29,6 +30,7 @@ const AttachmentTable: React.FC<AttachmentTableProps> = ({
   accessToken,
 }) => {
   const [sorting, setSorting] = useState<SortingState>([{ id: "created_at", desc: true }]);
+  const { t } = useTranslation();
 
   // Format date helper function
   const formatDate = (dateString?: string) => {
@@ -39,7 +41,7 @@ const AttachmentTable: React.FC<AttachmentTableProps> = ({
 
   const columns: ColumnDef<PolicyAttachment>[] = [
     {
-      header: "Attachment ID",
+      header: t("policies.attachment.attachmentId"),
       accessorKey: "attachment_id",
       cell: (info: any) => (
         <Tooltip title={String(info.getValue() || "")}>
@@ -50,7 +52,7 @@ const AttachmentTable: React.FC<AttachmentTableProps> = ({
       ),
     },
     {
-      header: "Policy",
+      header: t("policies.simulator.policy"),
       accessorKey: "policy_name",
       cell: ({ row }) => {
         const attachment = row.original;
@@ -62,7 +64,7 @@ const AttachmentTable: React.FC<AttachmentTableProps> = ({
       },
     },
     {
-      header: "Scope",
+      header: t("policies.attachment.scope"),
       accessorKey: "scope",
       cell: ({ row }) => {
         const attachment = row.original;
@@ -81,7 +83,7 @@ const AttachmentTable: React.FC<AttachmentTableProps> = ({
       },
     },
     {
-      header: "Teams",
+      header: t("policies.attachment.teams"),
       accessorKey: "teams",
       cell: ({ row }) => {
         const attachment = row.original;
@@ -106,7 +108,7 @@ const AttachmentTable: React.FC<AttachmentTableProps> = ({
       },
     },
     {
-      header: "Keys",
+      header: t("policies.attachment.keys"),
       accessorKey: "keys",
       cell: ({ row }) => {
         const attachment = row.original;
@@ -131,7 +133,7 @@ const AttachmentTable: React.FC<AttachmentTableProps> = ({
       },
     },
     {
-      header: "Models",
+      header: t("policies.attachment.models"),
       accessorKey: "models",
       cell: ({ row }) => {
         const attachment = row.original;
@@ -156,7 +158,7 @@ const AttachmentTable: React.FC<AttachmentTableProps> = ({
       },
     },
     {
-      header: "Tags",
+      header: t("policies.attachment.tags"),
       accessorKey: "tags",
       cell: ({ row }) => {
         const attachment = row.original;
@@ -181,7 +183,7 @@ const AttachmentTable: React.FC<AttachmentTableProps> = ({
       },
     },
     {
-      header: "Created At",
+      header: t("policies.table.createdAt"),
       accessorKey: "created_at",
       cell: ({ row }) => {
         const attachment = row.original;
@@ -194,14 +196,14 @@ const AttachmentTable: React.FC<AttachmentTableProps> = ({
     },
     {
       id: "actions",
-      header: "Actions",
+      header: t("policies.table.actions"),
       cell: ({ row }) => {
         const attachment = row.original;
         return (
           <div className="flex space-x-2">
             <ImpactPopover attachment={attachment} accessToken={accessToken} />
             {isAdmin && (
-              <Tooltip title="Delete attachment">
+              <Tooltip title={t("policies.attachment.deleteAttachment")}>
                 <Icon
                   icon={TrashIcon}
                   size="sm"
@@ -270,7 +272,7 @@ const AttachmentTable: React.FC<AttachmentTableProps> = ({
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-8 text-center">
                   <div className="text-center text-gray-500">
-                    <p>Loading...</p>
+                    <p>{t("common.loading")}</p>
                   </div>
                 </TableCell>
               </TableRow>
@@ -295,7 +297,7 @@ const AttachmentTable: React.FC<AttachmentTableProps> = ({
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-8 text-center">
                   <div className="text-center text-gray-500">
-                    <p>No attachments found</p>
+                    <p>{t("policies.attachment.noAttachmentsFound")}</p>
                   </div>
                 </TableCell>
               </TableRow>

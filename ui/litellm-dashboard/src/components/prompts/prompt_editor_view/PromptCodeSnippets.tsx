@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Modal, Select, Button as AntdButton, Tabs } from "antd";
 import { CodeOutlined } from "@ant-design/icons";
 import { Button as TremorButton, Text } from "@tremor/react";
@@ -27,6 +28,7 @@ const PromptCodeSnippets: React.FC<PromptCodeSnippetsProps> = ({
   proxySettings,
 }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const { t } = useTranslation();
   const [selectedLanguage, setSelectedLanguage] = useState<"curl" | "python" | "javascript">("curl");
   const [selectedTab, setSelectedTab] = useState("basic");
   const [generatedCode, setGeneratedCode] = useState("");
@@ -215,11 +217,11 @@ main();`;
         icon={CodeOutlined}
         onClick={showModal}
       >
-        Get Code
+        {t("prompts.getCode")}
       </TremorButton>
 
       <Modal
-        title="Generated Code"
+        title={t("prompts.generatedCode")}
         open={isModalVisible}
         onCancel={handleCancel}
         footer={null}
@@ -227,7 +229,7 @@ main();`;
       >
         <div className="flex justify-between items-center mb-4">
           <div>
-            <Text className="font-medium block mb-1 text-gray-700">Language</Text>
+            <Text className="font-medium block mb-1 text-gray-700">{t("prompts.language")}</Text>
             <Select
               value={selectedLanguage}
               onChange={(value) => setSelectedLanguage(value as "curl" | "python" | "javascript")}
@@ -242,10 +244,10 @@ main();`;
           <AntdButton
             onClick={() => {
               navigator.clipboard.writeText(generatedCode);
-              NotificationsManager.success("Copied to clipboard!");
+              NotificationsManager.success(t("common.copied"));
             }}
           >
-            Copy to Clipboard
+            {t("prompts.copyToClipboard")}
           </AntdButton>
         </div>
 
@@ -253,9 +255,9 @@ main();`;
           activeKey={selectedTab}
           onChange={setSelectedTab}
           items={[
-            { label: "Basic", key: "basic" },
-            { label: "With Messages", key: "messages" },
-            { label: "With Version", key: "version" },
+            { label: t("prompts.basic"), key: "basic" },
+            { label: t("prompts.withMessages"), key: "messages" },
+            { label: t("prompts.withVersion"), key: "version" },
           ]}
         />
 

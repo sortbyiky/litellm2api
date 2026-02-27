@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Modal, Spin, Checkbox, Select, Input, Typography, Tooltip } from "antd";
 import { Button, Card } from "@tremor/react";
 import { CheckCircleOutlined, CloseCircleOutlined, InfoCircleOutlined, DownOutlined, RightOutlined } from "@ant-design/icons";
@@ -54,6 +55,7 @@ const AiSuggestionModal: React.FC<AiSuggestionModalProps> = ({
   allTemplates,
 }) => {
   const [attackExamples, setAttackExamples] = useState<string[]>([""]);
+  const { t } = useTranslation();
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<SuggestedTemplate[] | null>(null);
@@ -408,8 +410,8 @@ const AiSuggestionModal: React.FC<AiSuggestionModalProps> = ({
           <svg className="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <p className="font-medium">No matching templates found</p>
-          <p className="text-sm mt-1">Try adjusting your examples or description.</p>
+          <p className="font-medium">{t("policies.aiSuggestion.noMatchingTemplates")}</p>
+          <p className="text-sm mt-1">{t("policies.aiSuggestion.tryAdjusting")}</p>
         </div>
       );
     }
@@ -501,7 +503,7 @@ const AiSuggestionModal: React.FC<AiSuggestionModalProps> = ({
             <div className="flex items-center gap-2 mb-1">
               <InfoCircleOutlined className="text-gray-400 text-xs" />
               <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
-                Why these templates
+                {t("policies.aiSuggestion.whyTheseTemplates")}
               </span>
             </div>
             <p className="text-xs text-gray-600 leading-relaxed">{explanation}</p>
@@ -522,7 +524,7 @@ const AiSuggestionModal: React.FC<AiSuggestionModalProps> = ({
       {/* Test header */}
       <div className="pb-3 border-b border-gray-200">
         <div className="flex items-center justify-between mb-1">
-          <h3 className="text-base font-semibold text-gray-900">Test Guardrails</h3>
+          <h3 className="text-base font-semibold text-gray-900">{t("policies.aiSuggestion.testGuardrails")}</h3>
           <button
             onClick={() => { setShowTestPanel(false); setTestResults(null); setTestOverallAction(null); }}
             className="text-gray-400 hover:text-gray-600"
@@ -796,12 +798,12 @@ const AiSuggestionModal: React.FC<AiSuggestionModalProps> = ({
       {/* Header */}
       <div className="px-8 pt-8 pb-4">
         <h3 className="text-xl font-semibold text-gray-900 mb-1">
-          AI Policy Suggestion
+          {t("policies.aiSuggestion.title")}
         </h3>
         <p className="text-sm text-gray-500">
           {showResults
-            ? `${suggestions?.length || 0} template${(suggestions?.length || 0) !== 1 ? "s" : ""} matched your requirements`
-            : "Describe what you want to block and we'll suggest the best policy templates"}
+            ? t("policies.aiSuggestion.matchedTemplates", { count: suggestions?.length || 0 })
+            : t("policies.aiSuggestion.describeToBlock")}
         </p>
       </div>
 
@@ -929,9 +931,9 @@ const AiSuggestionModal: React.FC<AiSuggestionModalProps> = ({
 
           {/* Footer */}
           <div className="flex justify-end gap-3 pt-2">
-            <Button variant="secondary" onClick={handleCancel} disabled={isLoading}>Cancel</Button>
+            <Button variant="secondary" onClick={handleCancel} disabled={isLoading}>{t("common.cancel")}</Button>
             <Button onClick={handleSuggest} loading={isLoading} disabled={!hasInput || !selectedModel || isLoading}>
-              {isLoading ? "Analyzing..." : "Suggest Policies"}
+              {isLoading ? t("policies.aiSuggestion.analyzing") : t("policies.aiSuggestion.suggestPolicies")}
             </Button>
           </div>
         </div>
@@ -959,10 +961,10 @@ const AiSuggestionModal: React.FC<AiSuggestionModalProps> = ({
 
           {/* Footer */}
           <div className="flex justify-end gap-3 pt-6 border-t border-gray-100 mt-4">
-            <Button variant="secondary" onClick={handleBack}>Back</Button>
+            <Button variant="secondary" onClick={handleBack}>{t("common.back")}</Button>
             {suggestions && suggestions.length > 0 && selectedIds.size > 0 && !showTestPanel && (
               <Button variant="secondary" onClick={() => setShowTestPanel(true)}>
-                Test Suggestions
+                {t("policies.aiSuggestion.testSuggestions")}
               </Button>
             )}
             <Button onClick={handleUseSelected} disabled={selectedIds.size === 0 || isEnriching}>

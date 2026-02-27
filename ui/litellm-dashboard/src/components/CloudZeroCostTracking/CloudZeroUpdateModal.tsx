@@ -2,6 +2,7 @@ import { useCloudZeroUpdateSettings } from "@/app/(dashboard)/hooks/cloudzero/us
 import useAuthorized from "@/app/(dashboard)/hooks/useAuthorized";
 import { Form, Input, message, Modal } from "antd";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { CloudZeroSettings } from "./types";
 
 interface CloudZeroUpdateModalProps {
@@ -12,6 +13,7 @@ interface CloudZeroUpdateModalProps {
 }
 
 export default function CloudZeroUpdateModal({ open, onOk, onCancel, settings }: CloudZeroUpdateModalProps) {
+  const { t } = useTranslation();
   const { accessToken } = useAuthorized();
   const [form] = Form.useForm();
   const updateMutation = useCloudZeroUpdateSettings(accessToken || "");
@@ -39,7 +41,7 @@ export default function CloudZeroUpdateModal({ open, onOk, onCancel, settings }:
         },
         {
           onSuccess: () => {
-            message.success("CloudZero integration updated successfully");
+            message.success(t("cloudZero.integrationUpdatedSuccess"));
             form.resetFields();
             onOk();
           },
@@ -47,7 +49,7 @@ export default function CloudZeroUpdateModal({ open, onOk, onCancel, settings }:
             if (error?.errorFields) {
               return;
             }
-            message.error(error?.message || "Failed to update CloudZero integration");
+            message.error(error?.message || t("cloudZero.failedToUpdateIntegration"));
           },
         },
       );
@@ -55,7 +57,7 @@ export default function CloudZeroUpdateModal({ open, onOk, onCancel, settings }:
       if (error?.errorFields) {
         return;
       }
-      message.error(error?.message || "Failed to update CloudZero integration");
+      message.error(error?.message || t("cloudZero.failedToUpdateIntegration"));
     }
   };
 
@@ -66,13 +68,13 @@ export default function CloudZeroUpdateModal({ open, onOk, onCancel, settings }:
 
   return (
     <Modal
-      title="Edit CloudZero Integration"
+      title={t("cloudZero.editIntegration")}
       open={open}
       onOk={handleSubmit}
       onCancel={handleCancel}
       confirmLoading={updateMutation.isPending}
-      okText={updateMutation.isPending ? "Updating..." : "Update"}
-      cancelText="Cancel"
+      okText={updateMutation.isPending ? t("cloudZero.updating") : t("common.update")}
+      cancelText={t("common.cancel")}
       okButtonProps={{
         disabled: updateMutation.isPending,
       }}
@@ -82,24 +84,24 @@ export default function CloudZeroUpdateModal({ open, onOk, onCancel, settings }:
     >
       <Form form={form} layout="vertical" onFinish={handleSubmit}>
         <Form.Item
-          label="CloudZero API Key"
+          label={t("cloudZero.apiKey")}
           name="api_key"
-          rules={[{ required: false, message: "Please enter your CloudZero API key" }]}
-          tooltip="Leave empty to keep the existing API key"
+          rules={[{ required: false, message: t("cloudZero.pleaseEnterApiKey") }]}
+          tooltip={t("cloudZero.leaveEmptyToKeep")}
         >
-          <Input.Password placeholder="Leave empty to keep existing" />
+          <Input.Password placeholder={t("cloudZero.leaveEmptyToKeepExisting")} />
         </Form.Item>
         <Form.Item
-          label="Connection ID"
+          label={t("cloudZero.connectionId")}
           name="connection_id"
-          rules={[{ required: true, message: "Please enter your CloudZero connection ID" }]}
+          rules={[{ required: true, message: t("cloudZero.pleaseEnterConnectionId") }]}
         >
-          <Input placeholder="Enter your CloudZero connection ID" />
+          <Input placeholder={t("cloudZero.enterConnectionId")} />
         </Form.Item>
         <Form.Item
-          label="Timezone"
+          label={t("cloudZero.timezone")}
           name="timezone"
-          tooltip="Timezone for date handling (defaults to UTC if not provided)"
+          tooltip={t("cloudZero.timezoneTooltip")}
         >
           <Input placeholder="UTC" />
         </Form.Item>

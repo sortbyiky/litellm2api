@@ -6,8 +6,10 @@ import useAuthorized from "@/app/(dashboard)/hooks/useAuthorized";
 import NotificationManager from "@/components/molecules/notifications_manager";
 import PageVisibilitySettings from "./PageVisibilitySettings";
 import { Alert, Card, Divider, Skeleton, Space, Switch, Typography } from "antd";
+import { useTranslation } from "react-i18next";
 
 export default function UISettings() {
+  const { t } = useTranslation();
   const { accessToken } = useAuthorized();
   const { data, isLoading, isError, error } = useUISettings();
   const { mutate: updateSettings, isPending: isUpdating, error: updateError } = useUpdateUISettings(accessToken);
@@ -27,7 +29,7 @@ export default function UISettings() {
       { disable_model_add_for_internal_users: checked },
       {
         onSuccess: () => {
-          NotificationManager.success("UI settings updated successfully");
+          NotificationManager.success(t("uiTheme.settingsUpdatedSuccess"));
         },
         onError: (error) => {
           NotificationManager.fromBackend(error);
@@ -41,7 +43,7 @@ export default function UISettings() {
       { disable_team_admin_delete_team_user: checked },
       {
         onSuccess: () => {
-          NotificationManager.success("UI settings updated successfully");
+          NotificationManager.success(t("uiTheme.settingsUpdatedSuccess"));
         },
         onError: (error) => {
           NotificationManager.fromBackend(error);
@@ -53,7 +55,7 @@ export default function UISettings() {
   const handleUpdatePageVisibility = (settings: { enabled_ui_pages_internal_users: string[] | null }) => {
     updateSettings(settings, {
       onSuccess: () => {
-        NotificationManager.success("Page visibility settings updated successfully");
+          NotificationManager.success(t("uiTheme.pageVisibilityUpdated"));
       },
       onError: (error) => {
         NotificationManager.fromBackend(error);
@@ -66,7 +68,7 @@ export default function UISettings() {
       { forward_client_headers_to_llm_api: checked },
       {
         onSuccess: () => {
-          NotificationManager.success("UI settings updated successfully");
+          NotificationManager.success(t("uiTheme.settingsUpdatedSuccess"));
         },
         onError: (error) => {
           NotificationManager.fromBackend(error);
@@ -80,7 +82,7 @@ export default function UISettings() {
       { require_auth_for_public_ai_hub: checked },
       {
         onSuccess: () => {
-          NotificationManager.success("UI settings updated successfully");
+          NotificationManager.success(t("uiTheme.settingsUpdatedSuccess"));
         },
         onError: (error) => {
           NotificationManager.fromBackend(error);
@@ -90,13 +92,13 @@ export default function UISettings() {
   };
 
   return (
-    <Card title="UI Settings">
+    <Card title={t("uiTheme.uiSettings")}>
       {isLoading ? (
         <Skeleton active />
       ) : isError ? (
         <Alert
           type="error"
-          message="Could not load UI settings"
+          message={t("uiTheme.couldNotLoad")}
           description={error instanceof Error ? error.message : undefined}
         />
       ) : (
@@ -108,7 +110,7 @@ export default function UISettings() {
           {updateError && (
             <Alert
               type="error"
-              message="Could not update UI settings"
+              message={t("uiTheme.couldNotUpdate")}
               description={updateError instanceof Error ? updateError.message : undefined}
             />
           )}
@@ -119,10 +121,10 @@ export default function UISettings() {
               disabled={isUpdating}
               loading={isUpdating}
               onChange={handleToggle}
-              aria-label={property?.description ?? "Disable model add for internal users"}
+              aria-label={property?.description ?? t("uiTheme.disableModelAddForInternalUsers")}
             />
             <Space direction="vertical" size={4}>
-              <Typography.Text strong>Disable model add for internal users</Typography.Text>
+              <Typography.Text strong>{t("uiTheme.disableModelAddForInternalUsers")}</Typography.Text>
               {property?.description && <Typography.Text type="secondary">{property.description}</Typography.Text>}
             </Space>
           </Space>
@@ -133,10 +135,10 @@ export default function UISettings() {
               disabled={isUpdating}
               loading={isUpdating}
               onChange={handleToggleTeamAdminDelete}
-              aria-label={disableTeamAdminDeleteProperty?.description ?? "Disable team admin delete team user"}
+              aria-label={disableTeamAdminDeleteProperty?.description ?? t("uiTheme.disableTeamAdminDeleteTeamUser")}
             />
             <Space direction="vertical" size={4}>
-              <Typography.Text strong>Disable team admin delete team user</Typography.Text>
+              <Typography.Text strong>{t("uiTheme.disableTeamAdminDeleteTeamUser")}</Typography.Text>
               {disableTeamAdminDeleteProperty?.description && (
                 <Typography.Text type="secondary">{disableTeamAdminDeleteProperty.description}</Typography.Text>
               )}
@@ -149,10 +151,10 @@ export default function UISettings() {
               disabled={isUpdating}
               loading={isUpdating}
               onChange={handleToggleRequireAuthForPublicAIHub}
-              aria-label={requireAuthForPublicAIHubProperty?.description ?? "Require authentication for public AI Hub"}
+              aria-label={requireAuthForPublicAIHubProperty?.description ?? t("uiTheme.requireAuthForPublicAIHub")}
             />
             <Space direction="vertical" size={4}>
-              <Typography.Text strong>Require authentication for public AI Hub</Typography.Text>
+              <Typography.Text strong>{t("uiTheme.requireAuthForPublicAIHub")}</Typography.Text>
               {requireAuthForPublicAIHubProperty?.description && (
                 <Typography.Text type="secondary">{requireAuthForPublicAIHubProperty.description}</Typography.Text>
               )}
@@ -165,13 +167,13 @@ export default function UISettings() {
               disabled={isUpdating}
               loading={isUpdating}
               onChange={handleToggleForwardClientHeaders}
-              aria-label={forwardClientHeadersProperty?.description ?? "Forward client headers to LLM API"}
+              aria-label={forwardClientHeadersProperty?.description ?? t("uiTheme.forwardClientHeaders")}
             />
             <Space direction="vertical" size={4}>
-              <Typography.Text strong>Forward client headers to LLM API</Typography.Text>
+              <Typography.Text strong>{t("uiTheme.forwardClientHeaders")}</Typography.Text>
               <Typography.Text type="secondary">
                 {forwardClientHeadersProperty?.description ??
-                  "If enabled, forwards client headers (e.g. Authorization) to the LLM API. Required for Claude Code with Max subscription."}
+                  t("uiTheme.forwardClientHeadersDesc")}
               </Typography.Text>
             </Space>
           </Space>

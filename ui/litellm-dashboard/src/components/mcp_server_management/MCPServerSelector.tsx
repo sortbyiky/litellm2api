@@ -2,6 +2,7 @@ import { useMCPAccessGroups } from "@/app/(dashboard)/hooks/mcpServers/useMCPAcc
 import { useMCPServers } from "@/app/(dashboard)/hooks/mcpServers/useMCPServers";
 import { Select } from "antd";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 interface MCPServerSelectorProps {
   onChange: (selected: { servers: string[]; accessGroups: string[] }) => void;
@@ -23,6 +24,7 @@ const MCPServerSelector: React.FC<MCPServerSelectorProps> = ({
   placeholder = "Select MCP servers",
   disabled = false,
 }) => {
+  const { t } = useTranslation();
   const { data: mcpServers = [], isLoading: serversLoading } = useMCPServers();
   const { data: accessGroups = [], isLoading: groupsLoading } = useMCPAccessGroups();
 
@@ -94,7 +96,7 @@ const MCPServerSelector: React.FC<MCPServerSelectorProps> = ({
                   opacity: 0.8,
                 }}
               >
-                {opt.isAccessGroup ? "Access Group" : "MCP Server"}
+                {opt.isAccessGroup ? t("mcp.accessGroup") : t("mcp.mcpServer")}
               </span>
             </div>
           </Select.Option>

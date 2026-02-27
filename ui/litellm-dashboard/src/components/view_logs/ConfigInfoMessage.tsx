@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 interface ConfigInfoMessageProps {
   show: boolean;
@@ -6,6 +7,7 @@ interface ConfigInfoMessageProps {
 }
 
 export const ConfigInfoMessage: React.FC<ConfigInfoMessageProps> = ({ show, onOpenSettings }) => {
+  const { t } = useTranslation();
   if (!show) return null;
 
   return (
@@ -28,19 +30,18 @@ export const ConfigInfoMessage: React.FC<ConfigInfoMessageProps> = ({ show, onOp
         </svg>
       </div>
       <div>
-        <h4 className="text-sm font-medium text-blue-800">Request/Response Data Not Available</h4>
+        <h4 className="text-sm font-medium text-blue-800">{t("logViewer.requestResponseNotAvailable")}</h4>
         <p className="text-sm text-blue-700 mt-1">
-          To view request and response details, enable prompt storage in your LiteLLM configuration by adding the
-          following to your <code className="bg-blue-100 px-1 py-0.5 rounded">proxy_config.yaml</code> file
+          {t("logViewer.enablePromptStorage")} <code className="bg-blue-100 px-1 py-0.5 rounded">proxy_config.yaml</code> {t("logViewer.file")}
           {onOpenSettings && (
-            <> or{" "}
+            <> {t("logViewer.or")}{" "}
               <button
                 onClick={onOpenSettings}
                 className="text-blue-600 hover:text-blue-800 underline font-medium"
               >
-                open the settings
+                {t("logViewer.openTheSettings")}
               </button>
-              {" "}to configure this directly.
+              {" "}{t("logViewer.toConfigureDirectly")}
             </>
           )}
         </p>
@@ -50,7 +51,7 @@ export const ConfigInfoMessage: React.FC<ConfigInfoMessageProps> = ({ show, onOp
   store_prompts_in_spend_logs: true`}
         </pre>
         <p className="text-xs text-blue-700 mt-2">
-          Note: This will only affect new requests after the configuration change.
+          {t("logViewer.onlyAffectNewRequests")}
         </p>
       </div>
     </div>

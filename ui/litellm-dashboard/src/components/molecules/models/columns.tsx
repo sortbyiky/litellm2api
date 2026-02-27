@@ -3,25 +3,26 @@ import { TrashIcon } from "@heroicons/react/outline";
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge, Button, Icon } from "@tremor/react";
 import { Divider, Flex, Popover, Space, Tooltip, Typography } from "antd";
+import { TFunction } from "i18next";
 import { ModelData } from "../../model_dashboard/types";
 import { ProviderLogo } from "./ProviderLogo";
 
 const { Text, Title } = Typography;
 
-const credentialsInfoPopoverContent = (
+const getCredentialsInfoPopoverContent = (t: TFunction) => (
   <Space direction="vertical" size={12}>
     <Text strong style={{ fontSize: 13 }}>
-      Credential types
+      {t("modelDashboard.credentialTypes")}
     </Text>
     <Space direction="vertical" size={8}>
       <Flex align="center" gap={8}>
         <Space direction="vertical">
           <Flex align="center" gap={8}>
             <SyncOutlined style={{ color: "#1890ff" }} />
-            <Title level={5} style={{ margin: 0, color: "#1890ff" }}>Reusable</Title>
+            <Title level={5} style={{ margin: 0, color: "#1890ff" }}>{t("modelDashboard.reusable")}</Title>
           </Flex>
           <Text type="secondary">
-            Credentials saved in LiteLLM that can be added to models repeatedly.
+            {t("modelDashboard.reusableDescription")}
           </Text>
         </Space>
       </Flex>
@@ -30,10 +31,10 @@ const credentialsInfoPopoverContent = (
         <Space direction="vertical" size={8}>
           <Flex align="center" gap={8}>
             <EditOutlined style={{ color: "#8c8c8c", fontSize: 14, flexShrink: 0 }} />
-            <Title level={5} style={{ margin: 0 }}>Manual</Title>
+            <Title level={5} style={{ margin: 0 }}>{t("modelDashboard.manual")}</Title>
           </Flex>
           <Text type="secondary">
-            Credentials added directly during model creation or defined in the config file.
+            {t("modelDashboard.manualDescription")}
           </Text>
         </Space>
       </Flex>
@@ -42,6 +43,7 @@ const credentialsInfoPopoverContent = (
 );
 
 export const columns = (
+  t: TFunction,
   userRole: string,
   userID: string,
   premiumUser: boolean,
@@ -54,7 +56,7 @@ export const columns = (
   setExpandedRows: (expandedRows: Set<string>) => void,
 ): ColumnDef<ModelData>[] => [
     {
-      header: () => <span className="text-sm font-semibold">Model ID</span>,
+      header: () => <span className="text-sm font-semibold">{t("modelDashboard.modelId")}</span>,
       accessorKey: "model_info.id",
       enableSorting: false,
       size: 130,
@@ -76,7 +78,7 @@ export const columns = (
       },
     },
     {
-      header: () => <span className="text-sm font-semibold">Model Information</span>,
+      header: () => <span className="text-sm font-semibold">{t("modelDashboard.modelInformation")}</span>,
       accessorKey: "model_name",
       size: 250,
       minSize: 120,
@@ -96,14 +98,14 @@ export const columns = (
                 style={{ fontSize: 12 }}
                 ellipsis
               >
-                {model.provider || "Unknown provider"}
+                {model.provider || t("modelDashboard.unknownProvider")}
               </Text>
             </Flex>
 
             <Space direction="vertical" size={6}>
               <Space direction="vertical" size={2} style={{ width: "100%" }}>
                 <Text type="secondary" style={{ fontSize: 11 }}>
-                  Public Model Name
+                  {t("modelDashboard.publicModelName")}
                 </Text>
                 <Text
                   strong
@@ -117,7 +119,7 @@ export const columns = (
 
               <Space direction="vertical" size={2}>
                 <Text type="secondary" style={{ fontSize: 11 }}>
-                  LiteLLM Model Name
+                  {t("modelDashboard.litellmModelName")}
                 </Text>
                 <Text
                   style={{ fontSize: 13 }}
@@ -163,9 +165,9 @@ export const columns = (
     {
       header: () => (
         <span className="flex items-center gap-1">
-          <span className="text-sm font-semibold">Credentials</span>
+          <span className="text-sm font-semibold">{t("modelDashboard.credentials")}</span>
           <Popover
-            content={credentialsInfoPopoverContent}
+            content={getCredentialsInfoPopoverContent(t)}
             placement="bottom"
             arrow={{ pointAtCenter: true }}
           >
@@ -197,7 +199,7 @@ export const columns = (
             ) : (
               <>
                 <EditOutlined className="flex-shrink-0" style={{ color: "#8c8c8c", fontSize: 14 }} />
-                <span className="text-xs text-gray-500">Manual</span>
+                <span className="text-xs text-gray-500">{t("modelDashboard.manual")}</span>
               </>
             )}
           </div>
@@ -205,7 +207,7 @@ export const columns = (
       },
     },
     {
-      header: () => <span className="text-sm font-semibold">Created By</span>,
+      header: () => <span className="text-sm font-semibold">{t("modelDashboard.createdBy")}</span>,
       accessorKey: "model_info.created_by",
       sortingFn: "datetime",
       size: 160,
@@ -221,23 +223,23 @@ export const columns = (
             {/* Created By - Primary */}
             <div
               className="text-xs font-medium text-gray-900 truncate"
-              title={isConfigModel ? "Defined in config" : createdBy || "Unknown"}
+              title={isConfigModel ? t("modelDashboard.definedInConfig") : createdBy || t("modelDashboard.unknown")}
             >
-              {isConfigModel ? "Defined in config" : createdBy || "Unknown"}
+              {isConfigModel ? t("modelDashboard.definedInConfig") : createdBy || t("modelDashboard.unknown")}
             </div>
             {/* Created At - Secondary */}
             <div
               className="text-xs text-gray-500 truncate mt-0.5"
-              title={isConfigModel ? "Config file" : createdAt || "Unknown date"}
+              title={isConfigModel ? t("modelDashboard.configFile") : createdAt || t("modelDashboard.unknownDate")}
             >
-              {isConfigModel ? "-" : createdAt || "Unknown date"}
+              {isConfigModel ? "-" : createdAt || t("modelDashboard.unknownDate")}
             </div>
           </div>
         );
       },
     },
     {
-      header: () => <span className="text-sm font-semibold">Updated At</span>,
+      header: () => <span className="text-sm font-semibold">{t("modelDashboard.updatedAt")}</span>,
       accessorKey: "model_info.updated_at",
       sortingFn: "datetime",
       size: 120,
@@ -252,7 +254,7 @@ export const columns = (
       },
     },
     {
-      header: () => <span className="text-sm font-semibold">Costs</span>,
+      header: () => <span className="text-sm font-semibold">{t("modelDashboard.costs")}</span>,
       accessorKey: "input_cost",
       size: 120,
       minSize: 80,
@@ -271,7 +273,7 @@ export const columns = (
         }
 
         return (
-          <Tooltip title="Cost per 1M tokens">
+            <Tooltip title={t("modelDashboard.costPerMillionTokens")}>
             <div className="flex flex-col min-w-0 w-full">
               {/* Input Cost - Primary */}
               {inputCost != null && <div className="text-xs font-medium text-gray-900 truncate">In: ${inputCost}</div>}
@@ -283,7 +285,7 @@ export const columns = (
       },
     },
     {
-      header: () => <span className="text-sm font-semibold">Team ID</span>,
+      header: () => <span className="text-sm font-semibold">{t("modelDashboard.teamId")}</span>,
       accessorKey: "model_info.team_id",
       enableSorting: false,
       size: 130,
@@ -309,7 +311,7 @@ export const columns = (
       },
     },
     {
-      header: () => <span className="text-sm font-semibold">Model Access Group</span>,
+      header: () => <span className="text-sm font-semibold">{t("modelDashboard.modelAccessGroup")}</span>,
       accessorKey: "model_info.model_access_group",
       enableSorting: false,
       size: 180,
@@ -370,7 +372,7 @@ export const columns = (
       },
     },
     {
-      header: () => <span className="text-sm font-semibold">Status</span>,
+      header: () => <span className="text-sm font-semibold">{t("modelDashboard.statusLabel")}</span>,
       accessorKey: "model_info.db_model",
       size: 120,
       minSize: 80,
@@ -383,14 +385,14 @@ export const columns = (
           ${model.model_info.db_model ? "bg-blue-50 text-blue-600" : "bg-gray-100 text-gray-600"}
         `}
           >
-            {model.model_info.db_model ? "DB Model" : "Config Model"}
+            {model.model_info.db_model ? t("modelDashboard.dbModel") : t("modelDashboard.configModel")}
           </div>
         );
       },
     },
     {
       id: "actions",
-      header: () => <span className="text-sm font-semibold">Actions</span>,
+      header: () => <span className="text-sm font-semibold">{t("modelDashboard.actions")}</span>,
       size: 60,
       minSize: 40,
       enableResizing: false,
@@ -401,11 +403,11 @@ export const columns = (
         return (
           <div className="flex items-center justify-end gap-2 pr-4">
             {isConfigModel ? (
-              <Tooltip title="Config model cannot be deleted on the dashboard. Please delete it from the config file.">
+              <Tooltip title={t("modelDashboard.configModelCannotDelete")}>
                 <Icon icon={TrashIcon} size="sm" className="opacity-50 cursor-not-allowed" />
               </Tooltip>
             ) : (
-              <Tooltip title="Delete model">
+              <Tooltip title={t("modelDashboard.deleteModel")}>
                 <Icon
                   icon={TrashIcon}
                   size="sm"

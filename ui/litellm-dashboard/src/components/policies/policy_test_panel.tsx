@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Form, Select, Alert, Tag, Empty, Typography } from "antd";
 import { Button } from "@tremor/react";
 import { resolvePoliciesCall, teamListCall, keyListCall, modelAvailableCall } from "../networking";
@@ -22,6 +23,7 @@ interface ResolveResult {
 }
 
 const PolicyTestPanel: React.FC<PolicyTestPanelProps> = ({ accessToken }) => {
+  const { t } = useTranslation();
   const [form] = Form.useForm();
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<ResolveResult | null>(null);
@@ -105,51 +107,51 @@ const PolicyTestPanel: React.FC<PolicyTestPanelProps> = ({ accessToken }) => {
     <div>
       <div className="bg-white border rounded-lg p-6 mb-6">
         <div className="mb-5">
-          <h3 className="text-base font-semibold mb-1">Policy Simulator</h3>
+          <h3 className="text-base font-semibold mb-1">{t("policies.simulator.title")}</h3>
           <Text type="secondary">
-            Simulate a request to see which policies and guardrails would apply. Select a team, key, model, or tags below and click &quot;Simulate&quot; to see the results.
+            {t("policies.simulator.description")}
           </Text>
         </div>
 
         <Form form={form} layout="vertical">
           <div className="grid grid-cols-2 gap-4">
-            <Form.Item name="team_alias" label="Team Alias" className="mb-3">
+            <Form.Item name="team_alias" label={t("policies.simulator.teamAlias")} className="mb-3">
               <Select
                 showSearch
                 allowClear
-                placeholder="Select or type a team alias"
+                placeholder={t("policies.simulator.selectTeam")}
                 options={availableTeams.map((t) => ({ label: t, value: t }))}
                 filterOption={(input, option) =>
                   (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
                 }
               />
             </Form.Item>
-            <Form.Item name="key_alias" label="Key Alias" className="mb-3">
+            <Form.Item name="key_alias" label={t("policies.simulator.keyAlias")} className="mb-3">
               <Select
                 showSearch
                 allowClear
-                placeholder="Select or type a key alias"
+                placeholder={t("policies.simulator.selectKey")}
                 options={availableKeys.map((k) => ({ label: k, value: k }))}
                 filterOption={(input, option) =>
                   (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
                 }
               />
             </Form.Item>
-            <Form.Item name="model" label="Model" className="mb-3">
+            <Form.Item name="model" label={t("policies.simulator.model")} className="mb-3">
               <Select
                 showSearch
                 allowClear
-                placeholder="Select or type a model"
+                placeholder={t("policies.simulator.selectModel")}
                 options={availableModels.map((m) => ({ label: m, value: m }))}
                 filterOption={(input, option) =>
                   (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
                 }
               />
             </Form.Item>
-            <Form.Item name="tags" label="Tags" className="mb-3">
+            <Form.Item name="tags" label={t("policies.simulator.tags")} className="mb-3">
               <Select
                 mode="tags"
-                placeholder="Type a tag and press Enter"
+                placeholder={t("policies.simulator.typeTags")}
                 tokenSeparators={[",", " "]}
                 notFoundContent={null}
                 suffixIcon={null}
@@ -159,10 +161,10 @@ const PolicyTestPanel: React.FC<PolicyTestPanelProps> = ({ accessToken }) => {
           </div>
           <div className="flex space-x-2">
             <Button onClick={handleTest} loading={isLoading} disabled={!accessToken}>
-              Simulate
+              {t("policies.simulator.simulate")}
             </Button>
             <Button variant="secondary" onClick={handleReset}>
-              Reset
+              {t("common.reset")}
             </Button>
           </div>
         </Form>
@@ -175,9 +177,9 @@ const PolicyTestPanel: React.FC<PolicyTestPanelProps> = ({ accessToken }) => {
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
             </svg>
           </div>
-          <p className="text-sm font-medium text-gray-600 mb-1">No simulation run yet</p>
+          <p className="text-sm font-medium text-gray-600 mb-1">{t("policies.simulator.noSimulationYet")}</p>
           <p className="text-xs text-gray-400">
-            Fill in one or more fields above and click &quot;Simulate&quot; to see which policies and guardrails would apply to that request.
+            {t("policies.simulator.noSimulationDesc")}
           </p>
         </div>
       )}
@@ -185,30 +187,30 @@ const PolicyTestPanel: React.FC<PolicyTestPanelProps> = ({ accessToken }) => {
       {hasSearched && result && (
         <div className="bg-white border rounded-lg p-6">
           {result.matched_policies.length === 0 ? (
-            <Empty description="No policies matched this context" />
+            <Empty description={t("policies.simulator.noPoliciesMatched")} />
           ) : (
             <>
               <div className="mb-4">
-                <p className="text-sm font-semibold mb-2">Effective Guardrails</p>
+                <p className="text-sm font-semibold mb-2">{t("policies.simulator.effectiveGuardrails")}</p>
                 <div className="flex flex-wrap gap-1">
                   {result.effective_guardrails.length > 0 ? (
                     result.effective_guardrails.map((g) => (
                       <Tag key={g} color="green">{g}</Tag>
                     ))
                   ) : (
-                    <span className="text-gray-400 text-sm">None</span>
+                    <span className="text-gray-400 text-sm">{t("common.none")}</span>
                   )}
                 </div>
               </div>
 
               <div>
-                <p className="text-sm font-semibold mb-2">Matched Policies</p>
+                <p className="text-sm font-semibold mb-2">{t("policies.simulator.matchedPolicies")}</p>
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b">
-                      <th className="text-left py-2 pr-4">Policy</th>
-                      <th className="text-left py-2 pr-4">Matched Via</th>
-                      <th className="text-left py-2">Guardrails Added</th>
+                      <th className="text-left py-2 pr-4">{t("policies.simulator.policy")}</th>
+                      <th className="text-left py-2 pr-4">{t("policies.simulator.matchedVia")}</th>
+                      <th className="text-left py-2">{t("policies.simulator.guardrailsAdded")}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -226,7 +228,7 @@ const PolicyTestPanel: React.FC<PolicyTestPanelProps> = ({ accessToken }) => {
                               ))}
                             </div>
                           ) : (
-                            <span className="text-gray-400">None</span>
+                            <span className="text-gray-400">{t("common.none")}</span>
                           )}
                         </td>
                       </tr>
@@ -241,8 +243,8 @@ const PolicyTestPanel: React.FC<PolicyTestPanelProps> = ({ accessToken }) => {
 
       {hasSearched && !result && !isLoading && (
         <Alert
-          message="Error"
-          description="Failed to resolve policies. Check the proxy logs."
+          message={t("common.error")}
+          description={t("policies.simulator.failedToResolve")}
           type="error"
           showIcon
         />

@@ -7,6 +7,7 @@ import React, { useState, useEffect } from "react";
 import { alertingSettingsCall, updateConfigFieldSetting } from "../networking";
 import DynamicForm from "./dynamic_form";
 import NotificationsManager from "../molecules/notifications_manager";
+import { useTranslation } from "react-i18next";
 interface alertingSettingsItem {
   field_name: string;
   field_type: string;
@@ -23,6 +24,7 @@ interface AlertingSettingsProps {
 }
 
 const AlertingSettings: React.FC<AlertingSettingsProps> = ({ accessToken, premiumUser }) => {
+  const { t } = useTranslation();
   const [alertingSettings, setAlertingSettings] = useState<alertingSettingsItem[]>([]);
 
   useEffect(() => {
@@ -78,7 +80,7 @@ const AlertingSettings: React.FC<AlertingSettingsProps> = ({ accessToken, premiu
         }
       }
       // update value in state
-      NotificationsManager.success("Wait 10s for proxy to update.");
+      NotificationsManager.success(t("logging.waitForProxyUpdate"));
     } catch (error) {
       // do something
     }

@@ -5,6 +5,7 @@ import { Text } from "@tremor/react";
 import { Spin, Checkbox } from "antd";
 import { XIcon } from "lucide-react";
 import { useMCPServers } from "../../app/(dashboard)/hooks/mcpServers/useMCPServers";
+import { useTranslation } from "react-i18next";
 
 interface MCPToolPermissionsProps {
   accessToken: string;
@@ -21,6 +22,7 @@ const MCPToolPermissions: React.FC<MCPToolPermissionsProps> = ({
   onChange,
   disabled = false,
 }) => {
+  const { t } = useTranslation();
   const { data: allServers = [] } = useMCPServers();
   const [serverTools, setServerTools] = useState<Record<string, MCPTool[]>>({});
   const [loadingTools, setLoadingTools] = useState<Record<string, boolean>>({});
@@ -147,20 +149,20 @@ const MCPToolPermissions: React.FC<MCPToolPermissionsProps> = ({
 
             {/* Tools */}
             <div className="p-4">
-              <Text className="text-sm font-medium text-gray-700 mb-3">Available Tools</Text>
+              <Text className="text-sm font-medium text-gray-700 mb-3">{t("mcp.availableTools")}</Text>
 
               {/* Loading */}
               {isLoading && (
                 <div className="flex items-center justify-center py-8">
                   <Spin size="large" />
-                  <Text className="ml-3 text-gray-500">Loading tools...</Text>
+                  <Text className="ml-3 text-gray-500">{t("mcp.loadingTools")}</Text>
                 </div>
               )}
 
               {/* Error */}
               {error && !isLoading && (
                 <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-center">
-                  <Text className="text-red-600 font-medium">Unable to load tools</Text>
+                  <Text className="text-red-600 font-medium">{t("mcp.unableToLoadTools")}</Text>
                   <Text className="text-sm text-red-500 mt-1">{error}</Text>
                 </div>
               )}
@@ -193,7 +195,7 @@ const MCPToolPermissions: React.FC<MCPToolPermissionsProps> = ({
               {/* Empty State */}
               {!isLoading && !error && tools.length === 0 && (
                 <div className="text-center py-6">
-                  <Text className="text-gray-500">No tools available</Text>
+                  <Text className="text-gray-500">{t("mcp.noToolsAvailable")}</Text>
                 </div>
               )}
             </div>

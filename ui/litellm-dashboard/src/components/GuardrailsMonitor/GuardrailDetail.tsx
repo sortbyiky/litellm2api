@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Col, Grid } from "@tremor/react";
 import { Button, Spin, Tabs } from "antd";
 import React, { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   getGuardrailsUsageDetail,
   getGuardrailsUsageLogs,
@@ -43,6 +44,7 @@ export function GuardrailDetail({
 }: GuardrailDetailProps) {
   const [activeTab, setActiveTab] = useState("overview");
   const [evaluationModalOpen, setEvaluationModalOpen] = useState(false);
+  const { t } = useTranslation();
   const [logsPage, setLogsPage] = useState(1);
   const logsPageSize = 50;
 
@@ -114,9 +116,9 @@ export function GuardrailDetail({
     return (
       <div>
         <Button type="link" icon={<ArrowLeftOutlined />} onClick={onBack} className="pl-0 mb-4">
-          Back to Overview
+          {t("guardrailsMonitor.backToOverview")}
         </Button>
-        <p className="text-red-600">Failed to load guardrail details.</p>
+        <p className="text-red-600">{t("guardrailsMonitor.failedToLoadDetails")}</p>
       </div>
     );
   }
@@ -130,7 +132,7 @@ export function GuardrailDetail({
           onClick={onBack}
           className="pl-0 mb-4"
         >
-          Back to Overview
+          {t("guardrailsMonitor.backToOverview")}
         </Button>
 
         <div className="flex items-start justify-between">
@@ -155,7 +157,7 @@ export function GuardrailDetail({
               type="default"
               icon={<SettingOutlined />}
               onClick={() => setEvaluationModalOpen(true)}
-              title="Evaluation settings"
+              title={t("guardrailsMonitor.evaluationSettings")}
             />
           </div>
         </div>
@@ -165,8 +167,8 @@ export function GuardrailDetail({
         activeKey={activeTab}
         onChange={setActiveTab}
         items={[
-          { key: "overview", label: "Overview" },
-          { key: "logs", label: "Logs" },
+          { key: "overview", label: t("guardrailsMonitor.overview") },
+          { key: "logs", label: t("guardrailsMonitor.logs") },
         ]}
       />
 
@@ -174,22 +176,22 @@ export function GuardrailDetail({
         <div className="space-y-6 mt-4">
           <Grid numItems={2} numItemsMd={5} className="gap-4">
             <Col>
-              <MetricCard label="Requests Evaluated" value={data.requestsEvaluated.toLocaleString()} />
+              <MetricCard label={t("guardrailsMonitor.requestsEvaluated")} value={data.requestsEvaluated.toLocaleString()} />
             </Col>
             <Col>
               <MetricCard
-                label="Fail Rate"
+                label={t("guardrailsMonitor.failRate")}
                 value={`${data.failRate}%`}
                 valueColor={
                   data.failRate > 15 ? "text-red-600" : data.failRate > 5 ? "text-amber-600" : "text-green-600"
                 }
-                subtitle={`${Math.round((data.requestsEvaluated * data.failRate) / 100).toLocaleString()} blocked`}
+                subtitle={`${Math.round((data.requestsEvaluated * data.failRate) / 100).toLocaleString()} ${t("guardrailsMonitor.blocked")}`}
                 icon={data.failRate > 15 ? <WarningOutlined className="text-red-400" /> : undefined}
               />
             </Col>
             <Col>
               <MetricCard
-                label="Avg. latency added"
+                label={t("guardrailsMonitor.avgLatencyAdded")}
                 value={
                   data.avgLatency != null ? `${Math.round(data.avgLatency)}ms` : "—"
                 }
@@ -202,7 +204,7 @@ export function GuardrailDetail({
                         : "text-green-600"
                     : "text-gray-500"
                 }
-                subtitle={data.avgLatency != null ? "Per request (avg)" : "No data"}
+                subtitle={data.avgLatency != null ? t("guardrailsMonitor.perRequestAvg") : t("guardrailsMonitor.noData")}
               />
             </Col>
           </Grid>

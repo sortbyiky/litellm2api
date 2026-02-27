@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Modal, Form, Input, Select, message } from "antd";
 import { Button } from "@tremor/react";
 import { registerClaudeCodePlugin } from "../networking";
@@ -38,40 +39,33 @@ const AddPluginForm: React.FC<AddPluginFormProps> = ({
   onSuccess,
 }) => {
   const [form] = Form.useForm();
+  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [sourceType, setSourceType] = useState<"github" | "url">("github");
 
   const handleSubmit = async (values: any) => {
     if (!accessToken) {
-      message.error("No access token available");
+      message.error(t("claudeCode.noAccessToken"));
       return;
     }
 
-    // Validate plugin name
     if (!validatePluginName(values.name)) {
-      message.error(
-        "Plugin name must be kebab-case (lowercase letters, numbers, and hyphens only)"
-      );
+      message.error(t("claudeCode.pluginNameKebabCase"));
       return;
     }
 
-    // Validate semantic version if provided
     if (values.version && !isValidSemanticVersion(values.version)) {
-      message.error(
-        "Version must be in semantic versioning format (e.g., 1.0.0)"
-      );
+      message.error(t("claudeCode.versionSemantic"));
       return;
     }
 
-    // Validate email if provided
     if (values.authorEmail && !isValidEmail(values.authorEmail)) {
-      message.error("Invalid email format");
+      message.error(t("claudeCode.invalidEmail"));
       return;
     }
 
-    // Validate homepage URL if provided
     if (values.homepage && !isValidUrl(values.homepage)) {
-      message.error("Invalid homepage URL format");
+      message.error(t("claudeCode.invalidHomepageUrl"));
       return;
     }
 
@@ -119,14 +113,14 @@ const AddPluginForm: React.FC<AddPluginFormProps> = ({
       }
 
       await registerClaudeCodePlugin(accessToken, pluginData);
-      message.success("Plugin registered successfully");
+      message.success(t("claudeCode.pluginRegisteredSuccess"));
       form.resetFields();
       setSourceType("github");
       onSuccess();
       onClose();
     } catch (error) {
       console.error("Error registering plugin:", error);
-      message.error("Failed to register plugin");
+      message.error(t("claudeCode.failedRegisterPlugin"));
     } finally {
       setIsSubmitting(false);
     }
@@ -146,7 +140,7 @@ const AddPluginForm: React.FC<AddPluginFormProps> = ({
 
   return (
     <Modal
-      title="Add New Claude Code Plugin"
+      title={t("claudeCode.addNewPlugin")}
       open={visible}
       onCancel={handleCancel}
       footer={null}
@@ -161,27 +155,26 @@ const AddPluginForm: React.FC<AddPluginFormProps> = ({
       >
         {/* Plugin Name */}
         <Form.Item
-          label="Plugin Name"
+          label={t("claudeCode.pluginName")}
           name="name"
           rules={[
-            { required: true, message: "Please enter plugin name" },
+            { required: true, message: t("claudeCode.pleaseEnterPluginName") },
             {
               pattern: /^[a-z0-9-]+$/,
-              message:
-                "Name must be kebab-case (lowercase, numbers, hyphens only)",
+              message: t("claudeCode.nameKebabCaseRule"),
             },
           ]}
-          tooltip="Unique identifier in kebab-case format (e.g., my-awesome-plugin)"
+          tooltip={t("claudeCode.pluginNameTooltip")}
         >
           <Input placeholder="my-awesome-plugin" className="rounded-lg" />
         </Form.Item>
 
         {/* Source Type */}
         <Form.Item
-          label="Source Type"
+          label={t("claudeCode.sourceType")}
           name="sourceType"
           initialValue="github"
-          rules={[{ required: true, message: "Please select source type" }]}
+          rules={[{ required: true, message: t("claudeCode.pleaseSelectSourceType") }]}
         >
           <Select onChange={handleSourceTypeChange} className="rounded-lg">
             <Option value="github">GitHub</Option>
@@ -192,16 +185,16 @@ const AddPluginForm: React.FC<AddPluginFormProps> = ({
         {/* GitHub Repository */}
         {sourceType === "github" && (
           <Form.Item
-            label="GitHub Repository"
+            label={t("claudeCode.githubRepository")}
             name="repo"
             rules={[
-              { required: true, message: "Please enter repository" },
+              { required: true, message: t("claudeCode.pleaseEnterRepository") },
               {
                 pattern: /^[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+$/,
-                message: "Repository must be in format: org/repo",
+                message: t("claudeCode.repoFormatRule"),
               },
             ]}
-            tooltip="Format: organization/repository (e.g., anthropics/claude-code)"
+            tooltip={t("claudeCode.repoTooltip")}
           >
             <Input placeholder="anthropics/claude-code" className="rounded-lg" />
           </Form.Item>
@@ -210,10 +203,10 @@ const AddPluginForm: React.FC<AddPluginFormProps> = ({
         {/* Git URL */}
         {sourceType === "url" && (
           <Form.Item
-            label="Git URL"
+            label={t("claudeCode.gitUrl")}
             name="url"
-            rules={[{ required: true, message: "Please enter git URL" }]}
-            tooltip="Full git URL to the repository"
+            rules={[{ required: true, message: t("claudeCode.pleaseEnterGitUrl") }]}
+            tooltip={t("claudeCode.gitUrlTooltip")}
           >
             <Input
               type="url"
@@ -225,35 +218,33 @@ const AddPluginForm: React.FC<AddPluginFormProps> = ({
 
         {/* Version */}
         <Form.Item
-          label="Version (Optional)"
+          label={t("claudeCode.versionOptional")}
           name="version"
-          tooltip="Semantic version (e.g., 1.0.0)"
+          tooltip={t("claudeCode.versionTooltip")}
         >
           <Input placeholder="1.0.0" className="rounded-lg" />
         </Form.Item>
 
-        {/* Description */}
         <Form.Item
-          label="Description (Optional)"
+          label={t("claudeCode.descriptionOptional")}
           name="description"
-          tooltip="Brief description of what the plugin does"
+          tooltip={t("claudeCode.descriptionTooltip")}
         >
           <TextArea
             rows={3}
-            placeholder="A plugin that helps with..."
+            placeholder={t("claudeCode.descriptionPlaceholder")}
             maxLength={500}
             className="rounded-lg"
           />
         </Form.Item>
 
-        {/* Category */}
         <Form.Item
-          label="Category (Optional)"
+          label={t("claudeCode.categoryOptional")}
           name="category"
-          tooltip="Select a category or enter a custom one"
+          tooltip={t("claudeCode.categoryTooltip")}
         >
           <Select
-            placeholder="Select or type a category"
+            placeholder={t("claudeCode.categoryPlaceholder")}
             allowClear
             showSearch
             optionFilterProp="children"
@@ -269,38 +260,38 @@ const AddPluginForm: React.FC<AddPluginFormProps> = ({
 
         {/* Keywords */}
         <Form.Item
-          label="Keywords (Optional)"
+          label={t("claudeCode.keywordsOptional")}
           name="keywords"
-          tooltip="Comma-separated list of keywords for search"
+          tooltip={t("claudeCode.keywordsTooltip")}
         >
           <Input placeholder="search, web, api" className="rounded-lg" />
         </Form.Item>
 
         {/* Author Name */}
         <Form.Item
-          label="Author Name (Optional)"
+          label={t("claudeCode.authorNameOptional")}
           name="authorName"
-          tooltip="Name of the plugin author or organization"
+          tooltip={t("claudeCode.authorNameTooltip")}
         >
           <Input placeholder="Your Name or Organization" className="rounded-lg" />
         </Form.Item>
 
         {/* Author Email */}
         <Form.Item
-          label="Author Email (Optional)"
+          label={t("claudeCode.authorEmailOptional")}
           name="authorEmail"
-          rules={[{ type: "email", message: "Please enter a valid email" }]}
-          tooltip="Contact email for the plugin author"
+          rules={[{ type: "email", message: t("claudeCode.pleaseEnterValidEmail") }]}
+          tooltip={t("claudeCode.authorEmailTooltip")}
         >
           <Input type="email" placeholder="author@example.com" className="rounded-lg" />
         </Form.Item>
 
         {/* Homepage */}
         <Form.Item
-          label="Homepage (Optional)"
+          label={t("claudeCode.homepageOptional")}
           name="homepage"
-          rules={[{ type: "url", message: "Please enter a valid URL" }]}
-          tooltip="URL to the plugin's homepage or documentation"
+          rules={[{ type: "url", message: t("claudeCode.pleaseEnterValidUrl") }]}
+          tooltip={t("claudeCode.homepageTooltip")}
         >
           <Input type="url" placeholder="https://example.com" className="rounded-lg" />
         </Form.Item>
@@ -313,10 +304,10 @@ const AddPluginForm: React.FC<AddPluginFormProps> = ({
               onClick={handleCancel}
               disabled={isSubmitting}
             >
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button type="submit" loading={isSubmitting}>
-              {isSubmitting ? "Registering..." : "Register Plugin"}
+              {isSubmitting ? t("claudeCode.registering") : t("claudeCode.registerPlugin")}
             </Button>
           </div>
         </Form.Item>

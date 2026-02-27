@@ -1,5 +1,6 @@
 import { Form, Input, Modal, Select, Tag, Typography, Button } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import NotificationsManager from "../molecules/notifications_manager";
 import { createGuardrailCall, getGuardrailProviderSpecificParams, getGuardrailUISettings } from "../networking";
 import ContentFilterConfiguration from "./content_filter/ContentFilterConfiguration";
@@ -97,6 +98,7 @@ interface ProviderParamsResponse {
 }
 
 const AddGuardrailForm: React.FC<AddGuardrailFormProps> = ({ visible, onClose, accessToken, onSuccess, preset }) => {
+  const { t } = useTranslation();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
@@ -153,7 +155,7 @@ const AddGuardrailForm: React.FC<AddGuardrailFormProps> = ({ visible, onClose, a
         populateGuardrailProviderMap(providerParamsResp);
       } catch (error) {
         console.error("Error fetching guardrail data:", error);
-        NotificationsManager.fromBackend("Failed to load guardrail configuration");
+        NotificationsManager.fromBackend(t("guardrailsSub.failedToLoadGuardrailConfig"));
       }
     };
 
@@ -281,7 +283,7 @@ const AddGuardrailForm: React.FC<AddGuardrailFormProps> = ({ visible, onClose, a
       // Validate configuration steps
       if (currentStep === 1) {
         if (shouldRenderPIIConfigSettings(selectedProvider) && selectedEntities.length === 0) {
-          NotificationsManager.fromBackend("Please select at least one PII entity to continue");
+          NotificationsManager.fromBackend(t("guardrailsSub.selectAtLeastOnePiiEntity"));
           return;
         }
       }
@@ -422,7 +424,7 @@ const AddGuardrailForm: React.FC<AddGuardrailFormProps> = ({ visible, onClose, a
           !hasCompetitorIntent
         ) {
           NotificationsManager.fromBackend(
-            "Please configure at least one content filter setting (category, pattern, keyword, or competitor intent)",
+            t("guardrailsSub.configureAtLeastOneContentFilter"),
           );
           setLoading(false);
           return;
@@ -476,7 +478,7 @@ const AddGuardrailForm: React.FC<AddGuardrailFormProps> = ({ visible, onClose, a
           // For some guardrails, the config values need to be in litellm_params
           guardrailData.guardrail_info = configObj;
         } catch (error) {
-          NotificationsManager.fromBackend("Invalid JSON in configuration");
+          NotificationsManager.fromBackend(t("guardrailsSub.invalidJsonConfig"));
           setLoading(false);
           return;
         }
@@ -484,7 +486,7 @@ const AddGuardrailForm: React.FC<AddGuardrailFormProps> = ({ visible, onClose, a
 
       if (guardrailProvider === "tool_permission") {
         if (toolPermissionConfig.rules.length === 0) {
-          NotificationsManager.fromBackend("Add at least one tool permission rule");
+          NotificationsManager.fromBackend(t("guardrailsSub.addAtLeastOneRule"));
           setLoading(false);
           return;
         }
@@ -552,7 +554,7 @@ const AddGuardrailForm: React.FC<AddGuardrailFormProps> = ({ visible, onClose, a
       console.log("Sending guardrail data:", JSON.stringify(guardrailData));
       await createGuardrailCall(accessToken, guardrailData);
 
-      NotificationsManager.success("Guardrail created successfully");
+      NotificationsManager.success(t("guardrailsSub.guardrailCreatedSuccess"));
 
       // Reset form and close modal
       resetForm();
@@ -573,19 +575,19 @@ const AddGuardrailForm: React.FC<AddGuardrailFormProps> = ({ visible, onClose, a
       <>
         <Form.Item
           name="guardrail_name"
-          label="Guardrail Name"
-          rules={[{ required: true, message: "Please enter a guardrail name" }]}
+          label={t("guardrailsSub.guardrailName")}
+          rules={[{ required: true, message: t("guardrailsSub.pleaseEnterGuardrailName") }]}
         >
-          <Input placeholder="Enter a name for this guardrail" />
+          <Input placeholder={t("guardrailsSub.enterNameForGuardrail")} />
         </Form.Item>
 
         <Form.Item
           name="provider"
-          label="Guardrail Provider"
-          rules={[{ required: true, message: "Please select a provider" }]}
+          label={t("guardrailsSub.guardrailProvider")}
+          rules={[{ required: true, message: t("guardrailsSub.pleaseSelectProvider") }]}
         >
           <Select
-            placeholder="Select a guardrail provider"
+            placeholder={t("guardrailsSub.selectGuardrailProvider")}
             onChange={handleProviderChange}
             labelInValue={false}
             optionLabelProp="label"
@@ -644,9 +646,9 @@ const AddGuardrailForm: React.FC<AddGuardrailFormProps> = ({ visible, onClose, a
 
         <Form.Item
           name="mode"
-          label="Mode"
-          tooltip="How the guardrail should be applied"
-          rules={[{ required: true, message: "Please select a mode" }]}
+          label={t("guardrailsSub.mode")}
+          tooltip={t("guardrailsSub.modeTooltip")}
+          rules={[{ required: true, message: t("guardrailsSub.pleaseSelectMode") }]}
         >
           <Select optionLabelProp="label" mode="multiple">
             {guardrailSettings?.supported_modes?.map((mode) => (
@@ -656,7 +658,7 @@ const AddGuardrailForm: React.FC<AddGuardrailFormProps> = ({ visible, onClose, a
                     <strong>{mode}</strong>
                     {mode === "pre_call" && (
                       <Tag color="green" style={{ marginLeft: "8px" }}>
-                        Recommended
+                        {t("guardrailsSub.recommended")}
                       </Tag>
                     )}
                   </div>
@@ -670,7 +672,7 @@ const AddGuardrailForm: React.FC<AddGuardrailFormProps> = ({ visible, onClose, a
                 <Option value="pre_call" label="pre_call">
                   <div>
                     <div>
-                      <strong>pre_call</strong> <Tag color="green">Recommended</Tag>
+                      <strong>pre_call</strong> <Tag color="green">{t("guardrailsSub.recommended")}</Tag>
                     </div>
                     <div style={{ fontSize: "12px", color: "#888" }}>{modeDescriptions.pre_call}</div>
                   </div>
@@ -706,12 +708,12 @@ const AddGuardrailForm: React.FC<AddGuardrailFormProps> = ({ visible, onClose, a
 
         <Form.Item
           name="default_on"
-          label="Always On"
-          tooltip="If enabled, this guardrail will be applied to all requests by default."
+          label={t("guardrailsSub.alwaysOn")}
+          tooltip={t("guardrailsSub.alwaysOnTooltip")}
         >
           <Select>
-            <Select.Option value={true}>Yes</Select.Option>
-            <Select.Option value={false}>No</Select.Option>
+            <Select.Option value={true}>{t("guardrailsSub.yes")}</Select.Option>
+            <Select.Option value={false}>{t("guardrailsSub.no")}</Select.Option>
           </Select>
         </Form.Item>
 
@@ -849,33 +851,33 @@ const AddGuardrailForm: React.FC<AddGuardrailFormProps> = ({ visible, onClose, a
 
     return (
       <div className="flex justify-end space-x-2 mt-4">
-        {currentStep > 0 && <Button onClick={prevStep}>Previous</Button>}
+        {currentStep > 0 && <Button onClick={prevStep}>{t("guardrailsSub.previous")}</Button>}
         {isCategoriesStep ? (
           <>
-            <Button onClick={nextStep}>Skip</Button>
+            <Button onClick={nextStep}>{t("guardrailsSub.skip")}</Button>
             <Button
               type="primary"
               onClick={() => handleAddAndContinue(hasCompetitorIntentConfigured)}
               disabled={!canContinueFromCategoriesStep}
             >
-              {hasPendingCategory ? "Add & Continue →" : "Continue →"}
+              {hasPendingCategory ? t("guardrailsSub.addAndContinue") : t("guardrailsSub.continue")}
             </Button>
           </>
         ) : (
           <>
             {!isLastStep && (
               <Button type="primary" onClick={nextStep}>
-                Next
+                {t("guardrailsSub.next")}
               </Button>
             )}
             {isLastStep && (
               <Button type="primary" onClick={handleSubmit} loading={loading}>
-                Create Guardrail
+                {t("guardrailsSub.createGuardrail")}
               </Button>
             )}
           </>
         )}
-        <Button onClick={handleClose}>Cancel</Button>
+        <Button onClick={handleClose}>{t("guardrailsSub.cancel")}</Button>
       </div>
     );
   };
@@ -883,21 +885,21 @@ const AddGuardrailForm: React.FC<AddGuardrailFormProps> = ({ visible, onClose, a
   const getStepConfigs = () => {
     if (shouldRenderContentFilterConfigSettings(selectedProvider)) {
       return [
-        { title: "Basic Info", optional: false },
-        { title: "Default Categories", optional: false },
-        { title: "Patterns", optional: false },
-        { title: "Keywords", optional: false },
+        { title: t("guardrailsSub.basicInfo"), optional: false },
+        { title: t("guardrailsSub.defaultCategories"), optional: false },
+        { title: t("guardrailsSub.patterns"), optional: false },
+        { title: t("guardrailsSub.keywords"), optional: false },
       ];
     }
     if (shouldRenderPIIConfigSettings(selectedProvider)) {
       return [
-        { title: "Basic Info", optional: false },
-        { title: "PII Configuration", optional: false },
+        { title: t("guardrailsSub.basicInfo"), optional: false },
+        { title: t("guardrailsSub.piiConfiguration"), optional: false },
       ];
     }
     return [
-      { title: "Basic Info", optional: false },
-      { title: "Provider Configuration", optional: false },
+      { title: t("guardrailsSub.basicInfo"), optional: false },
+      { title: t("guardrailsSub.providerConfiguration"), optional: false },
     ];
   };
 
@@ -919,7 +921,7 @@ const AddGuardrailForm: React.FC<AddGuardrailFormProps> = ({ visible, onClose, a
       <div className="flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-          <h3 className="text-base font-semibold text-gray-900 m-0">Create guardrail</h3>
+          <h3 className="text-base font-semibold text-gray-900 m-0">{t("guardrailsSub.createGuardrail")}</h3>
           <button
             onClick={handleClose}
             className="text-gray-400 hover:text-gray-600 bg-transparent border-none cursor-pointer text-base leading-none p-1"
@@ -987,8 +989,8 @@ const AddGuardrailForm: React.FC<AddGuardrailFormProps> = ({ visible, onClose, a
                       >
                         {step.title}
                       </span>
-                      {step.optional && !isCurrent && <span className="text-[11px] text-slate-400">optional</span>}
-                      {isDone && <span className="text-[11px] text-indigo-500 hover:underline">Edit</span>}
+                      {step.optional && !isCurrent && <span className="text-[11px] text-slate-400">{t("guardrailsSub.optional")}</span>}
+                      {isDone && <span className="text-[11px] text-indigo-500 hover:underline">{t("guardrailsSub.edit")}</span>}
                     </div>
 
                     {/* Expanded form content for current step */}
@@ -1002,15 +1004,15 @@ const AddGuardrailForm: React.FC<AddGuardrailFormProps> = ({ visible, onClose, a
 
         {/* Bottom bar */}
         <div className="flex items-center justify-end space-x-3 px-6 py-3 border-t border-gray-200">
-          <Button onClick={handleClose}>Cancel</Button>
-          {currentStep > 0 && <Button onClick={prevStep}>Previous</Button>}
+          <Button onClick={handleClose}>{t("guardrailsSub.cancel")}</Button>
+          {currentStep > 0 && <Button onClick={prevStep}>{t("guardrailsSub.previous")}</Button>}
           {currentStep < stepConfigs.length - 1 ? (
             <Button type="primary" onClick={nextStep}>
-              Next
+              {t("guardrailsSub.next")}
             </Button>
           ) : (
             <Button type="primary" onClick={handleSubmit} loading={loading}>
-              Create Guardrail
+              {t("guardrailsSub.createGuardrail")}
             </Button>
           )}
         </div>

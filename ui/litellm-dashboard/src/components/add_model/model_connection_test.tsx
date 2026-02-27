@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Typography, Button, Divider } from "antd";
 import { WarningOutlined, InfoCircleOutlined, CopyOutlined } from "@ant-design/icons";
 import { testConnectionRequest } from "../networking";
@@ -23,6 +24,7 @@ const ModelConnectionTest: React.FC<ModelConnectionTestProps> = ({
   onClose,
   onTestComplete,
 }) => {
+  const { t } = useTranslation();
   const [error, setError] = React.useState<Error | string | null>(null);
   const [rawRequest, setRawRequest] = React.useState<any>(null);
   const [rawResponse, setRawResponse] = React.useState<any>(null);
@@ -47,7 +49,7 @@ const ModelConnectionTest: React.FC<ModelConnectionTestProps> = ({
 
       if (!result) {
         console.log("No result from prepareModelAddRequest");
-        setError("Failed to prepare model data. Please check your form inputs.");
+        setError(t("addModel.failedToPrepareModelData"));
         setIsSuccess(false);
         setIsLoading(false);
         return;
@@ -59,7 +61,7 @@ const ModelConnectionTest: React.FC<ModelConnectionTestProps> = ({
 
       const response = await testConnectionRequest(accessToken, litellmParamsObj, modelInfoObj, modelInfoObj?.mode);
       if (response.status === "success") {
-        NotificationsManager.success("Connection test successful!");
+        NotificationsManager.success(t("addModel.connectionTestSuccessful"));
         setError(null);
         setIsSuccess(true);
       } else {
@@ -90,7 +92,7 @@ const ModelConnectionTest: React.FC<ModelConnectionTestProps> = ({
   }, []); // Empty dependency array means this runs once on mount
 
   const getCleanErrorMessage = (errorMsg: string) => {
-    if (!errorMsg) return "Unknown error";
+    if (!errorMsg) return t("addModel.unknownError");
 
     const mainError = errorMsg.split("stack trace:")[0].trim();
 
@@ -104,7 +106,7 @@ const ModelConnectionTest: React.FC<ModelConnectionTestProps> = ({
       ? getCleanErrorMessage(error)
       : error?.message
         ? getCleanErrorMessage(error.message)
-        : "Unknown error";
+        : t("addModel.unknownError");
 
   const formatCurlCommand = (
     apiBase: string,
@@ -154,7 +156,7 @@ ${formattedBody}
               }}
             />
           </div>
-          <Text style={{ fontSize: "16px" }}>Testing connection to {modelName}...</Text>
+          <Text style={{ fontSize: "16px" }}>{t("addModel.testingConnection", { modelName })}</Text>
           <style jsx>{`
             @keyframes spin {
               0% {
@@ -182,7 +184,7 @@ ${formattedBody}
             </svg>
           </div>
           <Text type="success" style={{ fontSize: "18px", fontWeight: 500, marginLeft: "10px" }}>
-            Connection to {modelName} successful!
+            {t("addModel.connectionSuccessful", { modelName })}
           </Text>
         </div>
       ) : (
@@ -191,7 +193,7 @@ ${formattedBody}
             <div style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}>
               <WarningOutlined style={{ color: "#ff4d4f", fontSize: "24px", marginRight: "12px" }} />
               <Text type="danger" style={{ fontSize: "18px", fontWeight: 500 }}>
-                Connection to {modelName} failed
+                {t("addModel.connectionFailed", { modelName })}
               </Text>
             </div>
 
@@ -206,7 +208,7 @@ ${formattedBody}
               }}
             >
               <Text strong style={{ display: "block", marginBottom: "8px" }}>
-                Error:{" "}
+                {t("addModel.error")}:{" "}
               </Text>
               <Text type="danger" style={{ fontSize: "14px", lineHeight: "1.5" }}>
                 {errorMessage}
@@ -219,7 +221,7 @@ ${formattedBody}
                     onClick={() => setShowDetails(!showDetails)}
                     style={{ paddingLeft: 0, height: "auto" }}
                   >
-                    {showDetails ? "Hide Details" : "Show Details"}
+                    {showDetails ? t("addModel.hideDetails") : t("addModel.showDetails")}
                   </Button>
                 </div>
               )}
@@ -228,7 +230,7 @@ ${formattedBody}
             {showDetails && (
               <div style={{ marginBottom: "20px" }}>
                 <Text strong style={{ display: "block", marginBottom: "8px", fontSize: "15px" }}>
-                  Troubleshooting Details
+                  {t("addModel.troubleshootingDetails")}
                 </Text>
                 <pre
                   style={{
@@ -249,7 +251,7 @@ ${formattedBody}
 
             <div>
               <Text strong style={{ display: "block", marginBottom: "8px", fontSize: "15px" }}>
-                API Request
+                {t("addModel.apiRequest")}
               </Text>
               <pre
                 style={{
@@ -263,17 +265,17 @@ ${formattedBody}
                   lineHeight: "1.5",
                 }}
               >
-                {curlCommand || "No request data available"}
+                {curlCommand || t("addModel.noRequestData")}
               </pre>
               <Button
                 style={{ marginTop: "8px" }}
                 icon={<CopyOutlined />}
                 onClick={() => {
                   navigator.clipboard.writeText(curlCommand || "");
-                  NotificationsManager.success("Copied to clipboard");
+                  NotificationsManager.success(t("addModel.copiedToClipboard"));
                 }}
               >
-                Copy to Clipboard
+                {t("addModel.copyToClipboard")}
               </Button>
             </div>
           </div>
@@ -282,7 +284,7 @@ ${formattedBody}
       <Divider style={{ margin: "24px 0 16px" }} />
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <Button type="link" href="https://docs.litellm.ai/docs/providers" target="_blank" icon={<InfoCircleOutlined />}>
-          View Documentation
+          {t("addModel.viewDocumentation")}
         </Button>
       </div>
     </div>

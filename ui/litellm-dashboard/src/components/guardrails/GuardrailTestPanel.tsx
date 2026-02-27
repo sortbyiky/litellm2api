@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@tremor/react";
 import { Input, Typography, Tooltip } from "antd";
 import { CopyOutlined, InfoCircleOutlined } from "@ant-design/icons";
@@ -26,10 +27,11 @@ export function GuardrailTestPanel({
   onClose,
 }: GuardrailTestPanelProps) {
   const [inputText, setInputText] = useState("");
+  const { t } = useTranslation();
 
   const handleSubmit = () => {
     if (!inputText.trim()) {
-      NotificationsManager.fromBackend("Please enter text to test");
+      NotificationsManager.fromBackend(t("guardrailsSub.pleaseEnterTextToTest"));
       return;
     }
 
@@ -74,9 +76,9 @@ export function GuardrailTestPanel({
   const handleCopyInput = async () => {
     const success = await copyToClipboard(inputText);
     if (success) {
-      NotificationsManager.success("Input copied to clipboard");
+      NotificationsManager.success(t("guardrailsSub.inputCopied"));
     } else {
-      NotificationsManager.fromBackend("Failed to copy input");
+      NotificationsManager.fromBackend(t("guardrailsSub.failedToCopyInput"));
     }
   };
 
@@ -87,7 +89,7 @@ export function GuardrailTestPanel({
         <div className="flex items-center space-x-3">
           <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-2 mb-1">
-              <h2 className="text-lg font-semibold text-gray-900">Test Guardrails:</h2>
+              <h2 className="text-lg font-semibold text-gray-900">{t("guardrailsSub.testGuardrails")}:</h2>
               <div className="flex flex-wrap gap-2">
                 {guardrailNames.map((name) => (
                   <div
@@ -100,7 +102,7 @@ export function GuardrailTestPanel({
               </div>
             </div>
             <p className="text-sm text-gray-500">
-              Test {guardrailNames.length > 1 ? "guardrails" : "guardrail"} and compare results
+              {t("guardrailsSub.testGuardrailsAndCompare", { count: guardrailNames.length })}
             </p>
           </div>
         </div>
@@ -112,8 +114,8 @@ export function GuardrailTestPanel({
           <div>
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-700">Input Text</label>
-                <Tooltip title="Press Enter to submit. Use Shift+Enter for new line.">
+                <label className="text-sm font-medium text-gray-700">{t("guardrailsSub.inputText")}</label>
+                <Tooltip title={t("guardrailsSub.enterToSubmitShiftEnterNewLine")}>
                   <InfoCircleOutlined className="text-gray-400 cursor-help" />
                 </Tooltip>
               </div>
@@ -124,7 +126,7 @@ export function GuardrailTestPanel({
                   icon={CopyOutlined}
                   onClick={handleCopyInput}
                 >
-                  Copy Input
+                  {t("guardrailsSub.copyInput")}
                 </Button>
               )}
             </div>
@@ -132,15 +134,15 @@ export function GuardrailTestPanel({
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Enter text to test with guardrails..."
+              placeholder={t("guardrailsSub.enterTextToTest")}
               rows={8}
               className="font-mono text-sm"
             />
             <div className="flex justify-between items-center mt-1">
               <Text className="text-xs text-gray-500">
-                Press <kbd className="px-1 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs">Enter</kbd> to submit • <kbd className="px-1 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs">Shift+Enter</kbd> for new line
+                {t("guardrailsSub.pressEnterToSubmit")}
               </Text>
-              <Text className="text-xs text-gray-500">Characters: {inputText.length}</Text>
+              <Text className="text-xs text-gray-500">{t("guardrailsSub.characters")}: {inputText.length}</Text>
             </div>
           </div>
 
@@ -152,8 +154,8 @@ export function GuardrailTestPanel({
               className="w-full"
             >
               {isLoading
-                ? `Testing ${guardrailNames.length} guardrail${guardrailNames.length > 1 ? "s" : ""}...`
-                : `Test ${guardrailNames.length} guardrail${guardrailNames.length > 1 ? "s" : ""}`}
+                ? t("guardrailsSub.testingGuardrails", { count: guardrailNames.length })
+                : t("guardrailsSub.testGuardrailsCount", { count: guardrailNames.length })}
             </Button>
           </div>
         </div>

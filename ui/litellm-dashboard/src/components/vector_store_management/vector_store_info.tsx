@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, Text, Title, Button, Badge, TabGroup, TabList, Tab, TabPanels, TabPanel } from "@tremor/react";
 import { Form, Input, Select as Select2, Tooltip, Button as AntButton } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
@@ -24,6 +25,7 @@ const VectorStoreInfoView: React.FC<VectorStoreInfoViewProps> = ({
   is_admin,
   editVectorStore,
 }) => {
+  const { t } = useTranslation();
   const [form] = Form.useForm();
   const [vectorStoreDetails, setVectorStoreDetails] = useState<VectorStore | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(editVectorStore);
@@ -58,7 +60,7 @@ const VectorStoreInfoView: React.FC<VectorStoreInfoViewProps> = ({
       }
     } catch (error) {
       console.error("Error fetching vector store details:", error);
-      NotificationsManager.fromBackend("Error fetching vector store details: " + error);
+      NotificationsManager.fromBackend(t("vectorStores.errorFetchingDetails") + ": " + error);
     }
   };
 
@@ -86,7 +88,7 @@ const VectorStoreInfoView: React.FC<VectorStoreInfoViewProps> = ({
       try {
         metadata = metadataString ? JSON.parse(metadataString) : {};
       } catch (e) {
-        NotificationsManager.fromBackend("Invalid JSON in metadata field");
+        NotificationsManager.fromBackend(t("vectorStores.invalidJsonMetadata"));
         return;
       }
 
@@ -99,17 +101,17 @@ const VectorStoreInfoView: React.FC<VectorStoreInfoViewProps> = ({
       };
 
       await vectorStoreUpdateCall(accessToken, updateData);
-      NotificationsManager.success("Vector store updated successfully");
+      NotificationsManager.success(t("vectorStores.vectorStoreUpdatedSuccess"));
       setIsEditing(false);
       fetchVectorStoreDetails();
     } catch (error) {
       console.error("Error updating vector store:", error);
-      NotificationsManager.fromBackend("Error updating vector store: " + error);
+      NotificationsManager.fromBackend(t("vectorStores.errorUpdatingVectorStore") + ": " + error);
     }
   };
 
   if (!vectorStoreDetails) {
-    return <div>Loading...</div>;
+    return <div>{t("common.loading")}</div>;
   }
 
   return (
@@ -117,18 +119,18 @@ const VectorStoreInfoView: React.FC<VectorStoreInfoViewProps> = ({
       <div className="flex justify-between items-center mb-6">
         <div>
           <Button icon={ArrowLeftIcon} variant="light" className="mb-4" onClick={onClose}>
-            Back to Vector Stores
+            {t("vectorStores.backToVectorStores")}
           </Button>
-          <Title>Vector Store ID: {vectorStoreDetails.vector_store_id}</Title>
-          <Text className="text-gray-500">{vectorStoreDetails.vector_store_description || "No description"}</Text>
+          <Title>{t("vectorStores.vectorStoreId")}: {vectorStoreDetails.vector_store_id}</Title>
+          <Text className="text-gray-500">{vectorStoreDetails.vector_store_description || t("vectorStores.noDescription")}</Text>
         </div>
-        {is_admin && !isEditing && <Button onClick={() => setIsEditing(true)}>Edit Vector Store</Button>}
+        {is_admin && !isEditing && <Button onClick={() => setIsEditing(true)}>{t("vectorStores.editVectorStore")}</Button>}
       </div>
 
       <TabGroup>
         <TabList className="mb-6">
-          <Tab>Details</Tab>
-          <Tab>Test Vector Store</Tab>
+          <Tab>{t("common.details")}</Tab>
+          <Tab>{t("vectorStores.testVectorStore")}</Tab>
         </TabList>
 
         <TabPanels>
@@ -137,23 +139,23 @@ const VectorStoreInfoView: React.FC<VectorStoreInfoViewProps> = ({
             {isEditing ? (
               <div>
                 <div className="flex justify-between items-center mb-4">
-                  <Title>Edit Vector Store</Title>
+                  <Title>{t("vectorStores.editVectorStore")}</Title>
                 </div>
                 <Card>
                   <Form form={form} onFinish={handleSave} layout="vertical" initialValues={vectorStoreDetails}>
                     <Form.Item
-                      label="Vector Store ID"
+                      label={t("vectorStores.vectorStoreId")}
                       name="vector_store_id"
-                      rules={[{ required: true, message: "Please input a vector store ID" }]}
+                      rules={[{ required: true, message: t("vectorStores.pleaseInputVectorStoreId") }]}
                     >
                       <Input disabled />
                     </Form.Item>
 
-                    <Form.Item label="Vector Store Name" name="vector_store_name">
+                    <Form.Item label={t("vectorStores.vectorStoreName")} name="vector_store_name">
                       <Input />
                     </Form.Item>
 
-                    <Form.Item label="Description" name="vector_store_description">
+                    <Form.Item label={t("common.description")} name="vector_store_description">
                       <Input.TextArea rows={4} />
                     </Form.Item>
 
@@ -161,13 +163,13 @@ const VectorStoreInfoView: React.FC<VectorStoreInfoViewProps> = ({
                       label={
                         <span>
                           Provider{" "}
-                          <Tooltip title="Select the provider for this vector store">
+                          <Tooltip title={t("vectorStores.selectProviderTooltip")}>
                             <InfoCircleOutlined style={{ marginLeft: "4px" }} />
                           </Tooltip>
                         </span>
                       }
                       name="custom_llm_provider"
-                      rules={[{ required: true, message: "Please select a provider" }]}
+                      rules={[{ required: true, message: t("vectorStores.pleaseSelectProvider") }]}
                     >
                       <Select2>
                         {Object.entries(Providers).map(([providerEnum, providerDisplayName]) => {
@@ -206,20 +208,20 @@ const VectorStoreInfoView: React.FC<VectorStoreInfoViewProps> = ({
                     {/* Credentials */}
                     <div className="mb-4">
                       <Text className="text-sm text-gray-500 mb-2">
-                        Either select existing credentials OR enter provider credentials below
+                        {t("vectorStores.credentialsOrProviderHint")}
                       </Text>
                     </div>
 
-                    <Form.Item label="Existing Credentials" name="litellm_credential_name">
+                    <Form.Item label={t("vectorStores.existingCredentials")} name="litellm_credential_name">
                       <Select2
                         showSearch
-                        placeholder="Select or search for existing credentials"
+                        placeholder={t("vectorStores.selectOrSearchCredentials")}
                         optionFilterProp="children"
                         filterOption={(input, option) =>
                           (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
                         }
                         options={[
-                          { value: null, label: "None" },
+                          { value: null, label: t("common.none") },
                           ...credentials.map((credential) => ({
                             value: credential.credential_name,
                             label: credential.credential_name,
@@ -238,8 +240,8 @@ const VectorStoreInfoView: React.FC<VectorStoreInfoViewProps> = ({
                     <Form.Item
                       label={
                         <span>
-                          Metadata{" "}
-                          <Tooltip title="JSON metadata for the vector store">
+                          {t("vectorStores.metadata")}{" "}
+                          <Tooltip title={t("vectorStores.metadataTooltip")}>
                             <InfoCircleOutlined style={{ marginLeft: "4px" }} />
                           </Tooltip>
                         </span>
@@ -254,9 +256,9 @@ const VectorStoreInfoView: React.FC<VectorStoreInfoViewProps> = ({
                     </Form.Item>
 
                     <div className="flex justify-end space-x-2">
-                      <AntButton onClick={() => setIsEditing(false)}>Cancel</AntButton>
+                      <AntButton onClick={() => setIsEditing(false)}>{t("common.cancel")}</AntButton>
                       <AntButton type="primary" htmlType="submit">
-                        Save Changes
+                        {t("vectorStores.saveChanges")}
                       </AntButton>
                     </div>
                   </Form>
@@ -265,25 +267,25 @@ const VectorStoreInfoView: React.FC<VectorStoreInfoViewProps> = ({
             ) : (
               <div>
                 <div className="flex justify-between items-center mb-4">
-                  <Title>Vector Store Details</Title>
-                  {is_admin && <Button onClick={() => setIsEditing(true)}>Edit Vector Store</Button>}
+                  <Title>{t("vectorStores.vectorStoreDetails")}</Title>
+                  {is_admin && <Button onClick={() => setIsEditing(true)}>{t("vectorStores.editVectorStore")}</Button>}
                 </div>
                 <Card>
                   <div className="space-y-4">
                     <div>
-                      <Text className="font-medium">ID</Text>
+                      <Text className="font-medium">{t("vectorStores.id")}</Text>
                       <Text>{vectorStoreDetails.vector_store_id}</Text>
                     </div>
                     <div>
-                      <Text className="font-medium">Name</Text>
+                      <Text className="font-medium">{t("common.name")}</Text>
                       <Text>{vectorStoreDetails.vector_store_name || "-"}</Text>
                     </div>
                     <div>
-                      <Text className="font-medium">Description</Text>
+                      <Text className="font-medium">{t("common.description")}</Text>
                       <Text>{vectorStoreDetails.vector_store_description || "-"}</Text>
                     </div>
                     <div>
-                      <Text className="font-medium">Provider</Text>
+                      <Text className="font-medium">{t("vectorStores.provider")}</Text>
                       <div className="flex items-center space-x-2 mt-1">
                         {(() => {
                           const provider = vectorStoreDetails.custom_llm_provider || "bedrock";
@@ -331,19 +333,19 @@ const VectorStoreInfoView: React.FC<VectorStoreInfoViewProps> = ({
                       </div>
                     </div>
                     <div>
-                      <Text className="font-medium">Metadata</Text>
+                      <Text className="font-medium">{t("vectorStores.metadata")}</Text>
                       <div className="bg-gray-50 p-3 rounded mt-2 font-mono text-xs overflow-auto max-h-48">
                         <pre>{metadataString}</pre>
                       </div>
                     </div>
                     <div>
-                      <Text className="font-medium">Created</Text>
+                      <Text className="font-medium">{t("vectorStores.created")}</Text>
                       <Text>
                         {vectorStoreDetails.created_at ? new Date(vectorStoreDetails.created_at).toLocaleString() : "-"}
                       </Text>
                     </div>
                     <div>
-                      <Text className="font-medium">Last Updated</Text>
+                      <Text className="font-medium">{t("vectorStores.lastUpdated")}</Text>
                       <Text>
                         {vectorStoreDetails.updated_at ? new Date(vectorStoreDetails.updated_at).toLocaleString() : "-"}
                       </Text>

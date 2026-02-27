@@ -496,6 +496,7 @@ const AllModelsTab = ({
 
             <AllModelsDataTable
               columns={columns(
+                t,
                 userRole,
                 userId,
                 premiumUser,

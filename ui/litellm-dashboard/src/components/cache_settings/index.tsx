@@ -5,6 +5,7 @@ import NotificationsManager from "../molecules/notifications_manager";
 import RedisTypeSelector from "./RedisTypeSelector";
 import CacheFieldRenderer from "./CacheFieldRenderer";
 import { gatherFormValues, groupFieldsByCategory } from "./cacheSettingsUtils";
+import { useTranslation } from "react-i18next";
 
 interface CacheSettingsProps {
   accessToken: string | null;
@@ -13,6 +14,7 @@ interface CacheSettingsProps {
 }
 
 const CacheSettings: React.FC<CacheSettingsProps> = ({ accessToken, userRole, userID }) => {
+  const { t } = useTranslation();
   const [cacheSettings, setCacheSettings] = useState<{ [key: string]: any }>({});
   const [fields, setFields] = useState<any[]>([]);
   const [redisTypeDescriptions, setRedisTypeDescriptions] = useState<{ [key: string]: string }>({});
@@ -65,7 +67,7 @@ const CacheSettings: React.FC<CacheSettingsProps> = ({ accessToken, userRole, us
       const result = await testCacheConnectionCall(accessToken, testSettings);
 
       if (result.status === "success") {
-        NotificationsManager.success("Cache connection test successful!");
+        NotificationsManager.success(t("cache.connectionTestSuccess"));
       } else {
         NotificationsManager.fromBackend(`Connection test failed: ${result.message || result.error}`);
       }
@@ -89,7 +91,7 @@ const CacheSettings: React.FC<CacheSettingsProps> = ({ accessToken, userRole, us
         settingsToSave.type = "redis-semantic";
       }
       await updateCacheSettingsCall(accessToken, settingsToSave);
-      NotificationsManager.success("Cache settings updated successfully");
+      NotificationsManager.success(t("cache.settingsUpdated"));
       // Reload settings to reflect saved values
       await loadCacheSettings();
     } catch (error) {
@@ -111,8 +113,8 @@ const CacheSettings: React.FC<CacheSettingsProps> = ({ accessToken, userRole, us
     <div className="w-full space-y-8 py-2">
       <div className="space-y-6">
         <div className="max-w-3xl">
-          <h3 className="text-sm font-medium text-gray-900">Cache Settings</h3>
-          <p className="text-xs text-gray-500 mt-1">Configure Redis cache for LiteLLM</p>
+          <h3 className="text-sm font-medium text-gray-900">{t("cache.cacheSettings")}</h3>
+          <p className="text-xs text-gray-500 mt-1">{t("cache.configureRedisCache")}</p>
         </div>
 
         {/* Redis Type Selector */}
@@ -124,7 +126,7 @@ const CacheSettings: React.FC<CacheSettingsProps> = ({ accessToken, userRole, us
 
         {/* Basic Fields */}
         <div className="space-y-6 pt-4 border-t border-gray-200">
-          <h4 className="text-sm font-medium text-gray-900">Connection Settings</h4>
+          <h4 className="text-sm font-medium text-gray-900">{t("cache.connectionSettings")}</h4>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             {basicFields.map((field: any) => {
               if (!field) return null;
@@ -137,7 +139,7 @@ const CacheSettings: React.FC<CacheSettingsProps> = ({ accessToken, userRole, us
         {/* Redis Type-Specific Fields */}
         {redisType === "cluster" && clusterFields.length > 0 && (
           <div className="space-y-6 pt-4 border-t border-gray-200">
-            <h4 className="text-sm font-medium text-gray-900">Cluster Configuration</h4>
+            <h4 className="text-sm font-medium text-gray-900">{t("cache.clusterConfiguration")}</h4>
             <div className="grid grid-cols-1 gap-6">
               {clusterFields.map((field: any) => {
                 const currentValue = cacheSettings[field.field_name] ?? field.field_default ?? "";
@@ -149,7 +151,7 @@ const CacheSettings: React.FC<CacheSettingsProps> = ({ accessToken, userRole, us
 
         {redisType === "sentinel" && sentinelFields.length > 0 && (
           <div className="space-y-6 pt-4 border-t border-gray-200">
-            <h4 className="text-sm font-medium text-gray-900">Sentinel Configuration</h4>
+            <h4 className="text-sm font-medium text-gray-900">{t("cache.sentinelConfiguration")}</h4>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               {sentinelFields.map((field: any) => {
                 const currentValue = cacheSettings[field.field_name] ?? field.field_default ?? "";
@@ -161,7 +163,7 @@ const CacheSettings: React.FC<CacheSettingsProps> = ({ accessToken, userRole, us
 
         {redisType === "semantic" && semanticFields.length > 0 && (
           <div className="space-y-6 pt-4 border-t border-gray-200">
-            <h4 className="text-sm font-medium text-gray-900">Semantic Configuration</h4>
+            <h4 className="text-sm font-medium text-gray-900">{t("cache.semanticConfiguration")}</h4>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               {semanticFields.map((field: any) => {
                 const currentValue = cacheSettings[field.field_name] ?? field.field_default ?? "";
@@ -174,14 +176,14 @@ const CacheSettings: React.FC<CacheSettingsProps> = ({ accessToken, userRole, us
         {/* Advanced Settings Accordion */}
         <Accordion className="mt-4">
           <AccordionHeader>
-            <span className="text-sm font-medium text-gray-900">Advanced Settings</span>
+            <span className="text-sm font-medium text-gray-900">{t("cache.advancedSettings")}</span>
           </AccordionHeader>
           <AccordionBody>
             <div className="space-y-6">
               {/* SSL Settings */}
               {sslFields.length > 0 && (
                 <div className="space-y-4">
-                  <h5 className="text-sm font-medium text-gray-700">SSL Settings</h5>
+                  <h5 className="text-sm font-medium text-gray-700">{t("cache.sslSettings")}</h5>
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     {sslFields.map((field: any) => {
                       if (!field) return null;
@@ -195,7 +197,7 @@ const CacheSettings: React.FC<CacheSettingsProps> = ({ accessToken, userRole, us
               {/* Cache Management */}
               {cacheManagementFields.length > 0 && (
                 <div className="space-y-4 pt-4 border-t border-gray-200">
-                  <h5 className="text-sm font-medium text-gray-700">Cache Management</h5>
+                  <h5 className="text-sm font-medium text-gray-700">{t("cache.cacheManagement")}</h5>
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     {cacheManagementFields.map((field: any) => {
                       if (!field) return null;
@@ -209,7 +211,7 @@ const CacheSettings: React.FC<CacheSettingsProps> = ({ accessToken, userRole, us
               {/* GCP Authentication */}
               {gcpFields.length > 0 && (
                 <div className="space-y-4 pt-4 border-t border-gray-200">
-                  <h5 className="text-sm font-medium text-gray-700">GCP Authentication</h5>
+                  <h5 className="text-sm font-medium text-gray-700">{t("cache.gcpAuthentication")}</h5>
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     {gcpFields.map((field: any) => {
                       if (!field) return null;
@@ -227,10 +229,10 @@ const CacheSettings: React.FC<CacheSettingsProps> = ({ accessToken, userRole, us
       {/* Actions */}
       <div className="border-t border-gray-200 pt-6 flex justify-end gap-3">
         <Button variant="secondary" size="sm" onClick={handleTestConnection} disabled={isTesting} className="text-sm">
-          {isTesting ? "Testing..." : "Test Connection"}
+          {isTesting ? t("cache.testing") : t("cache.testConnection")}
         </Button>
         <Button size="sm" onClick={handleSaveChanges} disabled={isSaving} className="text-sm font-medium">
-          {isSaving ? "Saving..." : "Save Changes"}
+          {isSaving ? t("cache.saving") : t("cache.saveChanges")}
         </Button>
       </div>
     </div>

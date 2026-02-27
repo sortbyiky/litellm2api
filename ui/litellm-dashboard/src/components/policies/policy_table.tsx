@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, Icon, Button, Badge } from "@tremor/react";
 import { TrashIcon, PencilIcon, SwitchVerticalIcon, ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/outline";
 import { Tooltip, Tag } from "antd";
@@ -56,6 +57,7 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
   isAdmin = false,
 }) => {
   const [sorting, setSorting] = useState<SortingState>([{ id: "policy_name", desc: false }]);
+  const { t } = useTranslation();
 
   const rows = useMemo(() => groupPoliciesByName(policies), [policies]);
 
@@ -67,7 +69,7 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
 
   const columns: ColumnDef<PolicyRow>[] = [
     {
-      header: "Name",
+      header: t("policies.table.name"),
       accessorKey: "policy_name",
       cell: ({ row }) => {
         const { primaryPolicy, versionCount } = row.original;
@@ -93,7 +95,7 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
       },
     },
     {
-      header: "Description",
+      header: t("policies.table.description"),
       accessorFn: (row) => row.primaryPolicy.description ?? "",
       cell: ({ row }) => {
         const policy = row.original.primaryPolicy;
@@ -107,7 +109,7 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
       },
     },
     {
-      header: "Inherits From",
+      header: t("policies.table.inheritsFrom"),
       accessorFn: (row) => row.primaryPolicy.inherit ?? "",
       cell: ({ row }) => {
         const policy = row.original.primaryPolicy;
@@ -121,7 +123,7 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
       },
     },
     {
-      header: "Guardrails (Add)",
+      header: t("policies.table.guardrailsAdd"),
       accessorFn: (row) => (row.primaryPolicy.guardrails_add ?? []).join(", "),
       cell: ({ row }) => {
         const policy = row.original.primaryPolicy;
@@ -146,7 +148,7 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
       },
     },
     {
-      header: "Guardrails (Remove)",
+      header: t("policies.table.guardrailsRemove"),
       accessorFn: (row) => (row.primaryPolicy.guardrails_remove ?? []).join(", "),
       cell: ({ row }) => {
         const policy = row.original.primaryPolicy;
@@ -171,7 +173,7 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
       },
     },
     {
-      header: "Model Condition",
+      header: t("policies.table.modelCondition"),
       accessorFn: (row) => {
         const m = row.primaryPolicy.condition?.model;
         return typeof m === "string" ? m : JSON.stringify(m ?? "");
@@ -196,7 +198,7 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
       },
     },
     {
-      header: "Created At",
+      header: t("policies.table.createdAt"),
       id: "created_at",
       accessorFn: (row) => row.primaryPolicy.created_at ?? "",
       cell: ({ row }) => {
@@ -210,7 +212,7 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
     },
     {
       id: "actions",
-      header: "Actions",
+      header: t("policies.table.actions"),
       cell: ({ row }) => {
         const { primaryPolicy } = row.original;
         const policy = primaryPolicy;
@@ -218,7 +220,7 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
           <div className="flex space-x-2">
             {isAdmin && (
               <>
-                <Tooltip title="Edit policy">
+                <Tooltip title={t("policies.editPolicy")}>
                   <Icon
                     icon={PencilIcon}
                     size="sm"
@@ -226,13 +228,13 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
                     className="cursor-pointer hover:text-blue-500"
                   />
                 </Tooltip>
-                <Tooltip title="Delete policy">
+                <Tooltip title={t("policies.deletePolicy")}>
                   <Icon
                     icon={TrashIcon}
                     size="sm"
                     onClick={() =>
                       policy.policy_id &&
-                      onDeleteClick(policy.policy_id, policy.policy_name || "Unnamed Policy")
+                      onDeleteClick(policy.policy_id, policy.policy_name || t("policies.unnamedPolicy"))
                     }
                     className="cursor-pointer hover:text-red-500"
                   />
@@ -299,7 +301,7 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-8 text-center">
                   <div className="text-center text-gray-500">
-                    <p>Loading...</p>
+                    <p>{t("common.loading")}</p>
                   </div>
                 </TableCell>
               </TableRow>
@@ -324,7 +326,7 @@ const PolicyTable: React.FC<PolicyTableProps> = ({
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-8 text-center">
                   <div className="text-center text-gray-500">
-                    <p>No policies found</p>
+                    <p>{t("policies.noPoliciesFound")}</p>
                   </div>
                 </TableCell>
               </TableRow>

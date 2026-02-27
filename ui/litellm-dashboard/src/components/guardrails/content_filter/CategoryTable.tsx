@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Typography, Select, Table, Tag, Button } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 
@@ -28,9 +29,10 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
   onRemove,
   readOnly = false,
 }) => {
+  const { t } = useTranslation();
   const columns = [
     {
-      title: "Category",
+      title: t("guardrailsSub.category"),
       dataIndex: "display_name",
       key: "display_name",
       render: (displayName: string, record: ContentCategory) => (
@@ -47,7 +49,7 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
       ),
     },
     {
-      title: "Severity Threshold",
+      title: t("guardrailsSub.severityThreshold"),
       dataIndex: "severity_threshold",
       key: "severity_threshold",
       width: 180,
@@ -71,15 +73,15 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
             style={{ width: 150 }}
             size="small"
           >
-            <Option value="high">High</Option>
-            <Option value="medium">Medium</Option>
-            <Option value="low">Low</Option>
+            <Option value="high">{t("guardrailsSub.high")}</Option>
+            <Option value="medium">{t("guardrailsSub.medium")}</Option>
+            <Option value="low">{t("guardrailsSub.low")}</Option>
           </Select>
         );
       },
     },
     {
-      title: "Action",
+      title: t("guardrailsSub.action"),
       dataIndex: "action",
       key: "action",
       width: 150,
@@ -98,8 +100,8 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
             style={{ width: 120 }}
             size="small"
           >
-            <Option value="BLOCK">Block</Option>
-            <Option value="MASK">Mask</Option>
+            <Option value="BLOCK">{t("guardrailsSub.block")}</Option>
+            <Option value="MASK">{t("guardrailsSub.mask")}</Option>
           </Select>
         );
       },
@@ -119,7 +121,7 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
           icon={<DeleteOutlined />}
           onClick={() => onRemove?.(record.id)}
         >
-          Delete
+          {t("guardrailsSub.delete")}
         </Button>
       ),
     } as any);
@@ -128,7 +130,7 @@ const CategoryTable: React.FC<CategoryTableProps> = ({
   if (categories.length === 0) {
     return (
       <div style={{ textAlign: "center", padding: "40px 0", color: "#999" }}>
-        No categories configured.
+        {t("guardrailsSub.noCategoriesConfigured")}
       </div>
     );
   }

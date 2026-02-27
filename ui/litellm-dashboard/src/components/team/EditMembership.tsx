@@ -1,6 +1,7 @@
 import { Text, TextInput } from "@tremor/react";
 import { Button as AntButton, Form, Modal, Select } from "antd";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import NumericalInput from "../shared/numerical_input";
 
 interface BaseMember {
@@ -47,6 +48,7 @@ const MemberModal = <T extends BaseMember>({
   mode,
   config,
 }: MemberModalProps<T>) => {
+  const { t } = useTranslation();
   const [form] = Form.useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -160,7 +162,7 @@ const MemberModal = <T extends BaseMember>({
       <Form form={form} onFinish={handleSubmit} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} labelAlign="left">
         {config.showEmail && (
           <Form.Item
-            label="Email"
+            label={t("teams.email")}
             name="user_email"
             className="mb-4"
             rules={[{ type: "email", message: "Please enter a valid email!" }]}
@@ -171,12 +173,12 @@ const MemberModal = <T extends BaseMember>({
 
         {config.showEmail && config.showUserId && (
           <div className="text-center mb-4">
-            <Text>OR</Text>
+            <Text>{t("teams.or")}</Text>
           </div>
         )}
 
         {config.showUserId && (
-          <Form.Item label="User ID" name="user_id" className="mb-4">
+          <Form.Item label={t("teams.userId")} name="user_id" className="mb-4">
             <TextInput placeholder="user_123" />
           </Form.Item>
         )}
@@ -184,9 +186,9 @@ const MemberModal = <T extends BaseMember>({
         <Form.Item
           label={
             <div className="flex items-center gap-2">
-              <span>Role</span>
+              <span>{t("teams.editMembership.role")}</span>
               {mode === "edit" && initialData && (
-                <span className="text-gray-500 text-sm">(Current: {getRoleLabel(initialData.role)})</span>
+                <span className="text-gray-500 text-sm">({t("teams.editMembership.current")}: {getRoleLabel(initialData.role)})</span>
               )}
             </div>
           }
@@ -222,16 +224,16 @@ const MemberModal = <T extends BaseMember>({
 
         <div className="text-right mt-6">
           <AntButton onClick={onCancel} className="mr-2" disabled={isSubmitting}>
-            Cancel
+            {t("common.cancel")}
           </AntButton>
           <AntButton type="default" htmlType="submit" loading={isSubmitting}>
             {mode === "add"
               ? isSubmitting
-                ? "Adding..."
-                : "Add Member"
+                ? t("teams.adding")
+                : t("teams.addMember")
               : isSubmitting
-                ? "Saving..."
-                : "Save Changes"}
+                ? t("teams.saving")
+                : t("common.save")}
           </AntButton>
         </div>
       </Form>

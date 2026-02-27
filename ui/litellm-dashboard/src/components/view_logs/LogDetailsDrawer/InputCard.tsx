@@ -4,6 +4,7 @@
  */
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { message } from 'antd';
 import { ParsedMessage } from './prettyMessagesTypes';
 import { SectionHeader } from './SectionHeader';
@@ -18,6 +19,7 @@ interface InputCardProps {
 }
 
 export function InputCard({ messages, promptTokens, inputCost }: InputCardProps) {
+  const { t } = useTranslation();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   if (messages.length === 0) {
@@ -33,7 +35,7 @@ export function InputCard({ messages, promptTokens, inputCost }: InputCardProps)
   const handleCopy = () => {
     const content = lastMessage?.content || '';
     navigator.clipboard.writeText(content);
-    message.success('Input copied');
+    message.success(t("logViewer.inputCopied"));
   };
 
   return (

@@ -3,6 +3,7 @@ import { Modal, Input, Typography } from "antd";
 import { fetchDiscoverableMCPServers } from "../networking";
 import { DiscoverableMCPServer, DiscoverMCPServersResponse } from "./types";
 import { mcpLogoImg } from "./create_mcp_server";
+import { useTranslation } from "react-i18next";
 
 const { Search } = Input;
 const { Text } = Typography;
@@ -41,6 +42,7 @@ const MCPDiscovery: React.FC<MCPDiscoveryProps> = ({
   onCustomServer,
   accessToken,
 }) => {
+  const { t } = useTranslation();
   const [servers, setServers] = useState<DiscoverableMCPServer[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -116,13 +118,13 @@ const MCPDiscovery: React.FC<MCPDiscoveryProps> = ({
                 objectFit: "contain",
               }}
             />
-            <h2 className="text-xl font-semibold text-gray-900">Add MCP Server</h2>
+            <h2 className="text-xl font-semibold text-gray-900">{t("mcp.addMcpServer")}</h2>
           </div>
           <button
             onClick={onCustomServer}
             className="text-sm text-blue-600 hover:text-blue-800 cursor-pointer bg-transparent border-none font-medium"
           >
-            + Custom Server
+            + {t("mcp.customServer")}
           </button>
         </div>
       }
@@ -164,7 +166,7 @@ const MCPDiscovery: React.FC<MCPDiscoveryProps> = ({
 
       {/* Search */}
       <Search
-        placeholder="Search servers..."
+        placeholder={t("mcp.searchServers")}
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
         style={{ marginBottom: 16 }}
@@ -196,12 +198,12 @@ const MCPDiscovery: React.FC<MCPDiscoveryProps> = ({
       {!loading && !error && filteredServers.length === 0 && (
         <div style={{ textAlign: "center", padding: "32px 0", color: "#9ca3af" }}>
           <Text>
-            No servers found.{" "}
+            {t("mcp.noServersFound")}{" "}
             <a
               onClick={onCustomServer}
               style={{ color: "#2563eb", cursor: "pointer" }}
             >
-              Add a custom server
+              {t("mcp.addCustomServer")}
             </a>
           </Text>
         </div>

@@ -3,6 +3,7 @@ import { Card, Title, Text } from "@tremor/react";
 import { ToolOutlined, CheckCircleOutlined, SearchOutlined } from "@ant-design/icons";
 import { Badge, Spin, Checkbox, Input } from "antd";
 import { useTestMCPConnection } from "../../hooks/useTestMCPConnection";
+import { useTranslation } from "react-i18next";
 
 interface MCPToolConfigurationProps {
   accessToken: string | null;
@@ -21,6 +22,7 @@ const MCPToolConfiguration: React.FC<MCPToolConfigurationProps> = ({
   existingAllowedTools,
   onAllowedToolsChange,
 }) => {
+  const { t } = useTranslation();
   const previousToolsLengthRef = useRef(0);
   const [toolSearchTerm, setToolSearchTerm] = useState("");
 
@@ -91,7 +93,7 @@ const MCPToolConfiguration: React.FC<MCPToolConfigurationProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ToolOutlined className="text-blue-600" />
-            <Title>Tool Configuration</Title>
+            <Title>{t("mcp.toolConfiguration")}</Title>
             {tools.length > 0 && (
               <Badge
                 count={tools.length}
@@ -106,8 +108,7 @@ const MCPToolConfiguration: React.FC<MCPToolConfigurationProps> = ({
         {/* Description */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
           <Text className="text-blue-800 text-sm">
-            <strong>Select which tools users can call:</strong> Only checked tools will be available for users to
-            invoke. Unchecked tools will be blocked from execution.
+            <strong>{t("mcp.selectToolsDesc")}:</strong> {t("mcp.selectToolsDescDetail")}
           </Text>
         </div>
 
@@ -115,7 +116,7 @@ const MCPToolConfiguration: React.FC<MCPToolConfigurationProps> = ({
         {isLoadingTools && (
           <div className="flex items-center justify-center py-6">
             <Spin size="large" />
-            <Text className="ml-3">Loading tools...</Text>
+            <Text className="ml-3">{t("mcp.loadingTools")}</Text>
           </div>
         )}
 
@@ -123,7 +124,7 @@ const MCPToolConfiguration: React.FC<MCPToolConfigurationProps> = ({
         {toolsError && !isLoadingTools && (
           <div className="text-center py-6 text-red-500 border rounded-lg border-dashed border-red-300 bg-red-50">
             <ToolOutlined className="text-2xl mb-2" />
-            <Text className="text-red-600 font-medium">Unable to load tools</Text>
+            <Text className="text-red-600 font-medium">{t("mcp.unableToLoadTools")}</Text>
             <br />
             <Text className="text-sm text-red-500">{toolsError}</Text>
           </div>
@@ -133,9 +134,9 @@ const MCPToolConfiguration: React.FC<MCPToolConfigurationProps> = ({
         {!isLoadingTools && !toolsError && tools.length === 0 && canFetchTools && (
           <div className="text-center py-6 text-gray-400 border rounded-lg border-dashed">
             <ToolOutlined className="text-2xl mb-2" />
-            <Text>No tools available for configuration</Text>
+            <Text>{t("mcp.noToolsForConfig")}</Text>
             <br />
-            <Text className="text-sm">Connect to an MCP server with tools to configure them</Text>
+            <Text className="text-sm">{t("mcp.connectToServerWithTools")}</Text>
           </div>
         )}
 
@@ -143,9 +144,9 @@ const MCPToolConfiguration: React.FC<MCPToolConfigurationProps> = ({
         {!canFetchTools && (formValues.url || formValues.spec_path) && (
           <div className="text-center py-6 text-gray-400 border rounded-lg border-dashed">
             <ToolOutlined className="text-2xl mb-2" />
-            <Text>Complete required fields to configure tools</Text>
+            <Text>{t("mcp.completeFieldsToConfigure")}</Text>
             <br />
-            <Text className="text-sm">Fill in URL, Transport, and Authentication to load available tools</Text>
+            <Text className="text-sm">{t("mcp.fillUrlTransportAuthToLoad")}</Text>
           </div>
         )}
 
@@ -156,8 +157,7 @@ const MCPToolConfiguration: React.FC<MCPToolConfigurationProps> = ({
               <div className="flex items-center gap-2 p-3 bg-green-50 rounded-lg border border-green-200 flex-1">
                 <CheckCircleOutlined className="text-green-600" />
                 <Text className="text-green-700 font-medium">
-                  {allowedTools.length} of {tools.length} {tools.length === 1 ? "tool" : "tools"} enabled for user
-                  access
+                  {allowedTools.length} of {tools.length} {tools.length === 1 ? t("mcp.tool") : t("mcp.tools")} {t("mcp.enabledForUserAccess")}
                 </Text>
               </div>
               <div className="flex gap-2 ml-3">
@@ -166,21 +166,21 @@ const MCPToolConfiguration: React.FC<MCPToolConfigurationProps> = ({
                   onClick={handleSelectAll}
                   className="px-3 py-1.5 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-md transition-colors"
                 >
-                  Enable All
+                  {t("mcp.enableAll")}
                 </button>
                 <button
                   type="button"
                   onClick={handleDeselectAll}
                   className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
                 >
-                  Disable All
+                  {t("mcp.disableAll")}
                 </button>
               </div>
             </div>
 
             {/* Search bar */}
             <Input
-              placeholder="Search tools by name or description..."
+              placeholder={t("mcp.searchToolsByNameOrDesc")}
               prefix={<SearchOutlined className="text-gray-400" />}
               value={toolSearchTerm}
               onChange={(e) => setToolSearchTerm(e.target.value)}
@@ -217,7 +217,7 @@ const MCPToolConfiguration: React.FC<MCPToolConfigurationProps> = ({
                             allowedTools.includes(tool.name) ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
                           }`}
                         >
-                          {allowedTools.includes(tool.name) ? "Enabled" : "Disabled"}
+                          {allowedTools.includes(tool.name) ? t("common.enabled") : t("common.disabled")}
                         </span>
                       </div>
                       {tool.description && <Text className="text-gray-500 text-sm block mt-1">{tool.description}</Text>}

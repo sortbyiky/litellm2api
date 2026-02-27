@@ -4,6 +4,7 @@ import { Button, Card, Grid, Text, Title } from "@tremor/react";
 import { Button as AntdButton } from "antd";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { SearchToolTester } from "./SearchToolTester";
 import { AvailableSearchProvider, SearchTool } from "./types";
 
@@ -22,6 +23,7 @@ export const SearchToolView: React.FC<SearchToolViewProps> = ({
   accessToken,
   availableProviders,
 }) => {
+  const { t } = useTranslation();
   const [copiedStates, setCopiedStates] = useState<Record<string, boolean>>({});
 
   const copyToClipboard = async (text: string | null | undefined, key: string) => {
@@ -44,7 +46,7 @@ export const SearchToolView: React.FC<SearchToolViewProps> = ({
       <div className="flex justify-between items-center mb-6">
         <div>
           <Button icon={ArrowLeftIcon} variant="light" className="mb-4" onClick={onBack}>
-            Back to All Search Tools
+            {t("searchTools.backToAllSearchTools")}
           </Button>
           <div className="flex items-center cursor-pointer">
             <Title>{searchTool.search_tool_name}</Title>
@@ -77,24 +79,24 @@ export const SearchToolView: React.FC<SearchToolViewProps> = ({
 
       <Grid numItems={1} numItemsSm={2} numItemsLg={3} className="gap-6">
         <Card>
-          <Text>Provider</Text>
+          <Text>{t("searchTools.provider")}</Text>
           <div className="mt-2">
             <Title>{getProviderDisplayName(searchTool.litellm_params.search_provider)}</Title>
           </div>
         </Card>
 
         <Card>
-          <Text>API Key</Text>
+          <Text>{t("searchTools.apiKey")}</Text>
           <div className="mt-2">
-            <Text>{searchTool.litellm_params.api_key ? "****" : "Not set"}</Text>
+            <Text>{searchTool.litellm_params.api_key ? "****" : t("searchTools.notSet")}</Text>
           </div>
         </Card>
 
         <Card>
-          <Text>Created At</Text>
+          <Text>{t("searchTools.createdAt")}</Text>
           <div className="mt-2">
             <Text>
-              {searchTool.created_at ? new Date(searchTool.created_at).toLocaleString() : "Unknown"}
+              {searchTool.created_at ? new Date(searchTool.created_at).toLocaleString() : t("searchTools.unknown")}
             </Text>
           </div>
         </Card>
@@ -102,7 +104,7 @@ export const SearchToolView: React.FC<SearchToolViewProps> = ({
 
       {searchTool.search_tool_info?.description && (
         <Card className="mt-6">
-          <Text>Description</Text>
+          <Text>{t("common.description")}</Text>
           <div className="mt-2">
             <Text>{searchTool.search_tool_info.description}</Text>
           </div>

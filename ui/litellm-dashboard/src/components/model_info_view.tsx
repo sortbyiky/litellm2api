@@ -19,6 +19,7 @@ import {
 import { Button, Form, Input, Modal, Select, Tooltip } from "antd";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { copyToClipboard as utilCopyToClipboard } from "../utils/dataUtils";
 import { formItemValidateJSON, truncateString } from "../utils/textUtils";
 import CacheControlSettings from "./add_model/cache_control_settings";
@@ -62,6 +63,7 @@ export default function ModelInfoView({
   modelAccessGroups,
 }: ModelInfoViewProps) {
   const [form] = Form.useForm();
+  const { t } = useTranslation();
   const [localModelData, setLocalModelData] = useState<any>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -206,9 +208,9 @@ export default function ModelInfoView({
         custom_llm_provider: localModelData.litellm_params?.custom_llm_provider,
       },
     };
-    NotificationsManager.info("Storing credential..");
+    NotificationsManager.info(t("modelDashboard.storingCredential"));
     let credentialResponse = await credentialCreateCall(accessToken, credentialItem);
-    NotificationsManager.success("Credential stored successfully");
+    NotificationsManager.success(t("modelDashboard.credentialStoredSuccess"));
   };
 
   const handleModelUpdate = async (values: any) => {
@@ -221,7 +223,7 @@ export default function ModelInfoView({
       try {
         parsedExtraParams = values.litellm_extra_params ? JSON.parse(values.litellm_extra_params) : {};
       } catch (e) {
-        NotificationsManager.fromBackend("Invalid JSON in LiteLLM Params");
+        NotificationsManager.fromBackend(t("modelDashboard.invalidJsonLitellmParams"));
         setIsSaving(false);
         return;
       }
@@ -272,7 +274,7 @@ export default function ModelInfoView({
           };
         }
       } catch (e) {
-        NotificationsManager.fromBackend("Invalid JSON in Model Info");
+        NotificationsManager.fromBackend(t("modelDashboard.invalidJsonModelInfo"));
         return;
       }
 
@@ -298,12 +300,12 @@ export default function ModelInfoView({
         onModelUpdate(updatedModelData);
       }
 
-      NotificationsManager.success("Model settings updated successfully");
+      NotificationsManager.success(t("modelDashboard.modelSettingsUpdated"));
       setIsDirty(false);
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating model:", error);
-      NotificationsManager.fromBackend("Failed to update model settings");
+      NotificationsManager.fromBackend(t("modelDashboard.failedToUpdateModelSettings"));
     } finally {
       setIsSaving(false);
     }
@@ -314,9 +316,9 @@ export default function ModelInfoView({
     return (
       <div className="p-4">
         <TremorButton icon={ArrowLeftIcon} variant="light" onClick={onClose} className="mb-4">
-          Back to Models
+          {t("modelDashboard.backToModels")}
         </TremorButton>
-        <Text>Loading...</Text>
+        <Text>{t("modelDashboard.loading")}</Text>
       </div>
     );
   }
@@ -326,9 +328,9 @@ export default function ModelInfoView({
     return (
       <div className="p-4">
         <TremorButton icon={ArrowLeftIcon} variant="light" onClick={onClose} className="mb-4">
-          Back to Models
+          {t("modelDashboard.backToModels")}
         </TremorButton>
-        <Text>Model not found</Text>
+        <Text>{t("modelDashboard.modelNotFound")}</Text>
       </div>
     );
   }
@@ -336,7 +338,7 @@ export default function ModelInfoView({
   const handleTestConnection = async () => {
     if (!accessToken) return;
     try {
-      NotificationsManager.info("Testing connection...");
+      NotificationsManager.info(t("modelDashboard.testingConnection"));
       const response = await testConnectionRequest(
         accessToken,
         {
@@ -351,15 +353,15 @@ export default function ModelInfoView({
       );
 
       if (response.status === "success") {
-        NotificationsManager.success("Connection test successful!");
+        NotificationsManager.success(t("modelDashboard.connectionTestSuccess"));
       } else {
         throw new Error(response?.result?.error || response?.message || "Unknown error");
       }
     } catch (error) {
       if (error instanceof Error) {
-        NotificationsManager.error("Error testing connection: " + truncateString(error.message, 100));
+        NotificationsManager.error(t("modelDashboard.errorTestingConnection") + ": " + truncateString(error.message, 100));
       } else {
-        NotificationsManager.error("Error testing connection: " + String(error));
+        NotificationsManager.error(t("modelDashboard.errorTestingConnection") + ": " + String(error));
       }
     }
   };
@@ -369,7 +371,7 @@ export default function ModelInfoView({
       setDeleteLoading(true);
       if (!accessToken) return;
       await modelDeleteCall(accessToken, modelId);
-      NotificationsManager.success("Model deleted successfully");
+      NotificationsManager.success(t("modelDashboard.modelDeletedSuccess"));
 
       if (onModelUpdate) {
         onModelUpdate({
@@ -381,7 +383,7 @@ export default function ModelInfoView({
       onClose();
     } catch (error) {
       console.error("Error deleting the model:", error);
-      NotificationsManager.fromBackend("Failed to delete model");
+      NotificationsManager.fromBackend(t("modelDashboard.failedToDeleteModel"));
     } finally {
       setDeleteLoading(false);
       setIsDeleteModalOpen(false);
@@ -411,9 +413,9 @@ export default function ModelInfoView({
       <div className="flex justify-between items-center mb-6">
         <div>
           <TremorButton icon={ArrowLeftIcon} variant="light" onClick={onClose} className="mb-4">
-            Back to Models
+            {t("modelDashboard.backToModels")}
           </TremorButton>
-          <Title>Public Model Name: {getDisplayModelName(modelData)}</Title>
+          <Title>{t("modelDashboard.publicModelNameLabel")}: {getDisplayModelName(modelData)}</Title>
           <div className="flex items-center cursor-pointer">
             <Text className="text-gray-500 font-mono">{modelData.model_info.id}</Text>
             <Button
@@ -436,7 +438,7 @@ export default function ModelInfoView({
             className="flex items-center gap-2"
             data-testid="test-connection-button"
           >
-            Test Connection
+            {t("modelDashboard.testConnection")}
           </TremorButton>
 
           <TremorButton
@@ -447,7 +449,7 @@ export default function ModelInfoView({
             disabled={!isAdmin}
             data-testid="reuse-credentials-button"
           >
-            Re-use Credentials
+            {t("modelDashboard.reuseCredentials")}
           </TremorButton>
           <TremorButton
             icon={TrashIcon}
@@ -457,15 +459,15 @@ export default function ModelInfoView({
             disabled={!canEditModel}
             data-testid="delete-model-button"
           >
-            Delete Model
+            {t("modelDashboard.deleteModel")}
           </TremorButton>
         </div>
       </div>
 
       <TabGroup>
         <TabList className="mb-6">
-          <Tab>Overview</Tab>
-          <Tab>Raw JSON</Tab>
+          <Tab>{t("modelDashboard.overview")}</Tab>
+          <Tab>{t("modelDashboard.rawJson")}</Tab>
         </TabList>
 
         <TabPanels>
@@ -473,7 +475,7 @@ export default function ModelInfoView({
             {/* Overview Grid */}
             <Grid numItems={1} numItemsSm={2} numItemsLg={3} className="gap-6 mb-6">
               <Card>
-                <Text>Provider</Text>
+                <Text>{t("modelDashboard.provider")}</Text>
                 <div className="mt-2 flex items-center space-x-2">
                   {modelData.provider && (
                     <img
@@ -499,24 +501,24 @@ export default function ModelInfoView({
                       }}
                     />
                   )}
-                  <Title>{modelData.provider || "Not Set"}</Title>
+                  <Title>{modelData.provider || t("modelDashboard.notSet")}</Title>
                 </div>
               </Card>
               <Card>
-                <Text>LiteLLM Model</Text>
+                <Text>{t("modelDashboard.litellmModel")}</Text>
                 <div className="mt-2 overflow-hidden">
-                  <Tooltip title={modelData.litellm_model_name || "Not Set"}>
+                  <Tooltip title={modelData.litellm_model_name || t("modelDashboard.notSet")}>
                     <div className="break-all text-sm font-medium leading-relaxed cursor-pointer">
-                      {modelData.litellm_model_name || "Not Set"}
+                      {modelData.litellm_model_name || t("modelDashboard.notSet")}
                     </div>
                   </Tooltip>
                 </div>
               </Card>
               <Card>
-                <Text>Pricing</Text>
+                <Text>{t("modelDashboard.pricing")}</Text>
                 <div className="mt-2">
-                  <Text>Input: ${modelData.input_cost}/1M tokens</Text>
-                  <Text>Output: ${modelData.output_cost}/1M tokens</Text>
+                  <Text>{t("modelDashboard.inputCostPerMillion", { cost: modelData.input_cost })}</Text>
+                  <Text>{t("modelDashboard.outputCostPerMillion", { cost: modelData.output_cost })}</Text>
                 </div>
               </Card>
             </Grid>
@@ -532,14 +534,14 @@ export default function ModelInfoView({
                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                Created At{" "}
+                {t("modelDashboard.createdAtLabel")}{" "}
                 {modelData.model_info.created_at
                   ? new Date(modelData.model_info.created_at).toLocaleDateString("en-US", {
                     month: "short",
                     day: "numeric",
                     year: "numeric",
                   })
-                  : "Not Set"}
+                  : t("modelDashboard.notSet")}
               </div>
               <div className="flex items-center gap-x-2">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -550,28 +552,28 @@ export default function ModelInfoView({
                     d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                   />
                 </svg>
-                Created By {modelData.model_info.created_by || "Not Set"}
+                {t("modelDashboard.createdByLabel")} {modelData.model_info.created_by || t("modelDashboard.notSet")}
               </div>
             </div>
 
             {/* Settings Card */}
             <Card>
               <div className="flex justify-between items-center mb-4">
-                <Title>Model Settings</Title>
+                <Title>{t("modelDashboard.modelSettings")}</Title>
                 <div className="flex gap-2">
                   {isAutoRouter && canEditModel && !isEditing && (
                     <TremorButton onClick={() => setIsAutoRouterModalOpen(true)} className="flex items-center">
-                      Edit Auto Router
+                      {t("modelDashboard.editAutoRouter")}
                     </TremorButton>
                   )}
                   {canEditModel ? (
                     !isEditing && (
                       <TremorButton onClick={() => setIsEditing(true)} className="flex items-center">
-                        Edit Settings
+                        {t("modelDashboard.editSettings")}
                       </TremorButton>
                     )
                   ) : (
-                    <Tooltip title="Only DB models can be edited. You must be an admin or the creator of the model to edit it.">
+                    <Tooltip title={t("modelDashboard.onlyDbModelsCanBeEdited")}>
                       <InfoCircleOutlined />
                     </Tooltip>
                   )}
@@ -616,10 +618,10 @@ export default function ModelInfoView({
                   <div className="space-y-4">
                     <div className="space-y-4">
                       <div>
-                        <Text className="font-medium">Model Name</Text>
+                        <Text className="font-medium">{t("modelDashboard.modelNameLabel")}</Text>
                         {isEditing ? (
                           <Form.Item name="model_name" className="mb-0">
-                            <TextInput placeholder="Enter model name" />
+                            <TextInput placeholder={t("modelDashboard.enterModelName")} />
                           </Form.Item>
                         ) : (
                           <div className="mt-1 p-2 bg-gray-50 rounded">{localModelData.model_name}</div>
@@ -627,10 +629,10 @@ export default function ModelInfoView({
                       </div>
 
                       <div>
-                        <Text className="font-medium">LiteLLM Model Name</Text>
+                        <Text className="font-medium">{t("modelDashboard.litellmModelName")}</Text>
                         {isEditing ? (
                           <Form.Item name="litellm_model_name" className="mb-0">
-                            <TextInput placeholder="Enter LiteLLM model name" />
+                            <TextInput placeholder={t("modelDashboard.enterLitellmModelName")} />
                           </Form.Item>
                         ) : (
                           <div className="mt-1 p-2 bg-gray-50 rounded">{localModelData.litellm_model_name}</div>
@@ -638,10 +640,10 @@ export default function ModelInfoView({
                       </div>
 
                       <div>
-                        <Text className="font-medium">Input Cost (per 1M tokens)</Text>
+                        <Text className="font-medium">{t("modelDashboard.inputCostPerMillionTokens")}</Text>
                         {isEditing ? (
                           <Form.Item name="input_cost" className="mb-0">
-                            <NumericalInput placeholder="Enter input cost" />
+                            <NumericalInput placeholder={t("modelDashboard.enterInputCost")} />
                           </Form.Item>
                         ) : (
                           <div className="mt-1 p-2 bg-gray-50 rounded">
@@ -649,16 +651,16 @@ export default function ModelInfoView({
                               ? (localModelData.litellm_params?.input_cost_per_token * 1_000_000).toFixed(4)
                               : localModelData?.model_info?.input_cost_per_token
                                 ? (localModelData.model_info.input_cost_per_token * 1_000_000).toFixed(4)
-                                : "Not Set"}
+                                : t("modelDashboard.notSet")}
                           </div>
                         )}
                       </div>
 
                       <div>
-                        <Text className="font-medium">Output Cost (per 1M tokens)</Text>
+                        <Text className="font-medium">{t("modelDashboard.outputCostPerMillionTokens")}</Text>
                         {isEditing ? (
                           <Form.Item name="output_cost" className="mb-0">
-                            <NumericalInput placeholder="Enter output cost" />
+                            <NumericalInput placeholder={t("modelDashboard.enterOutputCost")} />
                           </Form.Item>
                         ) : (
                           <div className="mt-1 p-2 bg-gray-50 rounded">
@@ -666,123 +668,123 @@ export default function ModelInfoView({
                               ? (localModelData.litellm_params.output_cost_per_token * 1_000_000).toFixed(4)
                               : localModelData?.model_info?.output_cost_per_token
                                 ? (localModelData.model_info.output_cost_per_token * 1_000_000).toFixed(4)
-                                : "Not Set"}
+                                : t("modelDashboard.notSet")}
                           </div>
                         )}
                       </div>
 
                       <div>
-                        <Text className="font-medium">API Base</Text>
+                        <Text className="font-medium">{t("modelDashboard.apiBase")}</Text>
                         {isEditing ? (
                           <Form.Item name="api_base" className="mb-0">
-                            <TextInput placeholder="Enter API base" />
+                            <TextInput placeholder={t("modelDashboard.enterApiBase")} />
                           </Form.Item>
                         ) : (
                           <div className="mt-1 p-2 bg-gray-50 rounded">
-                            {localModelData.litellm_params?.api_base || "Not Set"}
+                            {localModelData.litellm_params?.api_base || t("modelDashboard.notSet")}
                           </div>
                         )}
                       </div>
 
                       <div>
-                        <Text className="font-medium">Custom LLM Provider</Text>
+                        <Text className="font-medium">{t("modelDashboard.customLlmProvider")}</Text>
                         {isEditing ? (
                           <Form.Item name="custom_llm_provider" className="mb-0">
-                            <TextInput placeholder="Enter custom LLM provider" />
+                            <TextInput placeholder={t("modelDashboard.enterCustomLlmProvider")} />
                           </Form.Item>
                         ) : (
                           <div className="mt-1 p-2 bg-gray-50 rounded">
-                            {localModelData.litellm_params?.custom_llm_provider || "Not Set"}
+                            {localModelData.litellm_params?.custom_llm_provider || t("modelDashboard.notSet")}
                           </div>
                         )}
                       </div>
 
                       <div>
-                        <Text className="font-medium">Organization</Text>
+                        <Text className="font-medium">{t("modelDashboard.organization")}</Text>
                         {isEditing ? (
                           <Form.Item name="organization" className="mb-0">
-                            <TextInput placeholder="Enter organization" />
+                            <TextInput placeholder={t("modelDashboard.enterOrganization")} />
                           </Form.Item>
                         ) : (
                           <div className="mt-1 p-2 bg-gray-50 rounded">
-                            {localModelData.litellm_params?.organization || "Not Set"}
+                            {localModelData.litellm_params?.organization || t("modelDashboard.notSet")}
                           </div>
                         )}
                       </div>
 
                       <div>
-                        <Text className="font-medium">TPM (Tokens per Minute)</Text>
+                        <Text className="font-medium">{t("modelDashboard.tpm")}</Text>
                         {isEditing ? (
                           <Form.Item name="tpm" className="mb-0">
-                            <NumericalInput placeholder="Enter TPM" />
+                            <NumericalInput placeholder={t("modelDashboard.enterTpm")} />
                           </Form.Item>
                         ) : (
                           <div className="mt-1 p-2 bg-gray-50 rounded">
-                            {localModelData.litellm_params?.tpm || "Not Set"}
+                            {localModelData.litellm_params?.tpm || t("modelDashboard.notSet")}
                           </div>
                         )}
                       </div>
 
                       <div>
-                        <Text className="font-medium">RPM (Requests per Minute)</Text>
+                        <Text className="font-medium">{t("modelDashboard.rpm")}</Text>
                         {isEditing ? (
                           <Form.Item name="rpm" className="mb-0">
-                            <NumericalInput placeholder="Enter RPM" />
+                            <NumericalInput placeholder={t("modelDashboard.enterRpm")} />
                           </Form.Item>
                         ) : (
                           <div className="mt-1 p-2 bg-gray-50 rounded">
-                            {localModelData.litellm_params?.rpm || "Not Set"}
+                            {localModelData.litellm_params?.rpm || t("modelDashboard.notSet")}
                           </div>
                         )}
                       </div>
 
                       <div>
-                        <Text className="font-medium">Max Retries</Text>
+                        <Text className="font-medium">{t("modelDashboard.maxRetries")}</Text>
                         {isEditing ? (
                           <Form.Item name="max_retries" className="mb-0">
-                            <NumericalInput placeholder="Enter max retries" />
+                            <NumericalInput placeholder={t("modelDashboard.enterMaxRetries")} />
                           </Form.Item>
                         ) : (
                           <div className="mt-1 p-2 bg-gray-50 rounded">
-                            {localModelData.litellm_params?.max_retries || "Not Set"}
+                            {localModelData.litellm_params?.max_retries || t("modelDashboard.notSet")}
                           </div>
                         )}
                       </div>
 
                       <div>
-                        <Text className="font-medium">Timeout (seconds)</Text>
+                        <Text className="font-medium">{t("modelDashboard.timeout")}</Text>
                         {isEditing ? (
                           <Form.Item name="timeout" className="mb-0">
-                            <NumericalInput placeholder="Enter timeout" />
+                            <NumericalInput placeholder={t("modelDashboard.enterTimeout")} />
                           </Form.Item>
                         ) : (
                           <div className="mt-1 p-2 bg-gray-50 rounded">
-                            {localModelData.litellm_params?.timeout || "Not Set"}
+                            {localModelData.litellm_params?.timeout || t("modelDashboard.notSet")}
                           </div>
                         )}
                       </div>
 
                       <div>
-                        <Text className="font-medium">Stream Timeout (seconds)</Text>
+                        <Text className="font-medium">{t("modelDashboard.streamTimeout")}</Text>
                         {isEditing ? (
                           <Form.Item name="stream_timeout" className="mb-0">
-                            <NumericalInput placeholder="Enter stream timeout" />
+                            <NumericalInput placeholder={t("modelDashboard.enterStreamTimeout")} />
                           </Form.Item>
                         ) : (
                           <div className="mt-1 p-2 bg-gray-50 rounded">
-                            {localModelData.litellm_params?.stream_timeout || "Not Set"}
+                            {localModelData.litellm_params?.stream_timeout || t("modelDashboard.notSet")}
                           </div>
                         )}
                       </div>
 
                       <div>
-                        <Text className="font-medium">Model Access Groups</Text>
+                        <Text className="font-medium">{t("modelDashboard.modelAccessGroups")}</Text>
                         {isEditing ? (
                           <Form.Item name="model_access_group" className="mb-0">
                             <Select
                               mode="tags"
                               showSearch
-                              placeholder="Select existing groups or type to create new ones"
+                              placeholder={t("modelDashboard.selectOrCreateGroups")}
                               optionFilterProp="children"
                               tokenSeparators={[","]}
                               maxTagCount="responsive"
@@ -810,13 +812,13 @@ export default function ModelInfoView({
                                     ))}
                                   </div>
                                 ) : (
-                                  "No groups assigned"
+                                  t("modelDashboard.noGroupsAssigned")
                                 )
                               ) : (
                                 localModelData.model_info.access_groups
                               )
                             ) : (
-                              "Not Set"
+                              t("modelDashboard.notSet")
                             )}
                           </div>
                         )}
@@ -824,8 +826,8 @@ export default function ModelInfoView({
 
                       <div>
                         <Text className="font-medium">
-                          Guardrails
-                          <Tooltip title="Apply safety guardrails to this model to filter content or enforce policies">
+                          {t("modelDashboard.guardrails")}
+                          <Tooltip title={t("modelDashboard.guardrailsTooltip")}>
                             <a
                               href="https://docs.litellm.ai/docs/proxy/guardrails/quick_start"
                               target="_blank"
@@ -841,7 +843,7 @@ export default function ModelInfoView({
                             <Select
                               mode="tags"
                               showSearch
-                              placeholder="Select existing guardrails or type to create new ones"
+                              placeholder={t("modelDashboard.selectOrCreateGuardrails")}
                               optionFilterProp="children"
                               tokenSeparators={[","]}
                               maxTagCount="responsive"
@@ -871,26 +873,26 @@ export default function ModelInfoView({
                                     )}
                                   </div>
                                 ) : (
-                                  "No guardrails assigned"
+                                  t("modelDashboard.noGuardrailsAssigned")
                                 )
                               ) : (
                                 localModelData.litellm_params.guardrails
                               )
                             ) : (
-                              "Not Set"
+                              t("modelDashboard.notSet")
                             )}
                           </div>
                         )}
                       </div>
 
                       <div>
-                        <Text className="font-medium">Tags</Text>
+                        <Text className="font-medium">{t("modelDashboard.tags")}</Text>
                         {isEditing ? (
                           <Form.Item name="tags" className="mb-0">
                             <Select
                               mode="tags"
                               showSearch
-                              placeholder="Select existing tags or type to create new ones"
+                              placeholder={t("modelDashboard.selectOrCreateTags")}
                               optionFilterProp="children"
                               tokenSeparators={[","]}
                               maxTagCount="responsive"
@@ -919,13 +921,13 @@ export default function ModelInfoView({
                                     ))}
                                   </div>
                                 ) : (
-                                  "No tags assigned"
+                                  t("modelDashboard.noTagsAssigned")
                                 )
                               ) : (
                                 localModelData.litellm_params.tags
                               )
                             ) : (
-                              "Not Set"
+                              t("modelDashboard.notSet")
                             )}
                           </div>
                         )}
@@ -933,12 +935,12 @@ export default function ModelInfoView({
 
                       {isWildcardModel && (
                         <div>
-                          <Text className="font-medium">Health Check Model</Text>
+                          <Text className="font-medium">{t("modelDashboard.healthCheckModel")}</Text>
                           {isEditing ? (
                             <Form.Item name="health_check_model" className="mb-0">
                               <Select
                                 showSearch
-                                placeholder="Select existing health check model"
+                                placeholder={t("modelDashboard.selectHealthCheckModel")}
                                 optionFilterProp="children"
                                 allowClear
                                 options={(() => {
@@ -960,7 +962,7 @@ export default function ModelInfoView({
                             </Form.Item>
                           ) : (
                             <div className="mt-1 p-2 bg-gray-50 rounded">
-                              {localModelData.model_info?.health_check_model || "Not Set"}
+                              {localModelData.model_info?.health_check_model || t("modelDashboard.notSet")}
                             </div>
                           )}
                         </div>
@@ -975,11 +977,11 @@ export default function ModelInfoView({
                         />
                       ) : (
                         <div>
-                          <Text className="font-medium">Cache Control</Text>
+                          <Text className="font-medium">{t("modelDashboard.cacheControl")}</Text>
                           <div className="mt-1 p-2 bg-gray-50 rounded">
                             {localModelData.litellm_params?.cache_control_injection_points ? (
                               <div>
-                                <p>Enabled</p>
+                                <p>{t("modelDashboard.enabled")}</p>
                                 <div className="mt-2">
                                   {localModelData.litellm_params.cache_control_injection_points.map(
                                     (point: any, i: number) => (
@@ -992,14 +994,14 @@ export default function ModelInfoView({
                                 </div>
                               </div>
                             ) : (
-                              "Disabled"
+                              t("modelDashboard.disabled")
                             )}
                           </div>
                         </div>
                       )}
 
                       <div>
-                        <Text className="font-medium">Model Info</Text>
+                        <Text className="font-medium">{t("modelDashboard.modelInfo")}</Text>
                         {isEditing ? (
                           <Form.Item name="model_info" className="mb-0">
                             <Input.TextArea
@@ -1018,8 +1020,8 @@ export default function ModelInfoView({
                       </div>
                       <div>
                         <Text className="font-medium">
-                          LiteLLM Params
-                          <Tooltip title="Optional litellm params used for making a litellm.completion() call. Some params are automatically added by LiteLLM.">
+                          {t("modelDashboard.litellmParams")}
+                          <Tooltip title={t("modelDashboard.litellmParamsTooltip")}>
                             <a
                               href="https://docs.litellm.ai/docs/completion/input"
                               target="_blank"
@@ -1050,8 +1052,8 @@ export default function ModelInfoView({
                         )}
                       </div>
                       <div>
-                        <Text className="font-medium">Team ID</Text>
-                        <div className="mt-1 p-2 bg-gray-50 rounded">{modelData.model_info.team_id || "Not Set"}</div>
+                        <Text className="font-medium">{t("modelDashboard.teamId")}</Text>
+                        <div className="mt-1 p-2 bg-gray-50 rounded">{modelData.model_info.team_id || t("modelDashboard.notSet")}</div>
                       </div>
                     </div>
 
@@ -1066,17 +1068,17 @@ export default function ModelInfoView({
                           }}
                           disabled={isSaving}
                         >
-                          Cancel
+                          {t("modelDashboard.cancel")}
                         </TremorButton>
                         <TremorButton variant="primary" onClick={() => form.submit()} loading={isSaving}>
-                          Save Changes
+                          {t("modelDashboard.saveChanges")}
                         </TremorButton>
                       </div>
                     )}
                   </div>
                 </Form>
               ) : (
-                <Text>Loading...</Text>
+                <Text>{t("modelDashboard.loading")}</Text>
               )}
             </Card>
           </TabPanel>
@@ -1091,26 +1093,26 @@ export default function ModelInfoView({
 
       <DeleteResourceModal
         isOpen={isDeleteModalOpen}
-        title="Delete Model"
-        alertMessage="This action cannot be undone."
-        message="Are you sure you want to delete this model?"
-        resourceInformationTitle="Model Information"
+        title={t("modelDashboard.deleteModel")}
+        alertMessage={t("modelDashboard.actionCannotBeUndone")}
+        message={t("modelDashboard.confirmDeleteModel")}
+        resourceInformationTitle={t("modelDashboard.modelInformation")}
         resourceInformation={[
           {
-            label: "Model Name",
-            value: modelData?.model_name || "Not Set",
+            label: t("modelDashboard.modelNameLabel"),
+            value: modelData?.model_name || t("modelDashboard.notSet"),
           },
           {
-            label: "LiteLLM Model Name",
-            value: modelData?.litellm_model_name || "Not Set",
+            label: t("modelDashboard.litellmModelName"),
+            value: modelData?.litellm_model_name || t("modelDashboard.notSet"),
           },
           {
-            label: "Provider",
-            value: modelData?.provider || "Not Set",
+            label: t("modelDashboard.provider"),
+            value: modelData?.provider || t("modelDashboard.notSet"),
           },
           {
-            label: "Created By",
-            value: modelData?.model_info?.created_by || "Not Set",
+            label: t("modelDashboard.createdBy"),
+            value: modelData?.model_info?.created_by || t("modelDashboard.notSet"),
           },
         ]}
         onCancel={() => setIsDeleteModalOpen(false)}
@@ -1130,7 +1132,7 @@ export default function ModelInfoView({
         <Modal
           open={isCredentialModalOpen}
           onCancel={() => setIsCredentialModalOpen(false)}
-          title="Using Existing Credential"
+          title={t("modelDashboard.usingExistingCredential")}
         >
           <Text>{modelData.litellm_params.litellm_credential_name}</Text>
         </Modal>

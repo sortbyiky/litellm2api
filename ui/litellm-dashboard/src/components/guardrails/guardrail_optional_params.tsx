@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Form, Select, Typography, Input, Button } from "antd";
 import NumericalInput from "../shared/numerical_input";
 
@@ -32,6 +33,7 @@ interface DictFieldProps {
 const DictField: React.FC<DictFieldProps> = ({ field, fieldKey, fullFieldKey, value }) => {
   const [selectedEntries, setSelectedEntries] = React.useState<Array<{ key: string; id: string }>>([]);
   const [availableKeys, setAvailableKeys] = React.useState<string[]>(field.dict_key_options || []);
+  const { t } = useTranslation();
 
   // Initialize selectedEntries and availableKeys based on existing value
   React.useEffect(() => {
@@ -104,7 +106,7 @@ const DictField: React.FC<DictFieldProps> = ({ field, fieldKey, fullFieldKey, va
             size="small"
             onClick={() => removeEntry(entry.id, entry.key)}
           >
-            Remove
+            {t("guardrailsSub.remove")}
           </Button>
         </div>
       ))}
@@ -113,7 +115,7 @@ const DictField: React.FC<DictFieldProps> = ({ field, fieldKey, fullFieldKey, va
       {availableKeys.length > 0 && (
         <div className="flex items-center space-x-3 mt-2">
           <Select
-            placeholder="Select category to configure"
+            placeholder={t("guardrailsSub.selectCategoryToConfigure")}
             style={{ width: 200 }}
             onSelect={(value: string | undefined) => value && addEntry(value)}
             value={undefined}
@@ -124,7 +126,7 @@ const DictField: React.FC<DictFieldProps> = ({ field, fieldKey, fullFieldKey, va
               </Select.Option>
             ))}
           </Select>
-          <span className="text-sm text-gray-500">Select a category to add threshold configuration</span>
+          <span className="text-sm text-gray-500">{t("guardrailsSub.selectCategoryToAddThreshold")}</span>
         </div>
       )}
     </div>
@@ -136,6 +138,7 @@ const GuardrailOptionalParams: React.FC<GuardrailOptionalParamsProps> = ({
   parentFieldKey,
   values,
 }) => {
+  const { t } = useTranslation();
   const renderField = (fieldKey: string, field: ProviderParam) => {
     const fullFieldKey = `${parentFieldKey}.${fieldKey}`;
     const value = values?.[fieldKey];
@@ -215,10 +218,10 @@ const GuardrailOptionalParams: React.FC<GuardrailOptionalParamsProps> = ({
     <div className="guardrail-optional-params">
       <div className="mb-8 pb-4 border-b border-gray-100">
         <Title level={3} className="mb-2 font-semibold text-gray-900">
-          Optional Parameters
+          {t("guardrailsSub.optionalParameters")}
         </Title>
         <p className="text-gray-600 text-sm">
-          {optionalParams.description || "Configure additional settings for this guardrail provider"}
+          {optionalParams.description || t("guardrailsSub.configureAdditionalSettings")}
         </p>
       </div>
 

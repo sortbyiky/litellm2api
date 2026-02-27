@@ -1,5 +1,6 @@
 import React from "react";
 import { Modal, Form, message } from "antd";
+import { useTranslation } from "react-i18next";
 import {
   AccessGroupBaseForm,
   AccessGroupFormValues,
@@ -22,6 +23,7 @@ export function AccessGroupCreateModal({
 }: AccessGroupCreateModalProps) {
   const [form] = Form.useForm<AccessGroupFormValues>();
   const createMutation = useCreateAccessGroup();
+  const { t } = useTranslation();
 
   const handleOk = () => {
     form
@@ -37,7 +39,7 @@ export function AccessGroupCreateModal({
 
         createMutation.mutate(params, {
           onSuccess: () => {
-            message.success("Access group created successfully");
+            message.success(t("accessGroups.createdSuccess"));
             form.resetFields();
             onSuccess?.();
             onCancel();
@@ -51,13 +53,13 @@ export function AccessGroupCreateModal({
 
   return (
     <Modal
-      title="Create Access Group"
+      title={t("accessGroups.createAccessGroup")}
       open={visible}
       onOk={handleOk}
       onCancel={onCancel}
       width={700}
-      okText="Create Group"
-      cancelText="Cancel"
+      okText={t("accessGroups.createGroup")}
+      cancelText={t("common.cancel")}
       confirmLoading={createMutation.isPending}
       destroyOnClose
     >

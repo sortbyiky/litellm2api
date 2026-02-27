@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import AddGuardrailForm from "./add_guardrail_form";
@@ -20,13 +21,14 @@ const GuardrailDetailView: React.FC<GuardrailDetailViewProps> = ({
 }) => {
   const [isAddFormVisible, setIsAddFormVisible] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
+  const { t } = useTranslation();
 
   const detailRows = [
-    { property: "Provider", value: card.category === "litellm" ? "LiteLLM Content Filter" : "Partner Guardrail" },
-    ...(card.subcategory ? [{ property: "Subcategory", value: card.subcategory }] : []),
-    ...(card.category === "litellm" ? [{ property: "Cost", value: "$0 / request" }] : []),
-    ...(card.category === "litellm" ? [{ property: "External Dependencies", value: "None" }] : []),
-    ...(card.category === "litellm" ? [{ property: "Latency", value: card.eval?.latency || "<1ms" }] : []),
+    { property: t("guardrailsSub.provider"), value: card.category === "litellm" ? "LiteLLM Content Filter" : t("guardrailsSub.partnerGuardrail") },
+    ...(card.subcategory ? [{ property: t("guardrailsSub.subcategory"), value: card.subcategory }] : []),
+    ...(card.category === "litellm" ? [{ property: t("guardrailsSub.cost"), value: "$0 / request" }] : []),
+    ...(card.category === "litellm" ? [{ property: t("guardrailsSub.externalDependencies"), value: t("guardrailsSub.none") }] : []),
+    ...(card.category === "litellm" ? [{ property: t("guardrailsSub.latency"), value: card.eval?.latency || "<1ms" }] : []),
   ];
 
   const evalRows = card.eval
@@ -42,8 +44,8 @@ const GuardrailDetailView: React.FC<GuardrailDetailViewProps> = ({
     : [];
 
   const tabs = [
-    { key: "overview", label: "Overview" },
-    ...(card.eval ? [{ key: "eval", label: "Eval Results" }] : []),
+    { key: "overview", label: t("guardrailsSub.overview") },
+    ...(card.eval ? [{ key: "eval", label: t("guardrailsSub.evalResults") }] : []),
   ];
 
   return (
@@ -96,7 +98,7 @@ const GuardrailDetailView: React.FC<GuardrailDetailViewProps> = ({
             fontSize: 14,
           }}
         >
-          Create Guardrail
+          {t("guardrailsSub.createGuardrail")}
         </Button>
       </div>
 
@@ -128,18 +130,18 @@ const GuardrailDetailView: React.FC<GuardrailDetailViewProps> = ({
         <div style={{ display: "flex", gap: 64 }}>
           {/* Left column — overview + details table */}
           <div style={{ flex: 1, minWidth: 0 }}>
-            <h2 style={{ fontSize: 18, fontWeight: 400, color: "#202124", margin: "0 0 12px 0" }}>Overview</h2>
+            <h2 style={{ fontSize: 18, fontWeight: 400, color: "#202124", margin: "0 0 12px 0" }}>{t("guardrailsSub.overview")}</h2>
             <p style={{ fontSize: 14, color: "#3c4043", lineHeight: 1.7, margin: "0 0 32px 0" }}>
               {card.description}
             </p>
 
-            <h2 style={{ fontSize: 18, fontWeight: 400, color: "#202124", margin: "0 0 4px 0" }}>Guardrail Details</h2>
-            <p style={{ fontSize: 13, color: "#5f6368", margin: "0 0 16px 0" }}>Details are as follows</p>
+            <h2 style={{ fontSize: 18, fontWeight: 400, color: "#202124", margin: "0 0 4px 0" }}>{t("guardrailsSub.guardrailDetails")}</h2>
+            <p style={{ fontSize: 13, color: "#5f6368", margin: "0 0 16px 0" }}>{t("guardrailsSub.detailsAreAsFollows")}</p>
 
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid #dadce0" }}>
-                  <th style={{ textAlign: "left", padding: "12px 0", color: "#5f6368", fontWeight: 500, width: 200 }}>Property</th>
+                  <th style={{ textAlign: "left", padding: "12px 0", color: "#5f6368", fontWeight: 500, width: 200 }}>{t("guardrailsSub.property")}</th>
                   <th style={{ textAlign: "left", padding: "12px 0", color: "#5f6368", fontWeight: 500 }}>{card.name}</th>
                 </tr>
               </thead>
@@ -158,7 +160,7 @@ const GuardrailDetailView: React.FC<GuardrailDetailViewProps> = ({
           <div style={{ width: 240, flexShrink: 0 }}>
             {/* Guardrail ID */}
             <div style={{ marginBottom: 28 }}>
-              <div style={{ fontSize: 12, color: "#5f6368", marginBottom: 4 }}>Guardrail ID</div>
+              <div style={{ fontSize: 12, color: "#5f6368", marginBottom: 4 }}>{t("guardrailsSub.guardrailId")}</div>
               <div style={{ fontSize: 13, color: "#202124", wordBreak: "break-all" }}>
                 litellm/{card.id}
               </div>
@@ -166,16 +168,16 @@ const GuardrailDetailView: React.FC<GuardrailDetailViewProps> = ({
 
             {/* Type */}
             <div style={{ marginBottom: 28 }}>
-              <div style={{ fontSize: 12, color: "#5f6368", marginBottom: 4 }}>Type</div>
+              <div style={{ fontSize: 12, color: "#5f6368", marginBottom: 4 }}>{t("guardrailsSub.type")}</div>
               <div style={{ fontSize: 13, color: "#202124" }}>
-                {card.category === "litellm" ? "Content Filter" : "Partner"}
+                {card.category === "litellm" ? t("guardrailsSub.contentFilter") : t("guardrailsSub.partner")}
               </div>
             </div>
 
             {/* Tags — pill style like Vertex */}
             {card.tags.length > 0 && (
               <div style={{ marginBottom: 28 }}>
-                <div style={{ fontSize: 12, color: "#5f6368", marginBottom: 8 }}>Tags</div>
+                <div style={{ fontSize: 12, color: "#5f6368", marginBottom: 8 }}>{t("guardrailsSub.tags")}</div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                   {card.tags.map((tag) => (
                     <span
@@ -201,12 +203,12 @@ const GuardrailDetailView: React.FC<GuardrailDetailViewProps> = ({
 
       {activeTab === "eval" && (
         <div>
-          <h2 style={{ fontSize: 18, fontWeight: 400, color: "#202124", margin: "0 0 16px 0" }}>Eval Results</h2>
+          <h2 style={{ fontSize: 18, fontWeight: 400, color: "#202124", margin: "0 0 16px 0" }}>{t("guardrailsSub.evalResults")}</h2>
           <table style={{ width: "100%", maxWidth: 560, borderCollapse: "collapse", fontSize: 14 }}>
             <thead>
               <tr style={{ backgroundColor: "#f8f9fa", borderBottom: "1px solid #dadce0" }}>
-                <th style={{ textAlign: "left", padding: "12px 16px", color: "#5f6368", fontWeight: 500 }}>Metric</th>
-                <th style={{ textAlign: "left", padding: "12px 16px", color: "#5f6368", fontWeight: 500 }}>Value</th>
+                <th style={{ textAlign: "left", padding: "12px 16px", color: "#5f6368", fontWeight: 500 }}>{t("guardrailsSub.metric")}</th>
+                <th style={{ textAlign: "left", padding: "12px 16px", color: "#5f6368", fontWeight: 500 }}>{t("guardrailsSub.value")}</th>
               </tr>
             </thead>
             <tbody>

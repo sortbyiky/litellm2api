@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Modal, Form, message, Select, Input, Steps, Radio, Tag, Divider } from "antd";
 import { Button } from "@tremor/react";
 import { CheckCircleFilled, KeyOutlined, RobotOutlined, AppstoreOutlined } from "@ant-design/icons";
@@ -33,6 +34,7 @@ const AddAgentForm: React.FC<AddAgentFormProps> = ({
   onSuccess,
 }) => {
   const [form] = Form.useForm();
+  const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [agentType, setAgentType] = useState<string>("a2a");
@@ -150,7 +152,7 @@ const AddAgentForm: React.FC<AddAgentFormProps> = ({
 
   const handleCreateAgent = async () => {
     if (!accessToken) {
-      message.error("No access token available");
+      message.error(t("agentsSub.noAccessToken"));
       return;
     }
 
@@ -162,7 +164,7 @@ const AddAgentForm: React.FC<AddAgentFormProps> = ({
       const values = { ...form.getFieldsValue(true) };
       const agentData = buildAgentData(values);
       if (!agentData) {
-        message.error("Failed to build agent data");
+        message.error(t("agentsSub.failedBuildAgentData"));
         setIsSubmitting(false);
         return;
       }
@@ -182,7 +184,7 @@ const AddAgentForm: React.FC<AddAgentFormProps> = ({
         setCreatedKeyValue(keyResponse.key || null);
       } else if (keyAssignOption === "existing_key") {
         if (!selectedExistingKey) {
-          message.error("Please select an existing key to assign");
+          message.error(t("agentsSub.pleaseSelectExistingKey"));
           setIsSubmitting(false);
           return;
         }
@@ -198,7 +200,7 @@ const AddAgentForm: React.FC<AddAgentFormProps> = ({
       onSuccess();
     } catch (error) {
       console.error("Error creating agent:", error);
-      message.error("Failed to create agent");
+      message.error(t("agentsSub.failedCreateAgent"));
     } finally {
       setIsSubmitting(false);
     }
@@ -232,9 +234,9 @@ const AddAgentForm: React.FC<AddAgentFormProps> = ({
   const renderConfigureStep = () => (
     <>
       <Form.Item
-        label={<span className="text-sm font-medium text-gray-700">Agent Type</span>}
+        label={<span className="text-sm font-medium text-gray-700">{t("agentsSub.agentType")}</span>}
         required
-        tooltip="Select the type of agent you want to create"
+        tooltip={t("agentsSub.selectAgentTypeTooltip")}
       >
         <Select
           value={agentType}
@@ -248,7 +250,7 @@ const AddAgentForm: React.FC<AddAgentFormProps> = ({
               <Divider style={{ margin: "4px 0" }} />
               <div className="px-2 py-1">
                 <div className="text-xs text-gray-400 font-medium mb-1 uppercase tracking-wide px-2">
-                  Not listed?
+                  {t("agentsSub.notListed")}
                 </div>
                 <div
                   className={`flex items-center gap-3 px-2 py-2 rounded cursor-pointer transition-colors ${
@@ -261,11 +263,11 @@ const AddAgentForm: React.FC<AddAgentFormProps> = ({
                   <AppstoreOutlined className="text-amber-600 text-lg" />
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-amber-700">Custom / Other</span>
+                      <span className="font-medium text-amber-700">{t("agentsSub.customOther")}</span>
                       <Tag color="orange" style={{ fontSize: 10, padding: "0 4px" }}>GENERIC</Tag>
                     </div>
                     <div className="text-xs text-amber-600">
-                      For agents that don&apos;t follow a standard protocol — just needs a virtual key
+                      {t("agentsSub.customAgentDesc")}
                     </div>
                   </div>
                 </div>
@@ -306,17 +308,17 @@ const AddAgentForm: React.FC<AddAgentFormProps> = ({
         {agentType === CUSTOM_AGENT_TYPE ? (
           <div className="space-y-4">
             <Form.Item
-              label="Agent Name"
+              label={t("agentsSub.agentName")}
               name="agent_name"
-              rules={[{ required: true, message: "Please enter an agent name" }]}
+              rules={[{ required: true, message: t("agentsSub.pleaseEnterAgentName") }]}
             >
-              <Input placeholder="e.g. my-custom-agent" />
+              <Input placeholder={t("agentsSub.agentNamePlaceholder")} />
             </Form.Item>
             <Form.Item
-              label="Description"
+              label={t("agentsSub.description")}
               name="description"
             >
-              <Input.TextArea placeholder="Describe what this agent does…" rows={3} />
+              <Input.TextArea placeholder={t("agentsSub.descriptionPlaceholder")} rows={3} />
             </Form.Item>
           </div>
         ) : agentType === "a2a" ? (
@@ -327,7 +329,7 @@ const AddAgentForm: React.FC<AddAgentFormProps> = ({
             {selectedAgentTypeInfo.credential_fields.length > 0 && (
               <div className="mt-4 p-4 border border-gray-200 rounded-lg">
                 <h4 className="text-sm font-medium text-gray-700 mb-3">
-                  {selectedAgentTypeInfo.agent_type_display_name} Settings
+                  {selectedAgentTypeInfo.agent_type_display_name} {t("agentsSub.settings")}
                 </h4>
                 {selectedAgentTypeInfo.credential_fields.map((field) => (
                   <Form.Item
@@ -390,15 +392,15 @@ const AddAgentForm: React.FC<AddAgentFormProps> = ({
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <KeyOutlined className="text-indigo-600" />
-                    <span className="font-medium text-gray-900">Create a new key for this agent</span>
+                    <span className="font-medium text-gray-900">{t("agentsSub.createNewKey")}</span>
                   </div>
                   <p className="text-sm text-gray-500 mt-1">
-                    A dedicated key scoped to this agent.
+                    {t("agentsSub.dedicatedKeyDesc")}
                   </p>
                   {keyAssignOption === "create_new" && (
                     <div className="mt-3 space-y-3" onClick={(e) => e.stopPropagation()}>
                       <div>
-                        <label className="text-sm text-gray-600 block mb-1">Key Name</label>
+                        <label className="text-sm text-gray-600 block mb-1">{t("agentsSub.keyName")}</label>
                         <Input
                           value={newKeyName}
                           onChange={(e) => setNewKeyName(e.target.value)}
@@ -407,7 +409,7 @@ const AddAgentForm: React.FC<AddAgentFormProps> = ({
                       </div>
                       <div>
                         <label className="text-sm text-gray-600 block mb-1">
-                          Allowed Models <span className="text-gray-400">(optional — leave empty for all models)</span>
+                          {t("agentsSub.allowedModels")} <span className="text-gray-400">({t("agentsSub.optionalLeaveEmpty")})</span>
                         </label>
                         <Select
                           mode="tags"
@@ -422,7 +424,7 @@ const AddAgentForm: React.FC<AddAgentFormProps> = ({
                   )}
                 </div>
               </div>
-              <Tag color="green">Recommended</Tag>
+              <Tag color="green">{t("agentsSub.recommended")}</Tag>
             </div>
           </div>
 
@@ -444,17 +446,17 @@ const AddAgentForm: React.FC<AddAgentFormProps> = ({
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <KeyOutlined className="text-gray-500" />
-                  <span className="font-medium text-gray-900">Assign an existing key</span>
+                    <span className="font-medium text-gray-900">{t("agentsSub.assignExistingKey")}</span>
                 </div>
                 <p className="text-sm text-gray-500 mt-1">
-                  Re-assign a key you already have to this agent.
+                  {t("agentsSub.reassignKeyDesc")}
                 </p>
                 {keyAssignOption === "existing_key" && (
                   <div className="mt-3" onClick={(e) => e.stopPropagation()}>
                     <Select
                       showSearch
                       style={{ width: "100%" }}
-                      placeholder="Search by key name…"
+                      placeholder={t("agentsSub.searchByKeyName")}
                       loading={loadingKeys}
                       value={selectedExistingKey}
                       onChange={(value) => setSelectedExistingKey(value)}
@@ -479,7 +481,7 @@ const AddAgentForm: React.FC<AddAgentFormProps> = ({
             className="text-sm text-gray-500 underline hover:text-gray-700"
             onClick={() => setKeyAssignOption("skip")}
           >
-            Skip for now — I&apos;ll assign a key later
+            {t("agentsSub.skipForNow")}
           </button>
         </div>
       </div>
@@ -489,7 +491,7 @@ const AddAgentForm: React.FC<AddAgentFormProps> = ({
   const renderReadyStep = () => (
     <div className="text-center py-6">
       <CheckCircleFilled className="text-5xl text-green-500 mb-4" style={{ fontSize: 48 }} />
-      <h3 className="text-xl font-semibold text-gray-900 mb-2">Agent Created!</h3>
+      <h3 className="text-xl font-semibold text-gray-900 mb-2">{t("agentsSub.agentCreated")}</h3>
       <div className="flex justify-center mb-4">
         <Tag icon={<RobotOutlined />} color="purple" className="px-3 py-1 text-sm">
           {createdAgentName}
@@ -502,12 +504,12 @@ const AddAgentForm: React.FC<AddAgentFormProps> = ({
       )}
       {assignedKeyAlias && (
         <p className="text-sm text-gray-600 mt-2">
-          Key <span className="font-medium">{assignedKeyAlias}</span> has been assigned to this agent.
+          {t("agentsSub.keyAssignedToAgent", { keyAlias: assignedKeyAlias })}
         </p>
       )}
       {!createdKeyValue && !assignedKeyAlias && keyAssignOption === "skip" && (
         <p className="text-sm text-gray-500 mt-2">
-          No key assigned. You can create one from the Virtual Keys page.
+          {t("agentsSub.noKeyAssigned")}
         </p>
       )}
     </div>
@@ -520,7 +522,7 @@ const AddAgentForm: React.FC<AddAgentFormProps> = ({
           {selectedLogo && currentStep < 1 && (
             <img src={selectedLogo} alt="Agent" className="w-6 h-6 object-contain" />
           )}
-          <h2 className="text-xl font-semibold text-gray-900">Add New Agent</h2>
+          <h2 className="text-xl font-semibold text-gray-900">{t("agentsSub.addNewAgent")}</h2>
         </div>
       }
       open={visible}
@@ -536,9 +538,9 @@ const AddAgentForm: React.FC<AddAgentFormProps> = ({
       <div className="mt-4">
         {/* Step indicator */}
         <Steps current={currentStep} size="small" className="mb-8">
-          <Step title="Configure" />
-          <Step title="Assign Key" />
-          <Step title="Ready" />
+          <Step title={t("agentsSub.stepConfigure")} />
+          <Step title={t("agentsSub.stepAssignKey")} />
+          <Step title={t("agentsSub.stepReady")} />
         </Steps>
 
         <Form
@@ -561,29 +563,29 @@ const AddAgentForm: React.FC<AddAgentFormProps> = ({
                 onClick={handleBack}
                 className="text-sm text-gray-600 border border-gray-300 rounded px-4 py-2 hover:bg-gray-50"
               >
-                ← Back
+                ← {t("common.back")}
               </button>
             )}
           </div>
           <div className="flex gap-3">
             {currentStep < 2 && (
               <Button variant="secondary" onClick={handleClose}>
-                Cancel
+                {t("common.cancel")}
               </Button>
             )}
             {currentStep === 0 && (
               <Button variant="primary" onClick={handleNext}>
-                Next →
+                {t("common.next")} →
               </Button>
             )}
             {currentStep === 1 && (
               <Button variant="primary" loading={isSubmitting} onClick={handleCreateAgent}>
-                {isSubmitting ? "Creating..." : "Create Agent →"}
+                {isSubmitting ? t("agentsSub.creating") : t("agentsSub.createAgent")}
               </Button>
             )}
             {currentStep === 2 && (
               <Button variant="primary" onClick={handleClose}>
-                Done
+                {t("agentsSub.done")}
               </Button>
             )}
           </div>

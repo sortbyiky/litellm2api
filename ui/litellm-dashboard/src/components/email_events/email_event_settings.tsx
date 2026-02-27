@@ -5,6 +5,7 @@ import NotificationsManager from "../molecules/notifications_manager";
 import { getEmailEventSettings, updateEmailEventSettings, resetEmailEventSettings } from "../networking";
 import { EmailEvent } from "../../types";
 import { EmailEventSetting } from "./types";
+import { useTranslation } from "react-i18next";
 
 const { Title } = Typography;
 
@@ -13,6 +14,7 @@ interface EmailEventSettingsProps {
 }
 
 const EmailEventSettings: React.FC<EmailEventSettingsProps> = ({ accessToken }) => {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [eventSettings, setEventSettings] = useState<EmailEventSetting[]>([]);
 
@@ -48,7 +50,7 @@ const EmailEventSettings: React.FC<EmailEventSettingsProps> = ({ accessToken }) 
 
     try {
       await updateEmailEventSettings(accessToken, { settings: eventSettings });
-      NotificationsManager.success("Email event settings updated successfully");
+      NotificationsManager.success(t("logging.emailEventSettingsUpdated"));
     } catch (error) {
       console.error("Failed to update email event settings:", error);
       NotificationsManager.fromBackend(error);
@@ -60,7 +62,7 @@ const EmailEventSettings: React.FC<EmailEventSettingsProps> = ({ accessToken }) 
 
     try {
       await resetEmailEventSettings(accessToken);
-      NotificationsManager.success("Email event settings reset to defaults");
+      NotificationsManager.success(t("logging.emailEventSettingsReset"));
       // Refresh settings after reset
       fetchEventSettings();
     } catch (error) {
@@ -88,8 +90,8 @@ const EmailEventSettings: React.FC<EmailEventSettingsProps> = ({ accessToken }) 
 
   return (
     <Card>
-      <Title level={4}>Email Notifications</Title>
-      <Text>Select which events should trigger email notifications.</Text>
+      <Title level={4}>{t("logging.emailNotifications")}</Title>
+      <Text>{t("logging.selectEmailEvents")}</Text>
       <Divider />
 
       {loading ? (
@@ -115,10 +117,10 @@ const EmailEventSettings: React.FC<EmailEventSettingsProps> = ({ accessToken }) 
 
       <div className="mt-6 flex space-x-4">
         <Button onClick={handleSaveSettings} disabled={loading}>
-          Save Changes
+          {t("logging.saveChanges")}
         </Button>
         <Button onClick={handleResetSettings} variant="secondary" disabled={loading}>
-          Reset to Defaults
+          {t("logging.resetToDefaults")}
         </Button>
       </div>
     </Card>

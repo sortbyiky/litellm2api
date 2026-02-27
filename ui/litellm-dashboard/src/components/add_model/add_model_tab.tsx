@@ -3,6 +3,7 @@ import type { FormInstance } from "antd";
 import { Form } from "antd";
 import type { UploadProps } from "antd/es/upload";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import type { Team } from "../key_team_helpers/key_list";
 import { type CredentialItem } from "../networking";
 import { Providers } from "../provider_info_helpers";
@@ -43,8 +44,8 @@ const AddModelTab: React.FC<AddModelTabProps> = ({
   accessToken,
   userRole,
 }) => {
-  // Create separate form instance for auto router
   const [autoRouterForm] = Form.useForm();
+  const { t } = useTranslation();
 
   const handleAutoRouterOk = () => {
     autoRouterForm
@@ -61,8 +62,8 @@ const AddModelTab: React.FC<AddModelTabProps> = ({
     <>
       <TabGroup className="w-full">
         <TabList className="mb-4">
-          <Tab>Add Model</Tab>
-          <Tab>Add Auto Router</Tab>
+          <Tab>{t("addModel.title")}</Tab>
+          <Tab>{t("addModel.addAutoRouter")}</Tab>
         </TabList>
         <TabPanels>
           <TabPanel>

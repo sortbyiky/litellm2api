@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Card, Text } from "@tremor/react";
 import { PlusIcon, TrashIcon } from "lucide-react";
 import { Tool } from "./types";
@@ -16,20 +17,21 @@ const ToolsCard: React.FC<ToolsCardProps> = ({
   onEditTool,
   onRemoveTool,
 }) => {
+  const { t } = useTranslation();
   return (
     <Card className="p-3">
       <div className="flex items-center justify-between mb-2">
-        <Text className="text-sm font-medium">Tools</Text>
+        <Text className="text-sm font-medium">{t("prompts.tools")}</Text>
         <button
           onClick={onAddTool}
           className="text-xs text-blue-600 hover:text-blue-700 flex items-center"
         >
           <PlusIcon size={14} className="mr-1" />
-          Add
+          {t("common.add")}
         </button>
       </div>
       {tools.length === 0 ? (
-        <Text className="text-gray-500 text-xs">No tools added</Text>
+        <Text className="text-gray-500 text-xs">{t("prompts.noToolsAdded")}</Text>
       ) : (
         <div className="space-y-2">
           {tools.map((tool, index) => (
@@ -46,7 +48,7 @@ const ToolsCard: React.FC<ToolsCardProps> = ({
                   onClick={() => onEditTool(index)}
                   className="text-xs text-blue-600 hover:text-blue-700"
                 >
-                  Edit
+                  {t("common.edit")}
                 </button>
                 <button
                   onClick={() => onRemoveTool(index)}

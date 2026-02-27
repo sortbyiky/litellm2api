@@ -2,6 +2,7 @@ import { InfoCircleOutlined } from "@ant-design/icons";
 import { Text } from "@tremor/react";
 import { Checkbox, InputNumber, Popover, Slider, Tooltip, Typography } from "antd";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface AdditionalModelSettingsProps {
   temperature?: number;
@@ -24,6 +25,7 @@ const AdditionalModelSettings: React.FC<AdditionalModelSettingsProps> = ({
   mockTestFallbacks,
   onMockTestFallbacksChange,
 }) => {
+  const { t } = useTranslation();
   const [internalUseAdvancedParams, setInternalUseAdvancedParams] = useState(false);
   const useAdvancedParams =
     externalUseAdvancedParams !== undefined ? externalUseAdvancedParams : internalUseAdvancedParams;
@@ -65,7 +67,7 @@ const AdditionalModelSettings: React.FC<AdditionalModelSettingsProps> = ({
   return (
     <div className="space-y-4 p-4 w-80">
       <Checkbox checked={useAdvancedParams} onChange={(e) => handleUseAdvancedParamsChange(e.target.checked)}>
-        <span className="font-medium">Use Advanced Parameters</span>
+        <span className="font-medium">{t("playground.additionalSettings.useAdvancedParams")}</span>
       </Checkbox>
 
       {onMockTestFallbacksChange && (
@@ -74,7 +76,7 @@ const AdditionalModelSettings: React.FC<AdditionalModelSettingsProps> = ({
             checked={mockTestFallbacks ?? false}
             onChange={(e) => onMockTestFallbacksChange(e.target.checked)}
           >
-            <span className="font-medium">Simulate failure to test fallbacks</span>
+            <span className="font-medium">{t("playground.additionalSettings.simulateFailure")}</span>
           </Checkbox>
           <Popover
             trigger="hover"
@@ -82,18 +84,17 @@ const AdditionalModelSettings: React.FC<AdditionalModelSettingsProps> = ({
             content={
               <div style={{ maxWidth: 340 }}>
                 <Typography.Paragraph className="text-sm" style={{ marginBottom: 8 }}>
-                  Causes the first request to fail so the router tries fallbacks (if configured). Use
-                  this to verify your fallback setup.
+                  {t("playground.additionalSettings.simulateFailureDesc")}
                 </Typography.Paragraph>
                 <Typography.Paragraph className="text-sm" style={{ marginBottom: 0 }}>
-                  Behavior can differ when keys, teams, or router settings are configured.{" "}
+                  {t("playground.additionalSettings.simulateFailureBehavior")}{" "}
                   <a
                     href="https://docs.litellm.ai/docs/proxy/keys_teams_router_settings"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:text-blue-800"
                   >
-                    Learn more
+                    {t("playground.additionalSettings.learnMore")}
                   </a>
                 </Typography.Paragraph>
               </div>
@@ -101,7 +102,7 @@ const AdditionalModelSettings: React.FC<AdditionalModelSettingsProps> = ({
           >
             <InfoCircleOutlined
               className="text-xs text-gray-400 cursor-pointer shrink-0 hover:text-gray-600"
-              aria-label="Help: Simulate failure to test fallbacks"
+              aria-label={t("playground.additionalSettings.simulateFailure")}
             />
           </Popover>
         </div>
@@ -111,8 +112,8 @@ const AdditionalModelSettings: React.FC<AdditionalModelSettingsProps> = ({
         <div>
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-1">
-              <Text className={`text-sm ${disabledTextColor}`}>Temperature</Text>
-              <Tooltip title="Controls randomness. Lower values make output more deterministic, higher values more creative.">
+              <Text className={`text-sm ${disabledTextColor}`}>{t("playground.additionalSettings.temperature")}</Text>
+              <Tooltip title={t("playground.additionalSettings.temperatureTooltip")}>
                 <InfoCircleOutlined className={`text-xs ${disabledTextColor} cursor-help`} />
               </Tooltip>
             </div>
@@ -145,8 +146,8 @@ const AdditionalModelSettings: React.FC<AdditionalModelSettingsProps> = ({
         <div>
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-1">
-              <Text className={`text-sm ${disabledTextColor}`}>Max Tokens</Text>
-              <Tooltip title="Maximum number of tokens to generate in the response.">
+              <Text className={`text-sm ${disabledTextColor}`}>{t("playground.additionalSettings.maxTokens")}</Text>
+              <Tooltip title={t("playground.additionalSettings.maxTokensTooltip")}>
                 <InfoCircleOutlined className={`text-xs ${disabledTextColor} cursor-help`} />
               </Tooltip>
             </div>

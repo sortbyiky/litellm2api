@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Select } from "antd";
 import { Policy } from "./types";
 import { getPoliciesList } from "../networking";
@@ -53,6 +54,7 @@ const PolicySelector: React.FC<PolicySelectorProps> = ({
 }) => {
   const [policies, setPolicies] = useState<Policy[]>([]);
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchPolicies = async () => {
@@ -86,8 +88,8 @@ const PolicySelector: React.FC<PolicySelectorProps> = ({
         disabled={disabled}
         placeholder={
           disabled
-            ? "Setting policies is a premium feature."
-            : "Select policies (production or published versions)"
+            ? t("policies.selector.premiumFeature")
+            : t("policies.selector.selectPolicies")
         }
         onChange={handlePolicyChange}
         value={value}

@@ -11,6 +11,7 @@ import StdioConfiguration from "./StdioConfiguration";
 import { validateMCPServerUrl, validateMCPServerName } from "./utils";
 import NotificationsManager from "../molecules/notifications_manager";
 import { useMcpOAuthFlow } from "@/hooks/useMcpOAuthFlow";
+import { useTranslation } from "react-i18next";
 
 interface MCPServerEditProps {
   mcpServer: MCPServer;
@@ -31,6 +32,7 @@ const MCPServerEdit: React.FC<MCPServerEditProps> = ({
   onSuccess,
   availableAccessGroups,
 }) => {
+  const { t } = useTranslation();
   const [form] = Form.useForm();
   const [costConfig, setCostConfig] = useState<MCPServerCostInfo>({});
   const [tools, setTools] = useState<any[]>([]);
@@ -553,14 +555,14 @@ const MCPServerEdit: React.FC<MCPServerEditProps> = ({
   return (
     <TabGroup>
       <TabList className="grid w-full grid-cols-2">
-        <Tab>Server Configuration</Tab>
-        <Tab>Cost Configuration</Tab>
+        <Tab>{t("mcp.serverConfiguration")}</Tab>
+        <Tab>{t("mcp.costConfiguration")}</Tab>
       </TabList>
       <TabPanels className="mt-6">
         <TabPanel>
           <Form form={form} onFinish={handleSave} initialValues={initialValues} layout="vertical">
             <Form.Item
-              label="MCP Server Name"
+              label={t("mcp.mcpServerName")}
               name="server_name"
               rules={[
                 {
@@ -571,7 +573,7 @@ const MCPServerEdit: React.FC<MCPServerEditProps> = ({
               <Input className="rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" />
             </Form.Item>
             <Form.Item
-              label="Alias"
+              label={t("mcp.alias")}
               name="alias"
               rules={[
                 {
@@ -584,10 +586,10 @@ const MCPServerEdit: React.FC<MCPServerEditProps> = ({
                 className="rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500"
               />
             </Form.Item>
-            <Form.Item label="Description" name="description">
+            <Form.Item label={t("common.description")} name="description">
               <Input className="rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500" />
             </Form.Item>
-            <Form.Item label="Transport Type" name="transport" rules={[{ required: true }]}>
+            <Form.Item label={t("mcp.transportType")} name="transport" rules={[{ required: true }]}>
               <Select onChange={handleTransportChange}>
                 <Select.Option value="http">Streamable HTTP (Recommended)</Select.Option>
                 <Select.Option value="sse">Server-Sent Events (SSE)</Select.Option>
@@ -636,7 +638,7 @@ const MCPServerEdit: React.FC<MCPServerEditProps> = ({
 
             {/* Authentication - for HTTP, SSE, and OpenAPI */}
             {!isStdioTransport && (
-              <Form.Item label="Authentication" name="auth_type" rules={[{ required: true }]}>
+              <Form.Item label={t("mcp.authentication")} name="auth_type" rules={[{ required: true }]}>
                 <Select>
                   <Select.Option value="none">None</Select.Option>
                   <Select.Option value="api_key">API Key</Select.Option>
@@ -893,8 +895,8 @@ const MCPServerEdit: React.FC<MCPServerEditProps> = ({
             </div>
 
             <div className="flex justify-end gap-2">
-              <AntdButton onClick={onCancel}>Cancel</AntdButton>
-              <Button type="submit">Save Changes</Button>
+              <AntdButton onClick={onCancel}>{t("common.cancel")}</AntdButton>
+              <Button type="submit">{t("mcp.saveChanges")}</Button>
             </div>
           </Form>
         </TabPanel>
@@ -904,8 +906,8 @@ const MCPServerEdit: React.FC<MCPServerEditProps> = ({
             <MCPServerCostConfig value={costConfig} onChange={setCostConfig} tools={tools} disabled={isLoadingTools} />
 
             <div className="flex justify-end gap-2">
-              <AntdButton onClick={onCancel}>Cancel</AntdButton>
-              <Button onClick={() => form.submit()}>Save Changes</Button>
+              <AntdButton onClick={onCancel}>{t("common.cancel")}</AntdButton>
+              <Button onClick={() => form.submit()}>{t("mcp.saveChanges")}</Button>
             </div>
           </div>
         </TabPanel>

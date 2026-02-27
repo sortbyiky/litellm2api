@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { useSearchParams } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import { useOnboardingCredentials, useClaimOnboardingToken } from "@/app/(dashboard)/hooks/onboarding/useOnboarding";
@@ -16,6 +17,7 @@ export function OnboardingForm({ variant }: OnboardingFormProps) {
   const searchParams = useSearchParams()!;
   const inviteId = searchParams.get("invitation_id");
   const [claimError, setClaimError] = React.useState<string | null>(null);
+  const { t } = useTranslation();
 
   const {
     data: credentialsData,
@@ -49,7 +51,7 @@ export function OnboardingForm({ variant }: OnboardingFormProps) {
             : "/ui/?login=success";
         },
         onError: (error: Error) => {
-          setClaimError(error.message || "Failed to submit. Please try again.");
+          setClaimError(error.message || t("onboarding.failedToSubmit"));
         },
       }
     );

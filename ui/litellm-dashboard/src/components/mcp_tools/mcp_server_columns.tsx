@@ -4,6 +4,7 @@ import { Icon } from "@tremor/react";
 import { PencilAltIcon, TrashIcon } from "@heroicons/react/outline";
 import { getMaskedAndFullUrl } from "./utils";
 import { Tooltip } from "antd";
+import { TFunction } from "i18next";
 
 export const mcpServerColumns = (
   userRole: string,
@@ -11,10 +12,11 @@ export const mcpServerColumns = (
   onEdit: (serverId: string) => void,
   onDelete: (serverId: string) => void,
   isLoadingHealth?: boolean,
+  t?: TFunction,
 ): ColumnDef<MCPServer>[] => [
   {
     accessorKey: "server_id",
-    header: "Server ID",
+    header: t ? t("mcp.serverId") : "Server ID",
     cell: ({ row }) => (
       <button
         onClick={() => onView(row.original.server_id)}
@@ -26,15 +28,15 @@ export const mcpServerColumns = (
   },
   {
     accessorKey: "server_name",
-    header: "Name",
+    header: t ? t("mcp.serverName") : "Name",
   },
   {
     accessorKey: "alias",
-    header: "Alias",
+    header: t ? t("mcp.alias") : "Alias",
   },
   {
     id: "url",
-    header: "URL",
+    header: t ? t("mcp.url") : "URL",
     cell: ({ row }) => {
       const url = row.original.url;
       if (!url) {
@@ -46,7 +48,7 @@ export const mcpServerColumns = (
   },
   {
     accessorKey: "transport",
-    header: "Transport",
+    header: t ? t("mcp.transport") : "Transport",
     cell: ({ row }) => {
       const transport = row.original.transport || "http";
       const specPath = row.original.spec_path;
@@ -57,12 +59,12 @@ export const mcpServerColumns = (
   },
   {
     accessorKey: "auth_type",
-    header: "Auth Type",
+    header: t ? t("mcp.authType") : "Auth Type",
     cell: ({ getValue }) => <span>{(getValue() as string) || "none"}</span>,
   },
   {
     id: "health_status",
-    header: "Health Status",
+    header: t ? t("mcp.healthStatus") : "Health Status",
     cell: ({ row }) => {
       const server = row.original;
       const status = server.status || "unknown";
@@ -77,7 +79,7 @@ export const mcpServerColumns = (
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            <span className="text-xs">Loading...</span>
+            <span className="text-xs">{t ? t("mcp.loading") : "Loading..."}</span>
           </div>
         );
       }
@@ -106,15 +108,15 @@ export const mcpServerColumns = (
 
       const tooltipContent = (
         <div className="max-w-xs">
-          <div className="font-semibold mb-1">Health Status: {status}</div>
-          {lastCheck && <div className="text-xs mb-1">Last Check: {new Date(lastCheck).toLocaleString()}</div>}
+          <div className="font-semibold mb-1">{t ? t("mcp.healthStatus") : "Health Status"}: {status}</div>
+          {lastCheck && <div className="text-xs mb-1">{t ? t("mcp.lastCheck") : "Last Check"}: {new Date(lastCheck).toLocaleString()}</div>}
           {error && (
             <div className="text-xs">
-              <div className="font-medium text-red-400 mb-1">Error:</div>
+              <div className="font-medium text-red-400 mb-1">{t ? t("mcp.error") : "Error"}:</div>
               <div className="break-words">{error}</div>
             </div>
           )}
-          {!lastCheck && !error && <div className="text-xs text-gray-400">No health check data available</div>}
+          {!lastCheck && !error && <div className="text-xs text-gray-400">{t ? t("mcp.noHealthCheckData") : "No health check data available"}</div>}
         </div>
       );
 
@@ -132,7 +134,7 @@ export const mcpServerColumns = (
   },
   {
     id: "mcp_access_groups",
-    header: "Access Groups",
+    header: t ? t("mcp.accessGroups") : "Access Groups",
     cell: ({ row }) => {
       const groups = row.original.mcp_access_groups;
       if (Array.isArray(groups) && groups.length > 0) {
@@ -148,23 +150,23 @@ export const mcpServerColumns = (
           );
         }
       }
-      return <span className="text-gray-400 italic">None</span>;
+      return <span className="text-gray-400 italic">{t ? t("common.none") : "None"}</span>;
     },
   },
   {
     id: "available_on_public_internet",
-    header: "Network Access",
+    header: t ? t("mcp.networkAccess") : "Network Access",
     cell: ({ row }) => {
       const isPublic = row.original.available_on_public_internet;
       return isPublic ? (
-        <span className="px-2 py-0.5 bg-green-50 text-green-700 rounded text-xs font-medium">Public</span>
+        <span className="px-2 py-0.5 bg-green-50 text-green-700 rounded text-xs font-medium">{t ? t("mcp.public") : "Public"}</span>
       ) : (
-        <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs font-medium">Internal</span>
+        <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs font-medium">{t ? t("mcp.internal") : "Internal"}</span>
       );
     },
   },
   {
-    header: "Created At",
+    header: t ? t("mcp.createdAt") : "Created At",
     accessorKey: "created_at",
     sortingFn: "datetime",
     cell: ({ row }) => {
@@ -175,7 +177,7 @@ export const mcpServerColumns = (
     },
   },
   {
-    header: "Updated At",
+    header: t ? t("mcp.updatedAt") : "Updated At",
     accessorKey: "updated_at",
     sortingFn: "datetime",
     cell: ({ row }) => {
@@ -187,10 +189,10 @@ export const mcpServerColumns = (
   },
   {
     id: "actions",
-    header: "Actions",
+    header: t ? t("common.actions") : "Actions",
     cell: ({ row }) => (
       <div className="flex items-center gap-2">
-        <Tooltip title="Edit MCP Server">
+        <Tooltip title={t ? t("mcp.editServer") : "Edit MCP Server"}>
           <Icon
             icon={PencilAltIcon}
             size="sm"
@@ -198,7 +200,7 @@ export const mcpServerColumns = (
             className="cursor-pointer hover:text-blue-600"
           />
         </Tooltip>
-        <Tooltip title="Delete MCP Server">
+        <Tooltip title={t ? t("mcp.deleteServer") : "Delete MCP Server"}>
           <Icon
             icon={TrashIcon}
             size="sm"

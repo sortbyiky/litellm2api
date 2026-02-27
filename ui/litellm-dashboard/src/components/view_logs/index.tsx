@@ -1,6 +1,7 @@
 import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
 import { useCallback, useDeferredValue, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import GuardrailViewer from "@/components/view_logs/GuardrailViewer/GuardrailViewer";
 import { formatNumberWithCommas } from "@/utils/dataUtils";
 import { truncateString } from "@/utils/textUtils";
@@ -57,6 +58,7 @@ export default function SpendLogsTable({
   premiumUser,
 }: SpendLogsTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  const { t } = useTranslation();
   const [showFilters, setShowFilters] = useState(false);
   const [showColumnDropdown, setShowColumnDropdown] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -156,7 +158,7 @@ export default function SpendLogsTable({
   const LiveTailControls = () => {
     return (
       <div className="flex items-center gap-2">
-        <span className="text-sm font-medium text-gray-900">Live Tail</span>
+        <span className="text-sm font-medium text-gray-900">{t("logViewer.liveTail")}</span>
         <Switch color="green" checked={isLiveTail} defaultChecked={true} onChange={setIsLiveTail} />
       </div>
     );
@@ -409,11 +411,11 @@ export default function SpendLogsTable({
     },
     {
       name: "Status",
-      label: "Status",
+      label: t("logViewer.status"),
       isSearchable: false,
       options: [
-        { label: "Success", value: "success" },
-        { label: "Failure", value: "failure" },
+        { label: t("logViewer.success"), value: "success" },
+        { label: t("logViewer.failure"), value: "failure" },
       ],
     },
     {
@@ -494,19 +496,19 @@ export default function SpendLogsTable({
     <div className="w-full max-w-screen p-6 overflow-x-hidden box-border">
       <TabGroup defaultIndex={0} onIndexChange={(index) => setActiveTab(index === 0 ? "request logs" : "audit logs")}>
         <TabList>
-          <Tab>Request Logs</Tab>
-          <Tab>Audit Logs</Tab>
-          <Tab>Deleted Keys</Tab>
-          <Tab>Deleted Teams</Tab>
+          <Tab>{t("logViewer.requestLogs")}</Tab>
+          <Tab>{t("logViewer.auditLogs")}</Tab>
+          <Tab>{t("logViewer.deletedKeys")}</Tab>
+          <Tab>{t("logViewer.deletedTeams")}</Tab>
         </TabList>
         <TabPanels>
           <TabPanel>
             <div className="flex items-center justify-between mb-4">
-              <h1 className="text-xl font-semibold">Request Logs</h1>
+              <h1 className="text-xl font-semibold">{t("logViewer.requestLogs")}</h1>
               <Button
                 icon={<SettingOutlined />}
                 onClick={() => setIsSpendLogsSettingsModalVisible(true)}
-                title="Spend Logs Settings"
+                title={t("logViewer.spendLogsSettings")}
               />
             </div>
             {selectedKeyInfo && selectedKeyIdInfoView && selectedKeyInfo.api_key === selectedKeyIdInfoView ? (
@@ -515,7 +517,7 @@ export default function SpendLogsTable({
                 keyData={selectedKeyInfo}
                 teams={allTeams}
                 onClose={() => setSelectedKeyIdInfoView(null)}
-                backButtonText="Back to Logs"
+                backButtonText={t("logViewer.backToLogs")}
               />
             ) : (
               <>
@@ -536,7 +538,7 @@ export default function SpendLogsTable({
                         <div className="relative w-64 min-w-0 flex-shrink-0">
                           <input
                             type="text"
-                            placeholder="Search by Request ID"
+                            placeholder={t("logViewer.searchByRequestId")}
                             className="w-full px-3 py-2 pl-8 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
@@ -603,7 +605,7 @@ export default function SpendLogsTable({
                                       }`}
                                     onClick={() => setIsCustomDate(!isCustomDate)}
                                   >
-                                    Custom Range
+                                    {t("logViewer.customRange")}
                                   </button>
                                 </div>
                               </div>
@@ -619,7 +621,7 @@ export default function SpendLogsTable({
                             disabled={isButtonLoading}
                             title="Fetch data"
                           >
-                            {isButtonLoading ? "Fetching" : "Fetch"}
+                            {isButtonLoading ? t("logViewer.fetching") : t("logViewer.fetch")}
                           </Button>
                         </div>
 
@@ -654,17 +656,17 @@ export default function SpendLogsTable({
 
                       <div className="flex items-center space-x-4">
                         <span className="text-sm text-gray-700 whitespace-nowrap">
-                          Showing {logs.isLoading ? "..." : filteredLogs ? (currentPage - 1) * pageSize + 1 : 0} -{" "}
+                          {t("logViewer.showing")} {logs.isLoading ? "..." : filteredLogs ? (currentPage - 1) * pageSize + 1 : 0} -{" "}
                           {logs.isLoading
                             ? "..."
                             : filteredLogs
                               ? Math.min(currentPage * pageSize, filteredLogs.total)
                               : 0}{" "}
-                          of {logs.isLoading ? "..." : filteredLogs ? filteredLogs.total : 0} results
+                          {t("logViewer.of")} {logs.isLoading ? "..." : filteredLogs ? filteredLogs.total : 0} {t("logViewer.results")}
                         </span>
                         <div className="flex items-center space-x-2">
                           <span className="text-sm text-gray-700 min-w-[90px]">
-                            Page {logs.isLoading ? "..." : currentPage} of{" "}
+                            {t("logViewer.page")} {logs.isLoading ? "..." : currentPage} {t("logViewer.of")}{" "}
                             {logs.isLoading ? "..." : filteredLogs ? filteredLogs.total_pages : 1}
                           </span>
                           <button
@@ -672,14 +674,14 @@ export default function SpendLogsTable({
                             disabled={logs.isLoading || currentPage === 1}
                             className="px-3 py-1 text-sm border rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
-                            Previous
+                            {t("logViewer.previous")}
                           </button>
                           <button
                             onClick={() => setCurrentPage((p) => Math.min(filteredLogs.total_pages || 1, p + 1))}
                             disabled={logs.isLoading || currentPage === (filteredLogs.total_pages || 1)}
                             className="px-3 py-1 text-sm border rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
-                            Next
+                            {t("common.next")}
                           </button>
                         </div>
                       </div>
@@ -688,13 +690,13 @@ export default function SpendLogsTable({
                   {isLiveTail && currentPage === 1 && isMainQueryEnabled && (
                     <div className="mb-4 px-4 py-2 bg-green-50 border border-greem-200 rounded-md flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm text-green-700">Auto-refreshing every 15 seconds</span>
+                        <span className="text-sm text-green-700">{t("logViewer.autoRefreshing")}</span>
                       </div>
                       <button
                         onClick={() => setIsLiveTail(false)}
                         className="text-sm text-green-600 hover:text-green-800"
                       >
-                        Stop
+                        {t("logViewer.stop")}
                       </button>
                     </div>
                   )}
@@ -749,6 +751,7 @@ export default function SpendLogsTable({
 }
 
 export function RequestViewer({ row, onOpenSettings }: { row: Row<LogEntry>; onOpenSettings?: () => void }) {
+  const { t } = useTranslation();
   // Helper function to clean metadata by removing specific fields
   const formatData = (input: any) => {
     if (typeof input === "string") {
@@ -837,12 +840,12 @@ export function RequestViewer({ row, onOpenSettings }: { row: Row<LogEntry>; onO
       {/* Combined Info Card */}
       <div className="bg-white rounded-lg shadow w-full max-w-full overflow-hidden">
         <div className="p-4 border-b">
-          <h3 className="text-lg font-medium">Request Details</h3>
+          <h3 className="text-lg font-medium">{t("logViewer.requestDetails")}</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 w-full max-w-full overflow-hidden">
           <div className="space-y-2">
             <div className="flex">
-              <span className="font-medium w-1/3">Request ID:</span>
+              <span className="font-medium w-1/3">{t("logViewer.requestId")}:</span>
               {row.original.request_id.length > 64 ? (
                 <Tooltip title={row.original.request_id}>
                   <span className="font-mono text-sm">{truncatedRequestId}</span>
@@ -852,36 +855,36 @@ export function RequestViewer({ row, onOpenSettings }: { row: Row<LogEntry>; onO
               )}
             </div>
             <div className="flex">
-              <span className="font-medium w-1/3">Model:</span>
+              <span className="font-medium w-1/3">{t("logViewer.model")}:</span>
               <span>{row.original.model}</span>
             </div>
             <div className="flex">
-              <span className="font-medium w-1/3">Model ID:</span>
+              <span className="font-medium w-1/3">{t("logViewer.modelId")}:</span>
               <span>{row.original.model_id}</span>
             </div>
             <div className="flex">
-              <span className="font-medium w-1/3">Call Type:</span>
+              <span className="font-medium w-1/3">{t("logViewer.callType")}:</span>
               <span>{row.original.call_type}</span>
             </div>
             <div className="flex">
-              <span className="font-medium w-1/3">Provider:</span>
+              <span className="font-medium w-1/3">{t("logViewer.provider")}:</span>
               <span>{row.original.custom_llm_provider || "-"}</span>
             </div>
             <div className="flex">
-              <span className="font-medium w-1/3">API Base:</span>
+              <span className="font-medium w-1/3">{t("logViewer.apiBase")}:</span>
               <Tooltip title={row.original.api_base || "-"}>
                 <span className="max-w-[15ch] truncate block">{row.original.api_base || "-"}</span>
               </Tooltip>
             </div>
             {row?.original?.requester_ip_address && (
               <div className="flex">
-                <span className="font-medium w-1/3">IP Address:</span>
+                <span className="font-medium w-1/3">{t("logViewer.ipAddress")}:</span>
                 <span>{row?.original?.requester_ip_address}</span>
               </div>
             )}
             {hasGuardrailData && (
               <div className="flex">
-                <span className="font-medium w-1/3">Guardrail:</span>
+                <span className="font-medium w-1/3">{t("logViewer.guardrail")}:</span>
                 <div>
                   <span className="font-mono">{primaryGuardrailLabel}</span>
                   {totalMaskedEntities > 0 && (
@@ -895,35 +898,35 @@ export function RequestViewer({ row, onOpenSettings }: { row: Row<LogEntry>; onO
           </div>
           <div className="space-y-2">
             <div className="flex">
-              <span className="font-medium w-1/3">Tokens:</span>
+              <span className="font-medium w-1/3">{t("logViewer.tokens")}:</span>
               <span>
-                {row.original.total_tokens} ({row.original.prompt_tokens} prompt tokens +{" "}
-                {row.original.completion_tokens} completion tokens)
+                {row.original.total_tokens} ({row.original.prompt_tokens} {t("logViewer.promptTokens")} +{" "}
+                {row.original.completion_tokens} {t("logViewer.completionTokens")})
               </span>
             </div>
             <div className="flex">
-              <span className="font-medium w-1/3">Cache Read Tokens:</span>
+              <span className="font-medium w-1/3">{t("logViewer.cacheReadTokens")}:</span>
               <span>
                 {formatNumberWithCommas(row.original.metadata?.additional_usage_values?.cache_read_input_tokens || 0)}
               </span>
             </div>
             <div className="flex">
-              <span className="font-medium w-1/3">Cache Creation Tokens:</span>
+              <span className="font-medium w-1/3">{t("logViewer.cacheCreationTokens")}:</span>
               <span>
                 {formatNumberWithCommas(row.original.metadata?.additional_usage_values.cache_creation_input_tokens)}
               </span>
             </div>
             <div className="flex">
-              <span className="font-medium w-1/3">Cost:</span>
+              <span className="font-medium w-1/3">{t("logViewer.cost")}:</span>
               <span>${formatNumberWithCommas(row.original.spend || 0, 6)}</span>
             </div>
             <div className="flex">
-              <span className="font-medium w-1/3">Cache Hit:</span>
+              <span className="font-medium w-1/3">{t("logViewer.cacheHit")}:</span>
               <span>{row.original.cache_hit}</span>
             </div>
 
             <div className="flex">
-              <span className="font-medium w-1/3">Status:</span>
+              <span className="font-medium w-1/3">{t("logViewer.statusLabel")}:</span>
               <span
                 className={`px-2 py-1 rounded-md text-xs font-medium inline-block text-center w-16 ${(row.original.metadata?.status || "Success").toLowerCase() !== "failure"
                   ? "bg-green-100 text-green-800"
@@ -934,25 +937,25 @@ export function RequestViewer({ row, onOpenSettings }: { row: Row<LogEntry>; onO
               </span>
             </div>
             <div className="flex">
-              <span className="font-medium w-1/3">Start Time:</span>
+              <span className="font-medium w-1/3">{t("logViewer.startTime")}:</span>
               <span>{row.original.startTime}</span>
             </div>
             <div className="flex">
-              <span className="font-medium w-1/3">End Time:</span>
+              <span className="font-medium w-1/3">{t("logViewer.endTime")}:</span>
               <span>{row.original.endTime}</span>
             </div>
             <div className="flex">
-              <span className="font-medium w-1/3">Duration:</span>
+              <span className="font-medium w-1/3">{t("logViewer.duration")}:</span>
               <span>{row.original.duration} s.</span>
             </div>
             {row.original.metadata?.litellm_overhead_time_ms !== undefined && (
               <div className="flex">
-                <span className="font-medium w-1/3">LiteLLM Overhead:</span>
+                <span className="font-medium w-1/3">{t("logViewer.litellmOverhead")}:</span>
                 <span>{row.original.metadata.litellm_overhead_time_ms} ms</span>
               </div>
             )}
             <div className="flex">
-              <span className="font-medium w-1/3">Retries:</span>
+              <span className="font-medium w-1/3">{t("logViewer.retries")}:</span>
               <span>
                 {row.original.metadata?.attempted_retries !== undefined && row.original.metadata?.attempted_retries !== null
                   ? row.original.metadata.attempted_retries > 0
@@ -1003,7 +1006,7 @@ export function RequestViewer({ row, onOpenSettings }: { row: Row<LogEntry>; onO
       {row.original.request_tags && Object.keys(row.original.request_tags).length > 0 && (
         <div className="bg-white rounded-lg shadow">
           <div className="flex justify-between items-center p-4 border-b">
-            <h3 className="text-lg font-medium">Request Tags</h3>
+            <h3 className="text-lg font-medium">{t("logViewer.requestTags")}</h3>
           </div>
           <div className="p-4">
             <div className="flex flex-wrap gap-2">
@@ -1021,13 +1024,13 @@ export function RequestViewer({ row, onOpenSettings }: { row: Row<LogEntry>; onO
       {row.original.metadata && Object.keys(row.original.metadata).length > 0 && (
         <div className="bg-white rounded-lg shadow">
           <div className="flex justify-between items-center p-4 border-b">
-            <h3 className="text-lg font-medium">Metadata</h3>
+            <h3 className="text-lg font-medium">{t("logViewer.metadata")}</h3>
             <button
               onClick={() => {
                 navigator.clipboard.writeText(JSON.stringify(row.original.metadata, null, 2));
               }}
               className="p-1 hover:bg-gray-200 rounded"
-              title="Copy metadata"
+              title={t("logViewer.copyMetadata")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

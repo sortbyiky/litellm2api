@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { TextInput, Button as TremorButton } from "@tremor/react";
 import { Modal, Form, Select, Tooltip, Input, Alert } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
@@ -28,6 +29,7 @@ const VectorStoreForm: React.FC<VectorStoreFormProps> = ({
   accessToken,
   credentials,
 }) => {
+  const { t } = useTranslation();
   const [form] = Form.useForm();
   const [metadataJson, setMetadataJson] = useState("{}");
   const [selectedProvider, setSelectedProvider] = useState("bedrock");
@@ -58,7 +60,7 @@ const VectorStoreForm: React.FC<VectorStoreFormProps> = ({
       try {
         metadata = metadataJson.trim() ? JSON.parse(metadataJson) : {};
       } catch (e) {
-        NotificationsManager.fromBackend("Invalid JSON in metadata field");
+        NotificationsManager.fromBackend(t("vectorStores.invalidJsonMetadata"));
         return;
       }
 
@@ -90,13 +92,13 @@ const VectorStoreForm: React.FC<VectorStoreFormProps> = ({
       payload["litellm_params"] = litellmParams;
 
       await vectorStoreCreateCall(accessToken, payload);
-      NotificationsManager.success("Vector store created successfully");
+      NotificationsManager.success(t("vectorStores.vectorStoreCreatedSuccess"));
       form.resetFields();
       setMetadataJson("{}");
       onSuccess();
     } catch (error) {
       console.error("Error creating vector store:", error);
-      NotificationsManager.fromBackend("Error creating vector store: " + error);
+      NotificationsManager.fromBackend(t("vectorStores.errorCreatingVectorStore") + ": " + error);
     }
   };
 
@@ -108,19 +110,19 @@ const VectorStoreForm: React.FC<VectorStoreFormProps> = ({
   };
 
   return (
-    <Modal title="Add New Vector Store" open={isVisible} width={1000} footer={null} onCancel={handleCancel}>
+    <Modal title={t("vectorStores.addNewVectorStore")} open={isVisible} width={1000} footer={null} onCancel={handleCancel}>
       <Form form={form} onFinish={handleCreate} labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} labelAlign="left">
         <Form.Item
           label={
             <span>
               Provider{" "}
-              <Tooltip title="Select the provider for this vector store">
+              <Tooltip title={t("vectorStores.selectProviderTooltip")}>
                 <InfoCircleOutlined style={{ marginLeft: "4px" }} />
               </Tooltip>
             </span>
           }
           name="custom_llm_provider"
-          rules={[{ required: true, message: "Please select a provider" }]}
+          rules={[{ required: true, message: t("vectorStores.pleaseSelectProvider") }]}
           initialValue="bedrock"
         >
           <Select onChange={(value) => setSelectedProvider(value)}>
@@ -159,7 +161,7 @@ const VectorStoreForm: React.FC<VectorStoreFormProps> = ({
             message="PG Vector Setup Required"
             description={
               <div>
-                <p>LiteLLM provides a server to connect to PG Vector. To use this provider:</p>
+                <p>{t("vectorStores.pgVectorDescription")}</p>
                 <ol style={{ marginLeft: "16px", marginTop: "8px" }}>
                   <li>
                     Deploy the litellm-pgvector server from:{" "}
@@ -185,7 +187,7 @@ const VectorStoreForm: React.FC<VectorStoreFormProps> = ({
             message="Vertex AI RAG Engine Setup"
             description={
               <div>
-                <p>To use Vertex AI RAG Engine:</p>
+                <p>{t("vectorStores.vertexRagDescription")}</p>
                 <ol style={{ marginLeft: "16px", marginTop: "8px" }}>
                   <li>
                     Set up your Vertex AI RAG Engine corpus following the guide:{" "}
@@ -213,19 +215,19 @@ const VectorStoreForm: React.FC<VectorStoreFormProps> = ({
           label={
             <span>
               Vector Store ID{" "}
-              <Tooltip title="Enter the vector store ID from your api provider">
+              <Tooltip title={t("vectorStores.vectorStoreIdTooltip")}>
                 <InfoCircleOutlined style={{ marginLeft: "4px" }} />
               </Tooltip>
             </span>
           }
           name="vector_store_id"
-          rules={[{ required: true, message: "Please input the vector store ID from your api provider" }]}
+          rules={[{ required: true, message: t("vectorStores.pleaseInputVectorStoreId") }]}
         >
           <TextInput
             placeholder={
               selectedProvider === "vertex_rag_engine"
-                ? "6917529027641081856 (Get corpus ID from Vertex AI console)"
-                : "Enter vector store ID from your provider"
+                ? t("vectorStores.vertexCorpusIdPlaceholder")
+                : t("vectorStores.enterVectorStoreIdPlaceholder")
             }
           />
         </Form.Item>
@@ -292,7 +294,7 @@ const VectorStoreForm: React.FC<VectorStoreFormProps> = ({
           label={
             <span>
               Vector Store Name{" "}
-              <Tooltip title="Custom name you want to give to the vector store, this name will be rendered on the LiteLLM UI">
+              <Tooltip title={t("vectorStores.vectorStoreNameTooltip")}>
                 <InfoCircleOutlined style={{ marginLeft: "4px" }} />
               </Tooltip>
             </span>
@@ -302,15 +304,15 @@ const VectorStoreForm: React.FC<VectorStoreFormProps> = ({
           <TextInput />
         </Form.Item>
 
-        <Form.Item label="Description" name="vector_store_description">
+        <Form.Item label={t("common.description")} name="vector_store_description">
           <Input.TextArea rows={4} />
         </Form.Item>
 
         <Form.Item
           label={
             <span>
-              Existing Credentials{" "}
-              <Tooltip title="Optionally select API provider credentials for this vector store eg. Bedrock API KEY">
+              {t("vectorStores.existingCredentials")}{" "}
+              <Tooltip title={t("vectorStores.existingCredentialsTooltip")}>
                 <InfoCircleOutlined style={{ marginLeft: "4px" }} />
               </Tooltip>
             </span>
@@ -319,11 +321,11 @@ const VectorStoreForm: React.FC<VectorStoreFormProps> = ({
         >
           <Select
             showSearch
-            placeholder="Select or search for existing credentials"
+            placeholder={t("vectorStores.selectOrSearchCredentials")}
             optionFilterProp="children"
             filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
             options={[
-              { value: null, label: "None" },
+              { value: null, label: t("common.none") },
               ...credentials.map((credential) => ({
                 value: credential.credential_name,
                 label: credential.credential_name,
@@ -336,8 +338,8 @@ const VectorStoreForm: React.FC<VectorStoreFormProps> = ({
         <Form.Item
           label={
             <span>
-              Metadata{" "}
-              <Tooltip title="JSON metadata for the vector store (optional)">
+              {t("vectorStores.metadata")}{" "}
+              <Tooltip title={t("vectorStores.metadataTooltip")}>
                 <InfoCircleOutlined style={{ marginLeft: "4px" }} />
               </Tooltip>
             </span>
@@ -353,10 +355,10 @@ const VectorStoreForm: React.FC<VectorStoreFormProps> = ({
 
         <div className="flex justify-end space-x-3">
           <TremorButton onClick={handleCancel} variant="secondary">
-            Cancel
+            {t("common.cancel")}
           </TremorButton>
           <TremorButton variant="primary" type="submit">
-            Create
+            {t("common.create")}
           </TremorButton>
         </div>
       </Form>

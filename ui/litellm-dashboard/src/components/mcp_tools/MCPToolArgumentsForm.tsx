@@ -2,6 +2,7 @@ import React, { forwardRef, useImperativeHandle, useMemo } from "react";
 import { Form, Input, InputNumber, Select, Tooltip } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { MCPTool, InputSchema, InputSchemaProperty } from "./types";
+import { useTranslation } from "react-i18next";
 
 const isPlainObject = (value: unknown): value is Record<string, any> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -146,6 +147,7 @@ interface MCPToolArgumentsFormProps {
 
 const MCPToolArgumentsForm = forwardRef<MCPToolArgumentsFormRef, MCPToolArgumentsFormProps>(
   ({ tool, className }, ref) => {
+    const { t } = useTranslation();
     const [form] = Form.useForm();
 
     const schema: InputSchema = useMemo(() => {
@@ -218,7 +220,7 @@ const MCPToolArgumentsForm = forwardRef<MCPToolArgumentsFormRef, MCPToolArgument
       return (
         <Form form={form} layout="vertical" className={className}>
           <div className="py-4 text-center text-sm text-gray-500">
-            No parameters required for this tool.
+            {t("mcp.noParamsRequired")}
           </div>
         </Form>
       );

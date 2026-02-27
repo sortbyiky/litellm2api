@@ -6,6 +6,7 @@
 import { Modal } from "antd";
 import { ArrowRight } from "lucide-react";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 interface AddFallbacksModalProps {
   open: boolean;
@@ -18,6 +19,7 @@ export function AddFallbacksModal({
   onCancel,
   children,
 }: AddFallbacksModalProps) {
+  const { t } = useTranslation();
   return (
     <Modal
       title={
@@ -27,9 +29,9 @@ export function AddFallbacksModal({
               <ArrowRight className="w-5 h-5 text-indigo-600" />
             </div>
             <div>
-              <h2 className="text-lg font-bold m-0">Configure Model Fallbacks</h2>
+              <h2 className="text-lg font-bold m-0">{t("routerSettings.configureModelFallbacks")}</h2>
               <p className="text-sm text-gray-500 font-normal m-0">
-                Manage multiple fallback chains for different models (up to 5 groups at a time)
+                {t("routerSettings.manageFallbackChains")}
               </p>
             </div>
           </div>

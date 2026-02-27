@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Text, Badge } from "@tremor/react";
 import { DatabaseIcon } from "@heroicons/react/outline";
 import { vectorStoreListCall } from "../networking";
+import { useTranslation } from "react-i18next";
 
 interface VectorStoreDetails {
   vector_store_id: string;
@@ -15,6 +16,7 @@ interface VectorStorePermissionsProps {
 
 export function VectorStorePermissions({ vectorStores, accessToken }: VectorStorePermissionsProps) {
   const [vectorStoreDetails, setVectorStoreDetails] = useState<VectorStoreDetails[]>([]);
+  const { t } = useTranslation();
 
   // Fetch vector store details when component mounts
   useEffect(() => {
@@ -52,7 +54,7 @@ export function VectorStorePermissions({ vectorStores, accessToken }: VectorStor
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <DatabaseIcon className="h-4 w-4 text-blue-600" />
-        <Text className="font-semibold text-gray-900">Vector Stores</Text>
+        <Text className="font-semibold text-gray-900">{t("permissions.vectorStores")}</Text>
         <Badge color="blue" size="xs">
           {vectorStores.length}
         </Badge>
@@ -72,7 +74,7 @@ export function VectorStorePermissions({ vectorStores, accessToken }: VectorStor
       ) : (
         <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200">
           <DatabaseIcon className="h-4 w-4 text-gray-400" />
-          <Text className="text-gray-500 text-sm">No vector stores configured</Text>
+          <Text className="text-gray-500 text-sm">{t("permissions.noVectorStoresConfigured")}</Text>
         </div>
       )}
     </div>

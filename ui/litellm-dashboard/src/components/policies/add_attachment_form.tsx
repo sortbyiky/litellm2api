@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Modal, Form, Select, Radio, Divider, Typography } from "antd";
 import { Button } from "@tremor/react";
 import { Policy } from "./types";
@@ -28,6 +29,7 @@ const AddAttachmentForm: React.FC<AddAttachmentFormProps> = ({
   createAttachment,
 }) => {
   const [form] = Form.useForm();
+  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [scopeType, setScopeType] = useState<"global" | "specific">("global");
   const [availableTeams, setAvailableTeams] = useState<string[]>([]);
@@ -201,7 +203,7 @@ const AddAttachmentForm: React.FC<AddAttachmentFormProps> = ({
 
   return (
     <Modal
-      title="Create Policy Attachment"
+      title={t("policies.attachment.createAttachment")}
       open={visible}
       onCancel={handleClose}
       footer={null}
@@ -216,12 +218,12 @@ const AddAttachmentForm: React.FC<AddAttachmentFormProps> = ({
       >
         <Form.Item
           name="policy_names"
-          label="Policies"
-          rules={[{ required: true, message: "Please select at least one policy" }]}
+          label={t("policies.tabs.policies")}
+          rules={[{ required: true, message: t("policies.attachment.selectPolicyRequired") }]}
         >
           <Select
             mode="multiple"
-            placeholder="Select policies to attach"
+            placeholder={t("policies.attachment.selectPoliciesToAttach")}
             options={policyOptions}
             showSearch
             filterOption={(input, option) =>
@@ -232,16 +234,16 @@ const AddAttachmentForm: React.FC<AddAttachmentFormProps> = ({
         </Form.Item>
 
         <Divider orientation="left">
-          <Text strong>Scope</Text>
+          <Text strong>{t("policies.attachment.scope")}</Text>
         </Divider>
 
-        <Form.Item label="Scope Type">
+        <Form.Item label={t("policies.attachment.scopeType")}>
           <Radio.Group
             value={scopeType}
             onChange={(e) => setScopeType(e.target.value)}
           >
-            <Radio value="specific">Specific (teams, keys, models, or tags)</Radio>
-            <Radio value="global">Global (applies to all requests)</Radio>
+            <Radio value="specific">{t("policies.attachment.scopeSpecific")}</Radio>
+            <Radio value="global">{t("policies.attachment.scopeGlobal")}</Radio>
           </Radio.Group>
         </Form.Item>
 
@@ -340,15 +342,15 @@ const AddAttachmentForm: React.FC<AddAttachmentFormProps> = ({
 
         <div className="flex justify-end space-x-2 mt-4">
           <Button variant="secondary" onClick={handleClose}>
-            Cancel
+            {t("common.cancel")}
           </Button>
           {scopeType === "specific" && (
             <Button variant="secondary" onClick={handlePreviewImpact} loading={isEstimating}>
-              Estimate Impact
+              {t("policies.attachment.estimateImpact")}
             </Button>
           )}
           <Button onClick={handleSubmit} loading={isSubmitting}>
-            Create Attachment
+            {t("policies.attachment.createAttachment")}
           </Button>
         </div>
       </Form>

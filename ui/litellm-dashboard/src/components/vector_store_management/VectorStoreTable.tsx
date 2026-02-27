@@ -10,6 +10,7 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
 import { Tooltip } from "antd";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import TableIconActionButton from "../common_components/IconActionButton/TableIconActionButtons/TableIconActionButton";
 import { getProviderLogoAndName } from "../provider_info_helpers";
 import { VectorStore } from "./types";
@@ -22,11 +23,12 @@ interface VectorStoreTableProps {
 }
 
 const VectorStoreTable: React.FC<VectorStoreTableProps> = ({ data, onView, onEdit, onDelete }) => {
+  const { t } = useTranslation();
   const [sorting, setSorting] = React.useState<SortingState>([{ id: "created_at", desc: true }]);
 
   const columns: ColumnDef<VectorStore>[] = [
     {
-      header: "Vector Store ID",
+      header: t("vectorStores.vectorStoreId"),
       accessorKey: "vector_store_id",
       cell: ({ row }) => {
         const vectorStore = row.original;
@@ -43,7 +45,7 @@ const VectorStoreTable: React.FC<VectorStoreTableProps> = ({ data, onView, onEdi
       },
     },
     {
-      header: "Name",
+      header: t("common.name"),
       accessorKey: "vector_store_name",
       cell: ({ row }) => {
         const vectorStore = row.original;
@@ -55,7 +57,7 @@ const VectorStoreTable: React.FC<VectorStoreTableProps> = ({ data, onView, onEdi
       },
     },
     {
-      header: "Description",
+      header: t("common.description"),
       accessorKey: "vector_store_description",
       cell: ({ row }) => {
         const vectorStore = row.original;
@@ -67,7 +69,7 @@ const VectorStoreTable: React.FC<VectorStoreTableProps> = ({ data, onView, onEdi
       },
     },
     {
-      header: "Files",
+      header: t("vectorStores.files"),
       accessorKey: "vector_store_metadata",
       cell: ({ row }) => {
         const vectorStore = row.original;
@@ -78,12 +80,12 @@ const VectorStoreTable: React.FC<VectorStoreTableProps> = ({ data, onView, onEdi
         }
         
         const filenames = ingestedFiles
-          .map((file) => file.filename || file.file_url || "Unknown")
+          .map((file) => file.filename || file.file_url || t("vectorStores.unknown"))
           .join(", ");
         
         const displayText = ingestedFiles.length === 1 
-          ? ingestedFiles[0].filename || ingestedFiles[0].file_url || "1 file"
-          : `${ingestedFiles.length} files`;
+          ? ingestedFiles[0].filename || ingestedFiles[0].file_url || t("vectorStores.oneFile")
+          : `${ingestedFiles.length} ${t("vectorStores.filesCount")}`;
         
         return (
           <Tooltip title={filenames}>
@@ -93,7 +95,7 @@ const VectorStoreTable: React.FC<VectorStoreTableProps> = ({ data, onView, onEdi
       },
     },
     {
-      header: "Provider",
+      header: t("vectorStores.provider"),
       accessorKey: "custom_llm_provider",
       cell: ({ row }) => {
         const vectorStore = row.original;
@@ -107,7 +109,7 @@ const VectorStoreTable: React.FC<VectorStoreTableProps> = ({ data, onView, onEdi
       },
     },
     {
-      header: "Created At",
+      header: t("vectorStores.createdAt"),
       accessorKey: "created_at",
       sortingFn: "datetime",
       cell: ({ row }) => {
@@ -116,7 +118,7 @@ const VectorStoreTable: React.FC<VectorStoreTableProps> = ({ data, onView, onEdi
       },
     },
     {
-      header: "Updated At",
+      header: t("vectorStores.updatedAt"),
       accessorKey: "updated_at",
       sortingFn: "datetime",
       cell: ({ row }) => {
@@ -133,12 +135,12 @@ const VectorStoreTable: React.FC<VectorStoreTableProps> = ({ data, onView, onEdi
           <div className="flex space-x-2">
             <TableIconActionButton
               variant="Edit"
-              tooltipText="Edit vector store"
+              tooltipText={t("vectorStores.editVectorStore")}
               onClick={() => onEdit(vectorStore.vector_store_id)}
             />
             <TableIconActionButton
               variant="Delete"
-              tooltipText="Delete vector store"
+              tooltipText={t("vectorStores.deleteVectorStore")}
               onClick={() => onDelete(vectorStore.vector_store_id)}
             />
           </div>
@@ -218,7 +220,7 @@ const VectorStoreTable: React.FC<VectorStoreTableProps> = ({ data, onView, onEdi
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-8 text-center">
                   <div className="text-center text-gray-500">
-                    <p>No vector stores found</p>
+                    <p>{t("vectorStores.noVectorStoresFound")}</p>
                   </div>
                 </TableCell>
               </TableRow>
