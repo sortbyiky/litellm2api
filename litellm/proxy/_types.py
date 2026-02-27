@@ -3194,6 +3194,10 @@ class ProxyException(Exception):
         self.type = type
         self.param = param
         self.openai_code = openai_code or code
+        # Ensure type is set correctly for context window errors
+        # stream_chunk_builder wraps ContextWindowExceededError in APIError, losing the type
+        if self.openai_code == "context_length_exceeded" and (self.type is None or self.type == "None"):
+            self.type = "invalid_request_error"
         # If we look on official python OpenAI lib, the code should be a string:
         # https://github.com/openai/openai-python/blob/195c05a64d39c87b2dfdf1eca2d339597f1fce03/src/openai/types/shared/error_object.py#L11
         # Related LiteLLM issue: https://github.com/BerriAI/litellm/discussions/4834

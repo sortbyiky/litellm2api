@@ -398,6 +398,7 @@ class ContextWindowExceededError(BadRequestError):  # type: ignore
 
         # set after, to make it clear the raised error is a context window exceeded error
         self.code = "context_length_exceeded"
+        self.type = "invalid_request_error"
         self.message = "litellm.ContextWindowExceededError: {}".format(self.message)
 
     def __str__(self):
