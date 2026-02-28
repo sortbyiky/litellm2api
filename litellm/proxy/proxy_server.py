@@ -239,6 +239,9 @@ from litellm.proxy._experimental.mcp_server.tool_registry import (
     global_mcp_tool_registry,
 )
 from litellm.proxy._types import *
+from litellm.responses.litellm_completion_transformation.transformation import (
+    LiteLLMCompletionResponsesConfig,
+)
 from litellm.proxy.agent_endpoints.a2a_endpoints import router as a2a_router
 from litellm.proxy.agent_endpoints.agent_registry import global_agent_registry
 from litellm.proxy.agent_endpoints.endpoints import router as agent_endpoints_router
@@ -6434,6 +6437,39 @@ async def chat_completion(  # noqa: PLR0915
     global general_settings, user_debug, proxy_logging_obj, llm_model_list
     global user_temperature, user_request_timeout, user_max_tokens, user_api_base
     data = await _read_request_body(request=request)
+    # --- Cursor Agent BYOK workaround ---
+    # Cursor Agent (2.4+) sends Responses API format (input: [...]) to /v1/chat/completions
+    # when using BYOK + Base URL Override. This is a known Cursor bug (confirmed 2026-02-26).
+    # We detect and convert to standard Chat Completions format so context compaction works.
+    if "input" in data and "messages" not in data:
+        try:
+            _model = data.get("model", "")
+            _input = data.pop("input")
+            _responses_params = {
+                k: data.pop(k)
+                for k in list(data.keys())
+                if k in {
+                    "tools", "tool_choice", "text", "reasoning", "temperature",
+                    "top_p", "max_output_tokens", "parallel_tool_calls", "user",
+                    "store", "include", "prompt_cache_retention",
+                    "previous_response_id", "truncation", "context_management",
+                }
+            }
+            _converted = LiteLLMCompletionResponsesConfig.transform_responses_api_request_to_chat_completion_request(
+                model=_model,
+                input=_input,
+                responses_api_request=_responses_params,  # type: ignore
+                stream=data.get("stream"),
+            )
+            data.update(_converted)
+            verbose_proxy_logger.info(
+                f"[chat_completion] Detected Cursor Responses API format, converted to Chat Completions (model={_model})"
+            )
+        except Exception as _e:
+            verbose_proxy_logger.warning(
+                f"[chat_completion] Responses API format conversion failed: {_e}. Proceeding with original data."
+            )
+    # --- end Cursor Agent BYOK workaround ---
     if user_api_key_dict is not None:
         if data.get("metadata") is None:
             data["metadata"] = {}
