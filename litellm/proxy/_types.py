@@ -3218,8 +3218,22 @@ class ProxyException(Exception):
                 m = re.search(r"resulted in (\d+)\s*tokens", original_msg)
                 if m:
                     actual_tokens = int(m.group(1))
+            # Kiro/Anthropic: "Context window is full." — no token numbers in message
+            # Extract from litellm model info if available
             if not max_tokens:
-                max_tokens = 200000
+                m = re.search(r"max_input_tokens['\"]?\s*:\s*(\d+)", original_msg)
+                if m:
+                    max_tokens = int(m.group(1))
+            if not max_tokens:
+                # claude-sonnet-4.5 / claude-sonnet-4 default context window
+                if "sonnet" in original_msg.lower():
+                    max_tokens = 200000
+                elif "haiku" in original_msg.lower():
+                    max_tokens = 200000
+                elif "opus" in original_msg.lower():
+                    max_tokens = 200000
+                else:
+                    max_tokens = 200000
             if not actual_tokens:
                 actual_tokens = max_tokens + 1000
             self.message = (
@@ -3227,6 +3241,12 @@ class ProxyException(Exception):
                 f"However, your messages resulted in {actual_tokens} tokens. "
                 f"Please reduce the length of the messages."
             )
+            # CRITICAL: Set param to "messages" to match official OpenAI error format.
+            # Cursor's auto context compression is triggered by cursor.sh backend only when
+            # param == "messages". Without this field, cursor classifies the error as
+            # ERROR_OPENAI (generic server error) and retries instead of compressing.
+            if not self.param or self.param in ("none", "None", "null"):
+                self.param = "messages"
         # If we look on official python OpenAI lib, the code should be a string:
         # https://github.com/openai/openai-python/blob/195c05a64d39c87b2dfdf1eca2d339597f1fce03/src/openai/types/shared/error_object.py#L11
         # Related LiteLLM issue: https://github.com/BerriAI/litellm/discussions/4834
